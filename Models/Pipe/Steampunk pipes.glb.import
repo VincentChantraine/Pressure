@@ -37,6 +37,93 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:group1004552146": {
+"generate/physics": true
+},
+"PATH:group101053789": {
+"generate/physics": true
+},
+"PATH:group1045270348": {
+"generate/physics": true
+},
+"PATH:group1064214601": {
+"generate/physics": true
+},
+"PATH:group1142927423": {
+"generate/physics": true
+},
+"PATH:group1227174121": {
+"generate/physics": true
+},
+"PATH:group1299190962": {
+"generate/physics": true
+},
+"PATH:group1350089925": {
+"generate/physics": true
+},
+"PATH:group1368530898": {
+"generate/physics": true
+},
+"PATH:group1421749061": {
+"generate/physics": true
+},
+"PATH:group154128096": {
+"generate/physics": true
+},
+"PATH:group1550065549": {
+"generate/physics": true
+},
+"PATH:group1569151035": {
+"generate/physics": true
+},
+"PATH:group1626731971": {
+"generate/physics": true
+},
+"PATH:group172468808": {
+"generate/physics": true
+},
+"PATH:group185929771": {
+"generate/physics": true
+},
+"PATH:group1882872651": {
+"generate/physics": true
+},
+"PATH:group1958307834": {
+"generate/physics": true
+},
+"PATH:group2095706966": {
+"generate/physics": true
+},
+"PATH:group2148647": {
+"generate/physics": true
+},
+"PATH:group231731733": {
+"generate/physics": true
+},
+"PATH:group304819577": {
+"generate/physics": true
+},
+"PATH:group372445576": {
+"generate/physics": true
+},
+"PATH:group414090621": {
+"generate/physics": true
+},
+"PATH:group444473868": {
+"generate/physics": true
+},
+"PATH:group513117509": {
+"generate/physics": true
+},
+"PATH:group88248500": {
+"generate/physics": true
+},
+"PATH:group985966990": {
+"generate/physics": true
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1

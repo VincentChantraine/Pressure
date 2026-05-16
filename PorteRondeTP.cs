@@ -171,6 +171,8 @@ public partial class PorteRondeTP : Area3D
 		if (joueur != null)
 			joueur.TeleporterA(cible);
 
+		GameState.Instance?.NotifierEntreeBT01();
+
 		// Petit temps en noir complet
 		await ToSignal(GetTree().CreateTimer(DureeNoirComplet), SceneTreeTimer.SignalName.Timeout);
 

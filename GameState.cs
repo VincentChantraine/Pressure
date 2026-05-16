@@ -38,7 +38,8 @@ public partial class GameState : Node
 	[Signal] public delegate void ScanValideEventHandler(string porteId);
 	[Signal] public delegate void ScanInvalideEventHandler(string raison);
 	[Signal] public delegate void PorteFinaleDebloqueeEventHandler();
-	[Signal] public delegate void PorteFinaleOuverteEventHandler(); // ← nouveau, = victoire
+	[Signal] public delegate void PorteFinaleOuverteEventHandler();
+	[Signal] public delegate void JoueurEntreeBT01EventHandler();
 
 	public override void _EnterTree()
 	{
@@ -64,6 +65,11 @@ public partial class GameState : Node
 
 		if (estFinale)
 			GD.Print("[GameState] Porte finale déverrouillée — le joueur peut passer.");
+	}
+
+	public void NotifierEntreeBT01()
+	{
+		EmitSignal(SignalName.JoueurEntreeBT01);
 	}
 
 	// Appelé par VictoireCommandeTrigger quand le joueur atteint les commandes

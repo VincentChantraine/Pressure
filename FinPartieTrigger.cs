@@ -30,6 +30,7 @@ public partial class FinPartieTrigger : Area3D
 			}
 
 			player.TeleporterA(cible);
+			GameState.Instance?.NotifierEntreeBT01();
 		}
 	}
 }

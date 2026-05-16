@@ -17,6 +17,7 @@ public partial class PartieManager : Node
 	private ServoGameTimer servoTimer;
 	private Player joueur;
 	private bool partieTerminee = false;
+	private float tempsAuTP = -1f;
 
 	public override void _Ready()
 	{
@@ -33,7 +34,19 @@ public partial class PartieManager : Node
 			GD.PrintErr("[PartieManager] ServoGameTimer introuvable !");
 
 		if (GameState.Instance != null)
-			GameState.Instance.PorteFinaleOuverte += OnVictoire;
+		{
+			GameState.Instance.PorteFinaleOuverte  += OnVictoire;
+			GameState.Instance.JoueurEntreeBT01    += OnJoueurEntreeBT01;
+		}
+	}
+
+	private void OnJoueurEntreeBT01()
+	{
+		if (servoTimer == null) return;
+		tempsAuTP = servoTimer.GetElapsed();
+		servoTimer.Pause();
+		servoTimer.ActiverAlarmePermanente();
+		GD.Print($"[PartieManager] TP BT-01 — chrono figé à {tempsAuTP:F1}s.");
 	}
 
 	private void OnTempsEcoule()
@@ -52,28 +65,20 @@ public partial class PartieManager : Node
 		partieTerminee = true;
 
 		GD.Print("[PartieManager] Victoire ! Lancement séquence DepthBomb.");
-		float temps = servoTimer != null ? servoTimer.GetElapsed() : 0f;
+		float temps = tempsAuTP >= 0f ? tempsAuTP : (servoTimer != null ? servoTimer.GetElapsed() : 0f);
 		servoTimer?.Pause();
 
 		// Gèle le joueur : plus de déplacement ni de regard.
 		if (joueur != null) joueur.Frozen = true;
 
 		// Coupe la radio d'interférence du BT-01 : on a repris les commandes.
-		GD.Print($"[PartieManager] OnVictoire — tentative coupure radio. Path={SonRadioInterferencePath}");
 		if (SonRadioInterferencePath != null && !SonRadioInterferencePath.IsEmpty)
 		{
 			var radio = GetNodeOrNull<AudioStreamPlayer3D>(SonRadioInterferencePath);
-			GD.Print($"[PartieManager] radio={(radio != null ? radio.Name.ToString() : "NULL")} playing={(radio?.Playing ?? false)}");
 			if (radio is LoopingAudio loop)
-			{
 				loop.StopDefinitivement();
-				GD.Print("[PartieManager] radio coupée via StopDefinitivement.");
-			}
-			else if (radio != null)
-			{
-				radio.Stop();
-				GD.Print("[PartieManager] radio coupée via Stop standard.");
-			}
+			else
+				radio?.Stop();
 		}
 		else
 		{
@@ -113,6 +118,9 @@ public partial class PartieManager : Node
 		if (servoTimer != null)
 			servoTimer.TempsEcoule -= OnTempsEcoule;
 		if (GameState.Instance != null)
+		{
 			GameState.Instance.PorteFinaleOuverte -= OnVictoire;
+			GameState.Instance.JoueurEntreeBT01   -= OnJoueurEntreeBT01;
+		}
 	}
 }

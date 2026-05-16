@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 // Chrono principal de la partie (5 min).
@@ -30,6 +31,13 @@ public partial class ServoGameTimer : Node
 	// Courbe d'accélération (1 = linéaire, >1 = accélère vite à la fin).
 	[Export] public float CourbeTicTac = 1.5f;
 
+	// Lumières d'alarme : changent de couleur sans toucher au LightSwitch.
+	[Export] public OmniLight3D[] LumieresAlarme = Array.Empty<OmniLight3D>();
+	// Fraction du temps écoulé à partir de laquelle l'alarme s'active (0.7 = 30% restant).
+	[Export] public float SeuilAlarme = 0.7f;
+	// Couleur de l'alarme (rouge vif par défaut).
+	[Export] public Color CouleurAlarme = new Color(1f, 0.1f, 0f);
+
 	// Signal émis quand les 5 min sont écoulées
 	[Signal] public delegate void TempsEcouleEventHandler();
 
@@ -45,12 +53,23 @@ public partial class ServoGameTimer : Node
 	private int derniereVitesseEnvoyee = int.MinValue;
 	// Accepte AudioStreamPlayer ou AudioStreamPlayer3D — on accède via les propriétés dynamiques.
 	private Node sonTicTac;
+	private bool alarmeActive = false;
+	private Color[] couleursOriginales;
+	private float[] energiesOriginales;
 
 	private bool enPause = false;
+	private bool alarmeForcee = false;
+	private float alarmeTemps = 0f;
 
 	public float GetElapsed() => elapsed;
 	public bool EstDemarre()  => !enPause;
 	public bool EstFini()     => fini;
+
+	public void ActiverAlarmePermanente()
+	{
+		alarmeForcee = true;
+		alarmeActive = true;
+	}
 
 	public void Pause()   { enPause = true; }
 	public void Reprend() { enPause = false; }
@@ -82,6 +101,15 @@ public partial class ServoGameTimer : Node
 
 	public override void _Ready()
 	{
+		couleursOriginales = new Color[LumieresAlarme.Length];
+		energiesOriginales = new float[LumieresAlarme.Length];
+		for (int i = 0; i < LumieresAlarme.Length; i++)
+			if (LumieresAlarme[i] != null)
+			{
+				couleursOriginales[i] = LumieresAlarme[i].LightColor;
+				energiesOriginales[i] = LumieresAlarme[i].LightEnergy;
+			}
+
 		if (ArduinoPath != null && !ArduinoPath.IsEmpty)
 			arduino = GetNodeOrNull<Node3d>(ArduinoPath);
 
@@ -119,6 +147,19 @@ public partial class ServoGameTimer : Node
 
 	public override void _Process(double delta)
 	{
+		if (alarmeForcee)
+		{
+			alarmeTemps += (float)delta;
+			float pulse = (Mathf.Sin(alarmeTemps * 0.6f * Mathf.Pi * 2f) + 1f) * 0.5f;
+			for (int i = 0; i < LumieresAlarme.Length; i++)
+				if (LumieresAlarme[i] != null)
+				{
+					LumieresAlarme[i].LightColor = CouleurAlarme;
+					LumieresAlarme[i].LightEnergy = Mathf.Lerp(0.1f, energiesOriginales[i], pulse);
+				}
+			return;
+		}
+
 		if (fini || enPause) return;
 
 		elapsed += (float)delta;
@@ -152,6 +193,36 @@ public partial class ServoGameTimer : Node
 			}
 		}
 
+		// Lumières d'alarme : changent de couleur, sans toucher à l'énergie (LightSwitch intact).
+		if (LumieresAlarme.Length > 0)
+		{
+			if (t >= SeuilAlarme)
+			{
+				alarmeActive = true;
+				float progression = (t - SeuilAlarme) / (1f - SeuilAlarme);
+				float hz = Mathf.Lerp(0.15f, 0.6f, progression);
+				// Sinus entre 0 et 1 → pulse douce (jamais coupée net).
+				float pulse = (Mathf.Sin(elapsed * hz * Mathf.Pi * 2f) + 1f) * 0.5f;
+				for (int i = 0; i < LumieresAlarme.Length; i++)
+					if (LumieresAlarme[i] != null)
+					{
+						LumieresAlarme[i].LightColor = CouleurAlarme;
+						LumieresAlarme[i].LightEnergy = Mathf.Lerp(0.1f, energiesOriginales[i], pulse);
+					}
+			}
+			else if (alarmeActive)
+			{
+				// Bonus de temps : repasse sous le seuil → restaurer couleur et énergie d'origine.
+				for (int i = 0; i < LumieresAlarme.Length; i++)
+					if (LumieresAlarme[i] != null)
+					{
+						LumieresAlarme[i].LightColor = couleursOriginales[i];
+						LumieresAlarme[i].LightEnergy = energiesOriginales[i];
+					}
+				alarmeActive = false;
+			}
+		}
+
 		// Fin de partie
 		if (t >= 1f && !fini)
 		{
@@ -159,6 +230,12 @@ public partial class ServoGameTimer : Node
 				arduino.SendServoSpeed(0);
 			if (sonTicTac is AudioStreamPlayer aspStop && aspStop.Playing) aspStop.Stop();
 			else if (sonTicTac is AudioStreamPlayer3D asp3Stop && asp3Stop.Playing) asp3Stop.Stop();
+			for (int i = 0; i < LumieresAlarme.Length; i++)
+				if (LumieresAlarme[i] != null)
+				{
+					LumieresAlarme[i].LightColor = couleursOriginales[i];
+					LumieresAlarme[i].LightEnergy = energiesOriginales[i];
+				}
 			fini = true;
 			GD.Print("[ServoGameTimer] Temps écoulé — émission TempsEcoule.");
 			EmitSignal(SignalName.TempsEcoule);

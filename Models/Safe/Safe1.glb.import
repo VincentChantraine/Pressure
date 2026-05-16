@@ -37,6 +37,39 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:Box001": {
+"generate/physics": true
+},
+"PATH:Box002": {
+"generate/physics": true
+},
+"PATH:Box003": {
+"generate/physics": true
+},
+"PATH:Box004": {
+"generate/physics": true
+},
+"PATH:Box005": {
+"generate/physics": true
+},
+"PATH:Cylinder001": {
+"generate/physics": true
+},
+"PATH:Cylinder002": {
+"generate/physics": true
+},
+"PATH:Cylinder003": {
+"generate/physics": true
+},
+"PATH:Cylinder004": {
+"generate/physics": true
+},
+"PATH:Object001": {
+"generate/physics": true
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1

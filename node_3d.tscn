@@ -56,7 +56,6 @@
 [ext_resource type="Material" uid="uid://dn123ps6gypdc" path="res://Materiaux/mat_mur_metal.tres" id="37_3s0n5"]
 [ext_resource type="AudioStream" uid="uid://cey6xaf60msjm" path="res://Son/Porte-Refuser.ogg" id="37_4yprr"]
 [ext_resource type="Script" uid="uid://cshseamh3r1d3" path="res://Salle3ChiffresObjectif.cs" id="40_g0276"]
-[ext_resource type="PackedScene" uid="uid://o7fmde3y5638" path="res://Models/XR Pixel Block Font/Blank Picture Frame.glb" id="41_pf4ct"]
 [ext_resource type="PackedScene" uid="uid://6fi3obk5qbeo" path="res://Models/Safe/Safe2.glb" id="42_5w2ad"]
 [ext_resource type="PackedScene" uid="uid://d0gjk042cggm1" path="res://Models/Poly_Pizza/Bunk Bed.glb" id="42_alien"]
 [ext_resource type="PackedScene" uid="uid://bwqwim1y46vu6" path="res://Models/Safe/Security Camera.glb" id="43_8p5mg"]
@@ -80,6 +79,7 @@
 [ext_resource type="PackedScene" uid="uid://dx7r78s3w427m" path="res://Models/Poly_Pizza/Wall Shelf.glb" id="62_5xjb2"]
 [ext_resource type="PackedScene" uid="uid://cjao8gctxjg5a" path="res://Models/Poly_Pizza/Light bulb.glb" id="63_8uyoo"]
 [ext_resource type="PackedScene" uid="uid://p84sayy7l18w" path="res://Models/Poly_Pizza/Time Hotel 7.08 Folded Map.glb" id="63_lppl5"]
+[ext_resource type="PackedScene" uid="uid://o7fmde3y5638" path="res://Models/Poly_Pizza/Blank Picture Frame.glb" id="64_b2564"]
 [ext_resource type="PackedScene" uid="uid://dm6w66o20ke77" path="res://Models/Poly_Pizza/Light Switch.glb" id="64_j0jmk"]
 [ext_resource type="PackedScene" uid="uid://bug8esao22s35" path="res://Models/Poly_Pizza/table_with_metal_legs.glb" id="64_l74pm"]
 [ext_resource type="PackedScene" uid="uid://cail6fua8g0ss" path="res://Models/Poly_Pizza/metal_shelf_-_14mb.glb" id="65_jvcxi"]
@@ -347,124 +347,6 @@ radius = 2.0
 [sub_resource type="BoxShape3D" id="BoxShape3D_487xd"]
 size = Vector3(0.9863398, 2, 1.6234131)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tg6fq"]
-resource_name = "mat21"
-emission_enabled = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r5glg"]
-resource_name = "mat22"
-albedo_color = Color(0.6262097, 0.6262097, 0.6262097, 1)
-emission_enabled = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3ukd4"]
-resource_name = "mat15"
-albedo_color = Color(0.8152507, 0.85430586, 0.86504203, 1)
-emission_enabled = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dbdg6"]
-resource_name = "mat24"
-transparency = 4
-cull_mode = 2
-albedo_color = Color(0.92119145, 0.9499975, 0.940525, 0.4)
-roughness = 0.7
-emission_enabled = true
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_4nmnm"]
-_surfaces = [{
-"aabb": AABB(-0.2029279, -0.2686318, -0.08779699, 0.4138558, 0.5848498, 0.2666189),
-"format": 34896613377,
-"index_count": 204,
-"index_data": PackedByteArray("AAABAAIAAwAAAAIAAgABAAQABAAFAAIAAwACAAUABQAEAAYABQAHAAMACAAEAAEACAAGAAQABgAJAAUABwAFAAkACQAGAAoACwAKAAYACgAMAAkABgANAAsABgAIAA0ADgALAA0ABwANAAgADAAOAA8ADwAJAAwADQAPAA4ACQAPAAcADQAHAA8ABwAIABAAAQAQAAgAEAADAAcAEQAQAAEAAwAQABEAEQASAAMAEwARAAEAEQAUABIAFAARABUAFQARABMAFAAVABYAEwAXABUAEgAUABgAGAADABIAGQAYABQAFwATABoAGAAZABsAGgAcABcAHQADABgAHQAYABsAAwAdAAAAHgAbABkAGwAeAB0AHAAeAB8AHQAgAAAAHgAgAB0AIAAeABwAAQAAACAAIAAcACEAAQAgACEAHAAaACEAAQAhABMAIQAaABMAIgAjACQAJAAlACIAIwAiACYAJwAlACQAIwAnACQAKAAiACUAIgAoACYAJQAnACgAJgApACMAJwAjACkAKAApACYAKQAoACcA"),
-"name": "mat21",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 42,
-"vertex_data": PackedByteArray("mf0AAPoxAAD//8r+yDgAAMv9JAIzAgAAMQBZAwAAAAA+85P24jYAAC/xewrhAwAAKvO39f5JAADxDJAL5QEAAAAPqPfnNAAAG/GfCf0WAACm5/fpWEcAADwa8eqPRQAAzOV7FXAZAADsDs32A0gAAGEYdRaoFwAA3gy1CgIVAABlAv//lDYAADMC2v1bZgAAAAA0AcYvAACaQYz96GYAAPM/EED4PQAADUFjvkNZAACAQDp/nUsAAHOAFr7PWQAAZj/nAFMwAABZf8M/hT4AAACBP/11ZwAAzH6aAOAwAADav8m9XFoAADO+TQBtMQAAwL52PxI/AABNv59+t0wAAM3/pfyOaAAAZ8Dy/AJoAABJn/SYZjsAAENb05m1OQAALFJmAhrgAAAvlowBweIAACqfpZ5bVQAAX1UxAk3+AABlmVMB//8AACRbhJ+qUwAA")
-}, {
-"aabb": AABB(-0.1635099, -0.2195538, -0.0631575, 0.3350816, 0.4876734, 0.049666468),
-"format": 34896613377,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAgADAAAA"),
-"name": "mat22",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("SQL//2z2AAAAACsBAAAAALX9AACSCQAA///T/v//AAA=")
-}, {
-"aabb": AABB(-0.09954175, -0.123644, -0.02325383, 0.20677236, 0.2899755, 0.032390267),
-"format": 34896613377,
-"index_count": 60,
-"index_data": PackedByteArray("AQAAAAgAAAABAAIAAwABAAgABgAIAAAAAwAIAAQACAAGAAUABAAIAAUABAAFAAcACQAKAAsACgAMAAsACwANAAkADAAKAA4ACQAOAAoACwAMAA8ADgAPAAwADwANAAsADgAJABAADwAOABAAEAAJAA0ADQAPABAA"),
-"lods": [0.09882047, PackedByteArray("AAABAAIAAwABAAAAAwAAAAQABAAAAAUAAAAGAAUABAAFAAcA")],
-"name": "mat15",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 17,
-"vertex_data": PackedByteArray("5P5jf2F5AAAZgWP/K+UAAP//x/6z6QAANAL//6TgAAAaAZuAUnAAAOV+mwCHBAAAyv0AAA8JAAAAADcBAAAAAP9//3/ZdAAAuiP9yc35AACrIp9P6Y0AAL0iZlAtRwAA+s+ST19NAADMI8TKEbMAAOjPyk4blAAACdHwyUO5AAD30CnJ//8AAA==")
-}, {
-"aabb": AABB(-0.1768617, -0.2500647, -0.07549179, 0.3634593, 0.55070484, 0.07166303),
-"format": 34896613377,
-"index_count": 36,
-"index_data": PackedByteArray("AAABAAIAAQADAAIAAwAAAAIAAQAAAAQAAAADAAUAAwABAAYABwAEAAAAAAAFAAcAAQAEAAcABwAFAAMABwAGAAEAAwAGAAcA"),
-"name": "mat24",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 8,
-"vertex_data": PackedByteArray("7f8l/v//AACe/bkAMAcAAI39AAClPwAAAAAfAXQ4AAD//9/+iscAAGACRf/O+AAAEQDYAQAAAABxAv//WcAAAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_4r1av"]
-resource_name = "Blank Picture Frame_Node-Mesh"
-_surfaces = [{
-"aabb": AABB(-0.2029279, -0.2686318, -0.08779699, 0.4138558, 0.5848498, 0.2666189),
-"format": 34896613383,
-"index_count": 204,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABgAHAAQACAAJAAoACAALAAkACwAIAAwADAAIAA0ACwAMAA4ADwAQABEAEgAPABEAEQATABIAEwAUABIAEQAVABMAFgAXABgAGAAZABYAGgAbABwAHQAbABoAGwAdAB4AHgAdAB8AGwAeACAAIQAiACMAIwAkACEAJQAmACcAJwAoACUAKQAqACsAKwAsACkALQAuAC8ALwAwAC0AMQAyADMAMgAxADQANQA2ADcANgA1ADgAOQA6ADsAOwA8ADkAPQA+AD8APwBAAD0AQQBCAEMAQwBEAEEARQBGAEcARwBIAEUASQBKAEsASwBMAEkATQBOAE8ATgBNAFAAUQBSAFMAUgBRAFQAVQBWAFcAWABWAFUAVgBYAFkAWQBYAFoAVgBZAFsAXABdAF4AXQBcAF8AYABhAGIAYQBgAGMAZABlAGYAZgBnAGQAaABpAGoAaQBoAGsAbABtAG4AbQBsAG8AcABxAHIAcgBzAHAAdAB1AHYAdwB4AHkAegB7AHwAfQB+AH8A"),
-"material": SubResource("StandardMaterial3D_tg6fq"),
-"name": "mat21",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 128,
-"vertex_data": PackedByteArray("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")
-}, {
-"aabb": AABB(-0.1635099, -0.2195538, -0.0631575, 0.3350816, 0.4876734, 0.049666468),
-"format": 34896613383,
-"index_count": 6,
-"index_data": PackedByteArray("AAABAAIAAgADAAAA"),
-"material": SubResource("StandardMaterial3D_r5glg"),
-"name": "mat22",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("SQL//2z2/vwAACsBAAD+/LX9AACSCf78///T/v///vxSwXA+UsFwPlLBcD5SwXA+")
-}, {
-"aabb": AABB(-0.09954175, -0.123644, -0.02325383, 0.20677236, 0.2899755, 0.032390267),
-"format": 34896613383,
-"index_count": 60,
-"index_data": PackedByteArray("AQAAAAgAAAABAAIAAwAJAAQAAwAKAAkACwAFAAcACwAMAAUADQAGAA4ABgANAA8AEAARABIAEgATABAAFAAVABYAFQAUABcAGAAZABoAGgAbABgAHAAdAB4AHQAcAB8AIAAhACIAIQAgACMAJAAlACYAJgAnACQA"),
-"lods": [0.09882047, PackedByteArray("AAABAAIAAwABAAAAAwAAAAQABAAAAAUAAAAGAAUABAAFAAcA")],
-"material": SubResource("StandardMaterial3D_3ukd4"),
-"name": "mat15",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 40,
-"vertex_data": PackedByteArray("5P5jf2F5P8AZgWP/K+U/wP//x/6z6T/ANAL//6TgP8AaAZuAUnA/wOV+mwCHBD/Ayv0AAA8JP8AAADcBAAA/wP9//3/ZdD/A/3//f9l0P8AZgWP/K+U/wBoBm4BScD/A/3//f9l0P8D/f/9/2XQ/wOV+mwCHBD/A5P5jf2F5P8C6I/3Jzfk6wKsin0/pjTrAvSJmUC1HOsDMI8TKEbM6wOjPyk4blP//CdHwyUO5///6z5JPX03///fQKcn/////CdHwyUO5/vzMI8TKEbP+/L0iZlAtR/78+s+ST19N/vy6I/3Jzfk/wOjPyk4blD/AqyKfT+mNP8D30CnJ//8/wKsin0/pjSH9+s+ST19NIf29ImZQLUch/ejPyk4blCH999Apyf//NP26I/3Jzfk0/cwjxMoRszT9CdHwyUO5NP3ueaJ67nmieu55onrueaJ67nmieu55onrueaJ67nmieu55onrueaJ67nmieu55onrueaJ67nmieu55onrueaJ6/n8j//5/I//+fyP//n8j/6C/nH+gv5x/oL+cf6C/nH9SwXE+UsFxPlLBcT5SwXE+7nmieu55onrueaJ67nmieo9B9vyPQfb8j0H2/I9B9vwcg127HINduxyDXbscg127")
-}, {
-"aabb": AABB(-0.1768617, -0.2500647, -0.07549179, 0.3634593, 0.55070484, 0.07166303),
-"format": 34896613383,
-"index_count": 36,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABgAHAAQACAAJAAoACQAIAAsADAANAA4ADgAPAAwAEAARABIAEQAQABMAFAAVABYAFgAXABQA"),
-"material": SubResource("StandardMaterial3D_dbdg6"),
-"name": "mat24",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 24,
-"vertex_data": PackedByteArray("7f8l/v////+e/bkAMAf//439AAClP//////f/orH//9xAv//WcA6wGACRf/O+DrAAAAfAXQ4OsARANgBAAA6wAAAHwF0OD/A7f8l/v//P8CN/QAApT8/wGACRf/O+D/AcQL//1nA/vwRANgBAAD+/J79uQAwB/78///f/orH/vye/bkAMAch/QAAHwF0OCH9jf0AAKU/If0RANgBAAAh/XEC//9ZwDT9///f/orHNP3t/yX+//80/WACRf/O+DT9oL+df6C/nX+gv51/oL+df/5/I//+fyP//n8j//5/I//ueaJ67nmieu55onrueaJ6UsFwPlLBcD5SwXA+UsFwPo9B9vyPQfb8j0H2/I9B9vwcg1y7HINcuxyDXLscg1y7")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_4nmnm")
-
 [sub_resource type="BoxMesh" id="BoxMesh_a0tk4"]
 size = Vector3(2, 4, 0.1)
 
@@ -572,12 +454,6 @@ size = Vector3(1.1717529, 2.2817993, 1.6781006)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wjvdr"]
 size = Vector3(1.1593018, 2.9819946, 1.779541)
-
-[sub_resource type="BoxMesh" id="BoxMesh_4arys"]
-size = Vector3(0.2, 0.2, 0.2)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_tcnuu"]
-size = Vector3(0.2, 0.2, 0.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wlxy5"]
 size = Vector3(2.5, 2, 3)
@@ -729,10 +605,11 @@ autoplay = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1224397970]
 environment = SubResource("Environment_imku0")
 
-[node name="ServoGameTimer" type="Node3D" parent="." unique_id=1202743582]
+[node name="ServoGameTimer" type="Node3D" parent="." unique_id=1202743582 node_paths=PackedStringArray("LumieresAlarme")]
 script = ExtResource("2_r3fl7")
 ArduinoPath = NodePath("..")
 SonTicTacPath = NodePath("SonTicTac")
+LumieresAlarme = [NodePath("../Node3D Princ/LightBulb Princ/OmniLight3D princ"), NodePath("../Node3D sortie/LightBulb sortie/OmniLight3D sortie"), NodePath("../BT-01/OmniLight3D")]
 
 [node name="PartieManager" type="Node3D" parent="ServoGameTimer" unique_id=1046710800]
 script = ExtResource("2_5t8nk")
@@ -858,7 +735,7 @@ volume_db = -18.0
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 5, 0)
 
 [node name="OmniLight3D princ" type="OmniLight3D" parent="Node3D Princ/LightBulb Princ" unique_id=199832273]
-light_color = Color(0.34902, 1, 1, 1)
+light_color = Color(0.3019608, 0.8666667, 0.72156864, 1)
 shadow_enabled = true
 omni_range = 25.0
 omni_attenuation = 0.5
@@ -1002,9 +879,9 @@ shape = SubResource("SphereShape3D_g0276")
 [node name="LightBulb salle 1" parent="Node3D salle 1_2/Salle1" unique_id=1015961825 instance=ExtResource("63_8uyoo")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 5, 5.10511, 20)
 
-[node name="OmniLight3D salle1" type="OmniLight3D" parent="Node3D salle 1_2/Salle1/LightBulb salle 1" unique_id=128504731]
+[node name="OmniLight3D salle 1" type="OmniLight3D" parent="Node3D salle 1_2/Salle1/LightBulb salle 1" unique_id=128504731]
 transform = Transform3D(1, 0, 2.842171e-15, 0, 1, 0, -2.842171e-15, 0, 1, 0, -0.52555084, 0)
-light_color = Color(0, 0.91554, 0.96521, 1)
+light_color = Color(0.65882355, 0.9019608, 0.9372549, 1)
 shadow_enabled = true
 omni_range = 20.0
 omni_attenuation = 0.5
@@ -1012,7 +889,7 @@ omni_attenuation = 0.5
 [node name="Light Switch salle 1" parent="Node3D salle 1_2/Salle1/LightBulb salle 1" unique_id=2105833536 instance=ExtResource("64_j0jmk")]
 transform = Transform3D(-2.1855693e-07, 0, -5, 0, 5, 0, 5, 0, -2.1855693e-07, 11.059586, -27.178047, -49.296185)
 script = ExtResource("200_lswch")
-LumierePath = NodePath("../OmniLight3D salle1")
+LumierePath = NodePath("../OmniLight3D salle 1")
 ZonePath = NodePath("Area3D switchlight S1")
 ArduinoPath = NodePath("../../../..")
 SonOnPath = NodePath("SonOn")
@@ -1072,21 +949,11 @@ text = "Pour la salle 3
 éclairer les murs"
 font_size = 64
 
-[node name="Blank Picture Frame3" type="Node3D" parent="Node3D salle 1_2/Salle1" unique_id=658269587]
-transform = Transform3D(-1.7484555e-07, 0.370247, -3.982828, 0, 3.982828, 0.370247, 4, 1.618401e-08, -1.7409494e-07, 1.3071465, 1.8610616, 16.648561)
+[node name="Blank Picture Frame" parent="Node3D salle 1_2/Salle1" unique_id=1945314872 instance=ExtResource("64_b2564")]
+transform = Transform3D(-2.1855695e-07, 0.46185297, -4.9786234, 0, 4.9786234, 0.46185297, 5, 2.0188233e-08, -2.1762254e-07, 0.72371715, 1.861, 17)
 
-[node name="Node" type="MeshInstance3D" parent="Node3D salle 1_2/Salle1/Blank Picture Frame3" unique_id=1417366766]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.14788173)
-mesh = SubResource("ArrayMesh_4r1av")
-skeleton = NodePath("")
-
-[node name="Blank Picture Frame4" type="Node3D" parent="Node3D salle 1_2/Salle1" unique_id=918340820]
-transform = Transform3D(-1.7484555e-07, 0, 4, 0, 4, 0, -4, 0, -1.7484555e-07, 9.365795, 1.8610616, 18.231667)
-
-[node name="Node" type="MeshInstance3D" parent="Node3D salle 1_2/Salle1/Blank Picture Frame4" unique_id=1137014694]
-transform = Transform3D(1, 8.9590895e-09, 4.6027537e-10, -8.9590895e-09, 0.99473506, 0.10248004, 4.6027537e-10, -0.10248004, 0.99473506, 0, 0, 0.14154053)
-mesh = SubResource("ArrayMesh_4r1av")
-skeleton = NodePath("")
+[node name="Blank Picture Frame2" parent="Node3D salle 1_2/Salle1" unique_id=567034523 instance=ExtResource("64_b2564")]
+transform = Transform3D(-1.7484555e-07, -0.36948237, 3.9828987, 0, 3.9828987, 0.36948237, -4, 1.6150587e-08, -1.7409803e-07, 9.9025, 1.861, 18.232)
 
 [node name="Armoire" parent="Node3D salle 1_2/Salle1" unique_id=1405751263 instance=ExtResource("48_a41ck")]
 transform = Transform3D(-8.742278e-08, 0, -2, 0, 2, 0, 2, 0, -8.742278e-08, 9.254, -2.882, 24.699)
@@ -1094,7 +961,7 @@ transform = Transform3D(-8.742278e-08, 0, -2, 0, 2, 0, 2, 0, -8.742278e-08, 9.25
 [node name="Armoire2" parent="Node3D salle 1_2/Salle1" unique_id=752273278 instance=ExtResource("48_a41ck")]
 transform = Transform3D(-8.742278e-08, 0, 2, 0, 2, 0, -2, 0, -8.742278e-08, 0.683, -2.882, 24.699)
 
-[node name="Arrow" parent="Node3D salle 1_2/Salle1" unique_id=15671967 instance=ExtResource("26_j3e5s")]
+[node name="Arrow" parent="Node3D salle 1_2/Salle1" unique_id=439633708 instance=ExtResource("26_j3e5s")]
 transform = Transform3D(-4.371139e-07, -10, 0, 10, -4.371139e-07, 0, 0, 0, 10, 5, 3.4925122, 29.593754)
 
 [node name="Wall Art 06" parent="Node3D salle 1_2/Salle1" unique_id=1433345208 instance=ExtResource("24_8jhw1")]
@@ -1139,9 +1006,9 @@ transform = Transform3D(1, -8.742278e-08, 8.742278e-08, -8.742278e-08, -1, 0, 8.
 text = "Salle 1"
 font_size = 64
 
-[node name="PorteHud 1" type="CanvasLayer" parent="Node3D salle 1_2/Salle1" unique_id=962198167]
+[node name="PorteHud 1" type="CanvasLayer" parent="Node3D salle 1_2/Salle1/Porte salle 1" unique_id=962198167]
 script = ExtResource("10_wlxy5")
-PortePath = NodePath("../Porte salle 1")
+PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
@@ -1150,7 +1017,7 @@ IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
 
-[node name="Icon" type="TextureRect" parent="Node3D salle 1_2/Salle1/PorteHud 1" unique_id=862959111]
+[node name="Icon" type="TextureRect" parent="Node3D salle 1_2/Salle1/Porte salle 1/PorteHud 1" unique_id=862959111]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -1164,17 +1031,18 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("23_nu31w")
 
-[node name="Titre" type="Label" parent="Node3D salle 1_2/Salle1/PorteHud 1" unique_id=1105792465]
+[node name="Titre" type="Label" parent="Node3D salle 1_2/Salle1/Porte salle 1/PorteHud 1" unique_id=1105792465]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 88.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Etat" type="Label" parent="Node3D salle 1_2/Salle1/PorteHud 1" unique_id=288517211]
+[node name="Etat" type="Label" parent="Node3D salle 1_2/Salle1/Porte salle 1/PorteHud 1" unique_id=288517211]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -1184,7 +1052,7 @@ offset_bottom = 51.0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="BadgeRequis" type="Label" parent="Node3D salle 1_2/Salle1/PorteHud 1" unique_id=1713755286]
+[node name="BadgeRequis" type="Label" parent="Node3D salle 1_2/Salle1/Porte salle 1/PorteHud 1" unique_id=1713755286]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -1198,7 +1066,7 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Message" type="Label" parent="Node3D salle 1_2/Salle1/PorteHud 1" unique_id=947810488]
+[node name="Message" type="Label" parent="Node3D salle 1_2/Salle1/Porte salle 1/PorteHud 1" unique_id=947810488]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -1388,7 +1256,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("14_ars1g")
 
-[node name="Vanne" parent="Node3D salle 1_2/Salle2" unique_id=1386811967 instance=ExtResource("26_nu31w")]
+[node name="Vanne" parent="Node3D salle 1_2/Salle2" unique_id=948987102 instance=ExtResource("26_nu31w")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -2.498337, 0.6699999, 27.684238)
 script = ExtResource("22_id0nj")
 SalleIdAValider = "salle_2"
@@ -1451,7 +1319,6 @@ offset_bottom = 168.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 horizontal_alignment = 1
-metadata/_edit_use_anchors_ = true
 
 [node name="Progression" type="Label" parent="Node3D salle 1_2/Salle2/Vanne/VanneHud" unique_id=271368498]
 anchors_preset = 4
@@ -1507,10 +1374,10 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("26_riyl1")
 
-[node name="Steampunk pipes2" parent="Node3D salle 1_2/Salle2" unique_id=730009780 instance=ExtResource("26_nu31w")]
+[node name="Steampunk pipes2" parent="Node3D salle 1_2/Salle2" unique_id=1424044450 instance=ExtResource("26_nu31w")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.574, 0.67, 22)
 
-[node name="Steampunk pipes3" parent="Node3D salle 1_2/Salle2" unique_id=1061100650 instance=ExtResource("26_nu31w")]
+[node name="Steampunk pipes3" parent="Node3D salle 1_2/Salle2" unique_id=871015767 instance=ExtResource("26_nu31w")]
 transform = Transform3D(-1, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -1, -1.8117845, 0.6704284, 16.085886)
 
 [node name="WaterTank" parent="Node3D salle 1_2/Salle2" unique_id=2114634883 instance=ExtResource("34_qpkl4")]
@@ -1551,7 +1418,7 @@ mesh = SubResource("BoxMesh_a0tk4")
 skeleton = NodePath("../..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 1_2/Salle2/Porte salle 2/Pivot" unique_id=1378773229]
-transform = Transform3D(1, 0, 0, 0, 1, -3.3407477e-22, 0, -3.3407477e-22, 1, 1.085, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, -3.3407477e-22, 0, -3.3407477e-22, 1, -1.085, 0, 0)
 shape = SubResource("BoxShape3D_jka67")
 
 [node name="ZoneInteraction" type="Area3D" parent="Node3D salle 1_2/Salle2/Porte salle 2" unique_id=828636392]
@@ -1595,9 +1462,10 @@ texture = ExtResource("23_nu31w")
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 88.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
@@ -1755,8 +1623,8 @@ ChiffresPaths = [NodePath("../Node3DChiffre/4"), NodePath("../Node3DChiffre/3"),
 [node name="LightBulb salle 3" parent="Node3D salle 3_4/Salle3" unique_id=884650681 instance=ExtResource("63_8uyoo")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 5, 5, 20)
 
-[node name="OmniLight3D salle3" type="OmniLight3D" parent="Node3D salle 3_4/Salle3/LightBulb salle 3" unique_id=1646108051]
-light_color = Color(0, 0.91554, 0.96521, 1)
+[node name="OmniLight3D salle 3" type="OmniLight3D" parent="Node3D salle 3_4/Salle3/LightBulb salle 3" unique_id=1646108051]
+light_color = Color(0.65882355, 0.9019608, 0.9372549, 1)
 shadow_enabled = true
 omni_range = 20.0
 omni_attenuation = 0.5
@@ -1764,7 +1632,7 @@ omni_attenuation = 0.5
 [node name="Light Switch salle 3" parent="Node3D salle 3_4/Salle3/LightBulb salle 3" unique_id=1362783088 instance=ExtResource("64_j0jmk")]
 transform = Transform3D(-2.1855696e-07, 0, -5, 0, 5, 0, 5, 0, -2.1855696e-07, 10.798946, -26.449594, -49.249695)
 script = ExtResource("200_lswch")
-LumierePath = NodePath("../OmniLight3D salle3")
+LumierePath = NodePath("../OmniLight3D salle 3")
 ZonePath = NodePath("Area3D switchlight S3")
 ArduinoPath = NodePath("../../../..")
 SonOnPath = NodePath("SonOn")
@@ -1848,11 +1716,11 @@ transform = Transform3D(-2.1855695e-07, 0, -5, 0, 5, 0, 5, 0, -2.1855695e-07, 1.
 script = ExtResource("16_ealrb")
 TorchPath = NodePath("../../../../Player/Camera3D/SpotLight3D")
 
-[node name="Blank Picture Frame7" parent="Node3D salle 3_4/Salle3" unique_id=1161000384 instance=ExtResource("41_pf4ct")]
-transform = Transform3D(-2.1855695e-07, 0, 5, 0, 5, 0, -5, 0, -2.1855695e-07, 9, 3, 16.245167)
+[node name="Blank Picture Frame" parent="Node3D salle 3_4/Salle3" unique_id=757040063 instance=ExtResource("64_b2564")]
+transform = Transform3D(-2.1855695e-07, 0, 5, 0, 5, 0, -5, 0, -2.1855695e-07, 9, 3, 16.245)
 
-[node name="Blank Picture Frame8" parent="Node3D salle 3_4/Salle3" unique_id=766002625 instance=ExtResource("41_pf4ct")]
-transform = Transform3D(-2.1855695e-07, 0, -5, 0, 5, 0, 5, 0, -2.1855695e-07, 1, 3, 24.193356)
+[node name="Blank Picture Frame2" parent="Node3D salle 3_4/Salle3" unique_id=1900420385 instance=ExtResource("64_b2564")]
+transform = Transform3D(-2.1855695e-07, 0, -5, 0, 5, 0, 5, 0, -2.1855695e-07, 1, 3, 24.193)
 
 [node name="Lit" parent="Node3D salle 3_4/Salle3" unique_id=307007082 instance=ExtResource("42_alien")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 8.239, -2.872, 23.5)
@@ -1897,9 +1765,9 @@ transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, 0.46
 text = "Salle 3"
 font_size = 64
 
-[node name="PorteHud 3" type="CanvasLayer" parent="Node3D salle 3_4/Salle3" unique_id=28664158]
+[node name="PorteHud 3" type="CanvasLayer" parent="Node3D salle 3_4/Salle3/Porte salle 3" unique_id=28664158]
 script = ExtResource("10_wlxy5")
-PortePath = NodePath("../Porte salle 3")
+PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
@@ -1908,7 +1776,7 @@ IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
 
-[node name="Icon" type="TextureRect" parent="Node3D salle 3_4/Salle3/PorteHud 3" unique_id=1961048606]
+[node name="Icon" type="TextureRect" parent="Node3D salle 3_4/Salle3/Porte salle 3/PorteHud 3" unique_id=1961048606]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -1922,17 +1790,18 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("23_nu31w")
 
-[node name="Titre" type="Label" parent="Node3D salle 3_4/Salle3/PorteHud 3" unique_id=672919610]
+[node name="Titre" type="Label" parent="Node3D salle 3_4/Salle3/Porte salle 3/PorteHud 3" unique_id=672919610]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 88.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Etat" type="Label" parent="Node3D salle 3_4/Salle3/PorteHud 3" unique_id=1819868387]
+[node name="Etat" type="Label" parent="Node3D salle 3_4/Salle3/Porte salle 3/PorteHud 3" unique_id=1819868387]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -1942,7 +1811,7 @@ offset_bottom = 51.0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="BadgeRequis" type="Label" parent="Node3D salle 3_4/Salle3/PorteHud 3" unique_id=454524485]
+[node name="BadgeRequis" type="Label" parent="Node3D salle 3_4/Salle3/Porte salle 3/PorteHud 3" unique_id=454524485]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -1956,7 +1825,7 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Message" type="Label" parent="Node3D salle 3_4/Salle3/PorteHud 3" unique_id=661222737]
+[node name="Message" type="Label" parent="Node3D salle 3_4/Salle3/Porte salle 3/PorteHud 3" unique_id=661222737]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -2027,7 +1896,7 @@ transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 2.5244575, 2.2773426, 29.7309
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -5, 5, 20)
 
 [node name="OmniLight3D salle 4" type="OmniLight3D" parent="Node3D salle 3_4/Salle4/LightBulb salle 4" unique_id=830960190]
-light_color = Color(0, 0.91554, 0.96521, 1)
+light_color = Color(0.65882355, 0.9019608, 0.9372549, 1)
 shadow_enabled = true
 omni_range = 20.0
 omni_attenuation = 0.5
@@ -2089,7 +1958,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("14_ars1g")
 
-[node name="Coffre" parent="Node3D salle 3_4/Salle4" unique_id=501500039 instance=ExtResource("7_dhlwf")]
+[node name="Coffre" parent="Node3D salle 3_4/Salle4" unique_id=282056656 instance=ExtResource("7_dhlwf")]
 transform = Transform3D(-7, 0, -1.0569706e-06, 0, 7, 0, 1.0569706e-06, 0, -7, -4.98271, -2.9, 28.940794)
 script = ExtResource("3_jka67")
 ArduinoPath = NodePath("../../..")
@@ -2098,23 +1967,20 @@ SonChiffreValidePath = NodePath("SonChiffreValide")
 SonOuverturePath = NodePath("SonOuvertureCoffre")
 SalleIdAValider = "salle_4"
 
-[node name="Corps" type="StaticBody3D" parent="Node3D salle 3_4/Salle4/Coffre" unique_id=931353688]
-transform = Transform3D(1, 0, 7.1054274e-15, 0, 1, 0, -7.1054274e-15, 0, 1, 0, 0, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D salle 3_4/Salle4/Coffre/Corps" unique_id=1771750201]
-transform = Transform3D(1, 0, -7.1054274e-15, 0, 1, 0, 7.1054274e-15, 0, 1, 0.02, 0.12, -0.051)
-mesh = SubResource("BoxMesh_4arys")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 3_4/Salle4/Coffre/Corps" unique_id=2050669717]
-transform = Transform3D(1, 0, -7.1054274e-15, 0, 1, 0, 7.1054274e-15, 0, 1, 0.02, 0.12, 0)
-shape = SubResource("BoxShape3D_tcnuu")
-
 [node name="Area3D" type="Area3D" parent="Node3D salle 3_4/Salle4/Coffre" unique_id=584005712]
 transform = Transform3D(-0.2, 0, 1.7484552e-08, 0, 0.2, 0, -1.7484552e-08, 0, -0.2, 0, 0.20000002, 0)
 
 [node name="ZoneInteraction" type="CollisionShape3D" parent="Node3D salle 3_4/Salle4/Coffre/Area3D" unique_id=544402782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.9073486e-06, 0)
 shape = SubResource("BoxShape3D_wlxy5")
+
+[node name="SonChiffreValide" type="AudioStreamPlayer3D" parent="Node3D salle 3_4/Salle4/Coffre" unique_id=470236069]
+stream = ExtResource("65_s1scn")
+volume_db = -3.0
+
+[node name="SonOuvertureCoffre" type="AudioStreamPlayer3D" parent="Node3D salle 3_4/Salle4/Coffre" unique_id=233382458]
+stream = ExtResource("66_8ye18")
+volume_db = -2.0
 
 [node name="CoffreHud" type="CanvasLayer" parent="Node3D salle 3_4/Salle4/Coffre" unique_id=651864615]
 script = ExtResource("4_i5arm")
@@ -2148,9 +2014,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -200.0
-offset_top = 80.0
+offset_top = 50.0
 offset_right = 200.0
-offset_bottom = 168.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 horizontal_alignment = 1
@@ -2198,14 +2064,6 @@ theme_override_font_sizes/font_size = 56
 horizontal_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="SonChiffreValide" type="AudioStreamPlayer3D" parent="Node3D salle 3_4/Salle4/Coffre" unique_id=470236069]
-stream = ExtResource("65_s1scn")
-volume_db = -3.0
-
-[node name="SonOuvertureCoffre" type="AudioStreamPlayer3D" parent="Node3D salle 3_4/Salle4/Coffre" unique_id=233382458]
-stream = ExtResource("66_8ye18")
-volume_db = -2.0
-
 [node name="Safe2" parent="Node3D salle 3_4/Salle4" unique_id=915623170 instance=ExtResource("42_5w2ad")]
 transform = Transform3D(-6.6002366e-15, -4.3563118e-29, 2, -1.509958e-07, 2, -9.521022e-37, -2, -1.509958e-07, -6.600236e-15, -8.4965, -1.5551152, 27.392946)
 
@@ -2251,9 +2109,9 @@ transform = Transform3D(-1, 0, -8.742278e-08, -7.094875e-10, -0.99996704, 0.0081
 text = "Salle 4"
 font_size = 64
 
-[node name="PorteHud 4" type="CanvasLayer" parent="Node3D salle 3_4/Salle4" unique_id=2133875617]
+[node name="PorteHud 4" type="CanvasLayer" parent="Node3D salle 3_4/Salle4/Porte salle 4" unique_id=2133875617]
 script = ExtResource("10_wlxy5")
-PortePath = NodePath("../Porte salle 4")
+PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
@@ -2262,7 +2120,7 @@ IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
 
-[node name="Icon" type="TextureRect" parent="Node3D salle 3_4/Salle4/PorteHud 4" unique_id=1569418975]
+[node name="Icon" type="TextureRect" parent="Node3D salle 3_4/Salle4/Porte salle 4/PorteHud 4" unique_id=1569418975]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -2276,17 +2134,18 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("23_nu31w")
 
-[node name="Titre" type="Label" parent="Node3D salle 3_4/Salle4/PorteHud 4" unique_id=444007596]
+[node name="Titre" type="Label" parent="Node3D salle 3_4/Salle4/Porte salle 4/PorteHud 4" unique_id=444007596]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 88.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Etat" type="Label" parent="Node3D salle 3_4/Salle4/PorteHud 4" unique_id=861794851]
+[node name="Etat" type="Label" parent="Node3D salle 3_4/Salle4/Porte salle 4/PorteHud 4" unique_id=861794851]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -2296,7 +2155,7 @@ offset_bottom = 51.0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="BadgeRequis" type="Label" parent="Node3D salle 3_4/Salle4/PorteHud 4" unique_id=800737281]
+[node name="BadgeRequis" type="Label" parent="Node3D salle 3_4/Salle4/Porte salle 4/PorteHud 4" unique_id=800737281]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -2310,7 +2169,7 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Message" type="Label" parent="Node3D salle 3_4/Salle4/PorteHud 4" unique_id=795910314]
+[node name="Message" type="Label" parent="Node3D salle 3_4/Salle4/Porte salle 4/PorteHud 4" unique_id=795910314]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -2432,7 +2291,7 @@ transform = Transform3D(-0.000715657, 0, -0.99999976, 0, 1, 0, 0.99999976, 0, -0
 transform = Transform3D(-0.0001431314, 0, 0.19999996, 0, 0.2, 0, -0.19999996, 0, -0.0001431314, 5, 5, 20)
 
 [node name="OmniLight3D salle 5" type="OmniLight3D" parent="Node3D salle 5_6/Salle5/LightBulb salle 5" unique_id=973546983]
-light_color = Color(0, 0.91554, 0.96521, 1)
+light_color = Color(0.65882355, 0.9019608, 0.9372549, 1)
 shadow_enabled = true
 omni_range = 20.0
 omni_attenuation = 0.5
@@ -2565,9 +2424,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -200.0
-offset_top = 80.0
+offset_top = 50.0
 offset_right = 200.0
-offset_bottom = 168.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 horizontal_alignment = 1
@@ -2700,9 +2559,9 @@ transform = Transform3D(-0.9999984, 8.742276e-08, 0.0017452865, -8.742264e-08, -
 text = "Salle 5"
 font_size = 64
 
-[node name="PorteHud 5" type="CanvasLayer" parent="Node3D salle 5_6/Salle5" unique_id=953270757]
+[node name="PorteHud 5" type="CanvasLayer" parent="Node3D salle 5_6/Salle5/Porte salle 5" unique_id=953270757]
 script = ExtResource("10_wlxy5")
-PortePath = NodePath("../Porte salle 5")
+PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
@@ -2711,7 +2570,7 @@ IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
 
-[node name="Icon" type="TextureRect" parent="Node3D salle 5_6/Salle5/PorteHud 5" unique_id=1367239439]
+[node name="Icon" type="TextureRect" parent="Node3D salle 5_6/Salle5/Porte salle 5/PorteHud 5" unique_id=1367239439]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -2725,17 +2584,18 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("23_nu31w")
 
-[node name="Titre" type="Label" parent="Node3D salle 5_6/Salle5/PorteHud 5" unique_id=605961677]
+[node name="Titre" type="Label" parent="Node3D salle 5_6/Salle5/Porte salle 5/PorteHud 5" unique_id=605961677]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 88.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Etat" type="Label" parent="Node3D salle 5_6/Salle5/PorteHud 5" unique_id=1880608862]
+[node name="Etat" type="Label" parent="Node3D salle 5_6/Salle5/Porte salle 5/PorteHud 5" unique_id=1880608862]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -2745,7 +2605,7 @@ offset_bottom = 51.0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="BadgeRequis" type="Label" parent="Node3D salle 5_6/Salle5/PorteHud 5" unique_id=1349833787]
+[node name="BadgeRequis" type="Label" parent="Node3D salle 5_6/Salle5/Porte salle 5/PorteHud 5" unique_id=1349833787]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -2759,7 +2619,7 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Message" type="Label" parent="Node3D salle 5_6/Salle5/PorteHud 5" unique_id=488866145]
+[node name="Message" type="Label" parent="Node3D salle 5_6/Salle5/Porte salle 5/PorteHud 5" unique_id=488866145]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -2831,7 +2691,7 @@ transform = Transform3D(0.20000017, 0, 0, 0, 0.2, 0, 0, 0, 0.20000017, -5, 5, 20
 
 [node name="OmniLight3D salle 6" type="OmniLight3D" parent="Node3D salle 5_6/Salle6/LightBulb salle 6" unique_id=103429631]
 transform = Transform3D(1, 0, -1.4551904e-10, 0, 1, 0, 1.4551904e-10, 0, 1, 0, 0, 0)
-light_color = Color(0, 0.91554, 0.96521, 1)
+light_color = Color(0.65882355, 0.9019608, 0.9372549, 1)
 shadow_enabled = true
 omni_range = 20.0
 omni_attenuation = 0.5
@@ -2959,9 +2819,10 @@ texture = ExtResource("23_nu31w")
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 88.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
@@ -3075,9 +2936,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -200.0
-offset_top = 80.0
+offset_top = 50.0
 offset_right = 200.0
-offset_bottom = 168.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
@@ -3263,7 +3124,7 @@ transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 9.2, 0)
 
 [node name="OmniLight3D sortie" type="OmniLight3D" parent="Node3D sortie/LightBulb sortie" unique_id=1263292010]
 transform = Transform3D(1, 0, 2.842171e-15, 0, 1, 0, -2.842171e-15, 0, 1, 0, 0, 0)
-light_color = Color(0, 0.91554, 0.96521, 1)
+light_color = Color(0.65882355, 0.9019608, 0.9372549, 1)
 shadow_enabled = true
 omni_range = 20.0
 omni_attenuation = 0.5
@@ -3358,9 +3219,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06766143, -5.9604645e-08, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13506706, 0, 0.26062202)
 shape = SubResource("BoxShape3D_i5arm")
 
-[node name="PorteHud sortie" type="CanvasLayer" parent="Node3D sortie" unique_id=1426407652]
+[node name="PorteHud sortie" type="CanvasLayer" parent="Node3D sortie/Porte sortie" unique_id=1426407652]
 script = ExtResource("10_wlxy5")
-PortePath = NodePath("../Porte sortie")
+PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
@@ -3369,7 +3230,7 @@ IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("23_nu31w")
 ImageVerrouOuvert = ExtResource("24_obt1j")
 
-[node name="Icon" type="TextureRect" parent="Node3D sortie/PorteHud sortie" unique_id=935245006]
+[node name="Icon" type="TextureRect" parent="Node3D sortie/Porte sortie/PorteHud sortie" unique_id=935245006]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -3383,17 +3244,18 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("23_nu31w")
 
-[node name="Titre" type="Label" parent="Node3D sortie/PorteHud sortie" unique_id=1467586459]
+[node name="Titre" type="Label" parent="Node3D sortie/Porte sortie/PorteHud sortie" unique_id=1467586459]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -300.0
-offset_right = 300.0
-offset_bottom = 88.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Etat" type="Label" parent="Node3D sortie/PorteHud sortie" unique_id=695843463]
+[node name="Etat" type="Label" parent="Node3D sortie/Porte sortie/PorteHud sortie" unique_id=695843463]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -3403,7 +3265,7 @@ offset_bottom = 51.0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="BadgeRequis" type="Label" parent="Node3D sortie/PorteHud sortie" unique_id=562464999]
+[node name="BadgeRequis" type="Label" parent="Node3D sortie/Porte sortie/PorteHud sortie" unique_id=562464999]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -3417,7 +3279,7 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 
-[node name="Message" type="Label" parent="Node3D sortie/PorteHud sortie" unique_id=2073203726]
+[node name="Message" type="Label" parent="Node3D sortie/Porte sortie/PorteHud sortie" unique_id=2073203726]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -3578,9 +3440,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -99.0
-offset_top = 80.0
+offset_top = 50.0
 offset_right = 99.0
-offset_bottom = 168.0
+offset_bottom = 138.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 64
 text = "Ouvrir"
@@ -3592,8 +3454,8 @@ transform = Transform3D(-2.6226832e-07, 0, 6, 0, 6, 0, -6, 0, -2.6226832e-07, 0.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.934, 0.36, 0)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="BT-01" unique_id=673797162]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9975271, 0.44794106, 4.4703484e-08)
-visible = false
+transform = Transform3D(1, 0, 1.5987212e-14, 0, 1, 0, -1.5987212e-14, 0, 1, 0.7194953, 1.1465883, -0.0051136017)
+light_color = Color(1, 0.8352941, 0.5019608, 1)
 omni_range = 20.0
 
 [node name="SonRadioInterference" type="AudioStreamPlayer3D" parent="BT-01" unique_id=2030101003]
@@ -3632,9 +3494,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -250.0
-offset_top = 80.0
+offset_top = 50.0
 offset_right = 250.0
-offset_bottom = 190.0
+offset_bottom = 160.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 80
 

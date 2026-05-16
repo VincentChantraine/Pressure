@@ -49,6 +49,9 @@ public partial class ProgressionHud : CanvasLayer
 	private float clignoteAccum = 0f;
 	private float ledTimer = 0f;
 	private Color ledCouleur = new Color(0, 0, 0, 0);
+	private ShaderMaterial waterMaterial;
+
+	private bool hudEauMasque = false;
 
 	public override void _Ready()
 	{
@@ -71,19 +74,34 @@ public partial class ProgressionHud : CanvasLayer
 			GameState.Instance.ScanValide += OnScanValide;
 			GameState.Instance.ScanInvalide += OnScanInvalide;
 			GameState.Instance.PorteFinaleDebloquee += OnPorteFinaleDebloquee;
+			GameState.Instance.JoueurEntreeBT01 += OnJoueurEntreeBT01;
 		}
 
-		// Le ColorRect "NiveauEau" remplit la largeur écran et monte depuis le bas.
+		// Le ColorRect couvre tout l'écran ; le shader gère lui-même la zone eau.
 		if (niveauEauRect != null)
 		{
 			niveauEauRect.AnchorLeft   = 0.0f;
 			niveauEauRect.AnchorRight  = 1.0f;
-			niveauEauRect.AnchorTop    = 1.0f;
+			niveauEauRect.AnchorTop    = 0.0f;
 			niveauEauRect.AnchorBottom = 1.0f;
 			niveauEauRect.OffsetLeft   = 0;
 			niveauEauRect.OffsetRight  = 0;
 			niveauEauRect.OffsetTop    = 0;
 			niveauEauRect.OffsetBottom = 0;
+			niveauEauRect.Color        = new Color(0, 0, 0, 0); // transparent par défaut
+
+			var shader = GD.Load<Shader>("res://WaterHUD.gdshader");
+			if (shader != null)
+			{
+				waterMaterial = new ShaderMaterial { Shader = shader };
+				niveauEauRect.Material = waterMaterial;
+			}
+			else
+			{
+				GD.PrintErr("[ProgressionHud] WaterHUD.gdshader introuvable — shader eau désactivé.");
+				// Repli : retrouver l'ancien comportement (AnchorTop dynamique + couleur unie)
+				niveauEauRect.AnchorTop = 1.0f;
+			}
 		}
 
 		RafraichirBarreLabel();
@@ -135,7 +153,7 @@ public partial class ProgressionHud : CanvasLayer
 
 	private void RafraichirBarreLabel()
 	{
-		if (barreLabel == null || GameState.Instance == null) return;
+		if (hudEauMasque || barreLabel == null || GameState.Instance == null) return;
 
 		var sb = new System.Text.StringBuilder();
 		bool prochaineMarquee = false;
@@ -179,6 +197,7 @@ public partial class ProgressionHud : CanvasLayer
 	// =========================================================================
 	private void RafraichirChronoEtEau(float delta)
 	{
+		if (hudEauMasque) return;
 		float elapsed;
 		float total;
 		bool demarre;
@@ -247,36 +266,26 @@ public partial class ProgressionHud : CanvasLayer
 			}
 		}
 
-		// --- Niveau d'eau : monte de bas en haut ---
-		if (niveauEauRect != null)
+		// --- Niveau d'eau : shader avec vagues animées (ou repli rectangle simple) ---
+		if (waterMaterial != null)
 		{
-			niveauEauRect.AnchorTop = 1.0f - t;
-
-			Color couleur;
-			if (t < 0.6f)
-				couleur = new Color(0.2f, 0.5f, 0.9f, 0.45f);
-			else if (t < 0.9f)
-			{
-				float k = (t - 0.6f) / 0.3f;
-				couleur = new Color(
-					Mathf.Lerp(0.2f, 0.4f, k),
-					Mathf.Lerp(0.5f, 0.2f, k),
-					Mathf.Lerp(0.9f, 0.7f, k),
-					0.55f
-				);
-			}
-			else
-			{
-				float k = (t - 0.9f) / 0.1f;
-				couleur = new Color(
-					Mathf.Lerp(0.4f, 0.7f, k),
-					Mathf.Lerp(0.2f, 0.1f, k),
-					Mathf.Lerp(0.7f, 0.2f, k),
-					0.65f
-				);
-			}
-			niveauEauRect.Color = couleur;
+			waterMaterial.SetShaderParameter("water_level", t);
+			waterMaterial.SetShaderParameter("time_offset", elapsed);
 		}
+		else if (niveauEauRect != null)
+		{
+			// Repli sans shader : ancien comportement rectangle
+			niveauEauRect.AnchorTop = 1.0f - t;
+			niveauEauRect.Color = t < 0.6f
+				? new Color(0.2f, 0.5f, 0.9f, 0.45f)
+				: new Color(Mathf.Lerp(0.2f, 0.7f, (t - 0.6f) / 0.4f), 0.1f, 0.5f, 0.6f);
+		}
+	}
+
+	private void OnJoueurEntreeBT01()
+	{
+		hudEauMasque = true;
+		Visible = false;
 	}
 
 	private void OnScanValide(string porteId)

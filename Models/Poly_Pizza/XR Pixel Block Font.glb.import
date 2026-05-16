@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://o7fmde3y5638"
-path="res://.godot/imported/Blank Picture Frame.glb-ba9bac101e341f7e529da35bbbf3433b.scn"
+uid="uid://dyx3lib7fdk4s"
+path="res://.godot/imported/XR Pixel Block Font.glb-26dcb07b06c10a392204bac59910fc54.scn"
 
 [deps]
 
-source_file="res://Models/XR Pixel Block Font/Blank Picture Frame.glb"
-dest_files=["res://.godot/imported/Blank Picture Frame.glb-ba9bac101e341f7e529da35bbbf3433b.scn"]
+source_file="res://Models/Poly_Pizza/XR Pixel Block Font.glb"
+dest_files=["res://.godot/imported/XR Pixel Block Font.glb-26dcb07b06c10a392204bac59910fc54.scn"]
 
 [params]
 

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dyx3lib7fdk4s"
-path="res://.godot/imported/XR Pixel Block Font.glb-85324eef16aa4fa6adb1076bb0070444.scn"
+uid="uid://o7fmde3y5638"
+path="res://.godot/imported/Blank Picture Frame.glb-377e81c208618014be3c259f076b6ece.scn"
 
 [deps]
 
-source_file="res://Models/XR Pixel Block Font/XR Pixel Block Font.glb"
-dest_files=["res://.godot/imported/XR Pixel Block Font.glb-85324eef16aa4fa6adb1076bb0070444.scn"]
+source_file="res://Models/Poly_Pizza/Blank Picture Frame.glb"
+dest_files=["res://.godot/imported/Blank Picture Frame.glb-377e81c208618014be3c259f076b6ece.scn"]
 
 [params]
 
@@ -37,6 +37,12 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:Node": {
+"generate/physics": true
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1
