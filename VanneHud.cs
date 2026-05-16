@@ -115,7 +115,7 @@ public partial class VanneHud : CanvasLayer
 			else if (toursPleins > 0)
 				detail = $"  ({toursPleins} tour{(toursPleins > 1 ? "s" : "")})";
  
-			progressionLabel.Text = $"⟳ {quartsTotal}/{requis} quarts{detail}";
+			progressionLabel.Text = $"⟳ {quartsTotal}/{requis}{detail}";
 		}
  
 		if (barre != null)

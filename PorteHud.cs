@@ -91,7 +91,7 @@ public partial class PorteHud : CanvasLayer
 	{
 		if (etatLabel == null || porte == null) return;
 		if (porte.EstDeverrouille)
-			etatLabel.Text = porte.EstOuverte ? "🔓 Ouverte" : "🔓 Déverrouillée (appuie pour ouvrir)";
+			etatLabel.Text = porte.EstOuverte ? "🔓 Ouverte" : "🔓 Déverrouillée";
 		else
 			etatLabel.Text = "🔒 Verrouillée";
 	}
@@ -115,7 +115,6 @@ public partial class PorteHud : CanvasLayer
 		}
 		else if (porte.NecessiteBadge1)
 		{
-			string ligne = "Badge 1 requis";
 			if (!string.IsNullOrEmpty(porte.SallePrerequise))
 			{
 				bool ok = porte.PrerequisRempli;
@@ -123,9 +122,12 @@ public partial class PorteHud : CanvasLayer
 				string nomSalle = porte.NumeroSallePrerequise > 0
 					? $"Salle {porte.NumeroSallePrerequise}"
 					: porte.SallePrerequise.Replace("_", " ");
-				ligne += $"  |  {nomSalle} d'abord {check}";
+				badgeRequisLabel.Text = $"Badge 1  |  {nomSalle} {check}";
 			}
-			badgeRequisLabel.Text = ligne;
+			else
+			{
+				badgeRequisLabel.Text = "Badge 1 requis";
+			}
 		}
 		else
 		{
@@ -160,7 +162,6 @@ public partial class PorteHud : CanvasLayer
 		RafraichirEtat();
 		RafraichirBadgeRequis();
 		RafraichirIcone();
-		ShowMessage("✓ Déverrouillée", 1.5f);
 	}
 
 	private void OnPorteOuverte()

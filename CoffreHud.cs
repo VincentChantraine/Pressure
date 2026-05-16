@@ -16,6 +16,7 @@ public partial class CoffreHud : CanvasLayer
 	[Export] public NodePath ProgressionLabelPath;
 	[Export] public NodePath MessageLabelPath;
 	[Export] public NodePath VerrouImagePath;
+	[Export] public NodePath IndicePath;
 
 	// Les deux images à glisser dans l'inspecteur.
 	[Export] public Texture2D ImageVerrou;   // affichée tant que le coffre est fermé
@@ -34,6 +35,7 @@ public partial class CoffreHud : CanvasLayer
 	private Label progressionLabel;
 	private Label messageLabel;
 	private TextureRect verrouImage;
+	private TextureRect indice;
 
 	private float messageTimer = 0f;
 
@@ -46,6 +48,7 @@ public partial class CoffreHud : CanvasLayer
 		if (ProgressionLabelPath != null) progressionLabel = GetNodeOrNull<Label>(ProgressionLabelPath);
 		if (MessageLabelPath != null) messageLabel = GetNodeOrNull<Label>(MessageLabelPath);
 		if (VerrouImagePath != null) verrouImage = GetNodeOrNull<TextureRect>(VerrouImagePath);
+		if (IndicePath != null) indice = GetNodeOrNull<TextureRect>(IndicePath);
 
 		if (coffre != null)
 		{
@@ -68,6 +71,8 @@ public partial class CoffreHud : CanvasLayer
 			verrouImage.Texture = ImageVerrou;
 			verrouImage.Visible = false;
 		}
+
+		if (indice != null) indice.Visible = false;
 
 		// État initial : caché si on attend d'être dans la zone
 		if (VisibleSeulementDansZone)
@@ -106,7 +111,7 @@ public partial class CoffreHud : CanvasLayer
 		string cibleChiffre = MasquerCombinaison ? "?" : combi[idx].ToString();
 		string cibleFleche = (sensAttendu < 0 ? "←" : "→");
 		string sensActuel = crans == 0 ? "·" : (crans < 0 ? "←" : "→");
-		progressionLabel.Text = $"#{idx + 1}/{combi.Length}   cible: {cibleChiffre}{cibleFleche}   en cours: {Mathf.Abs(crans)}{sensActuel}";
+		progressionLabel.Text = $"#{idx + 1}/{combi.Length}   {cibleChiffre}{cibleFleche}   {Mathf.Abs(crans)}{sensActuel}";
 	}
 
 	private void OnChiffreValide(int idx)
@@ -124,9 +129,8 @@ public partial class CoffreHud : CanvasLayer
 		ShowMessage("🔓 COFFRE OUVERT !", 10f);
 		if (progressionLabel != null) progressionLabel.Text = "";
 
-		// Bascule l'image : verrou → code
-		if (verrouImage != null && ImageCode != null)
-			verrouImage.Texture = ImageCode;
+		if (verrouImage != null) verrouImage.Visible = false;
+		if (indice != null) indice.Visible = true;
 	}
 
 	private void OnJoueurEntreZone()
