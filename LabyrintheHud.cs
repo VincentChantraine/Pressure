@@ -7,21 +7,17 @@ using Godot;
 // - Label "Etat" (🎯 En cours / ✓ Réussi)
 // - Label "Message" (succès éphémère)
 // - TextureRect "Icone" (image labyrinthe puis image révélée à la réussite)
-public partial class LabyrintheHud : CanvasLayer
+public partial class LabyrintheHud : BasePuzzleHud
 {
 	[Export] public NodePath LabyrinthePath;
 	[Export] public NodePath TitreLabelPath;
 	[Export] public NodePath InstructionsLabelPath;
 	[Export] public NodePath EtatLabelPath;
-	[Export] public NodePath MessageLabelPath;
 	[Export] public NodePath IconePath;
 
 	// Les deux images à glisser dans l'inspecteur.
 	[Export] public Texture2D ImageLabyrinthe;   // affichée tant que l'épreuve n'est pas réussie
 	[Export] public Texture2D ImageReussite;     // affichée une fois la sortie atteinte
-
-	// Si true : la HUD n'est visible que quand le joueur est dans la zone du labyrinthe.
-	[Export] public bool VisibleSeulementDansZone = true;
 
 	[Export(PropertyHint.MultilineText)] public string IndiceSuivant = "Fonce à la sortie.";
 	[Export] public float DureeMessageReussite = 12f;
@@ -30,19 +26,15 @@ public partial class LabyrintheHud : CanvasLayer
 	private Label titre;
 	private Label instructionsLabel;
 	private Label etatLabel;
-	private Label messageLabel;
 	private TextureRect icone;
 
-	private float messageTimer = 0f;
-
-	public override void _Ready()
+	protected override void OnHudReady()
 	{
 		if (LabyrinthePath != null && !LabyrinthePath.IsEmpty)
 			labyrinthe = GetNode<LabyrintheBille>(LabyrinthePath);
 		if (TitreLabelPath != null) titre = GetNodeOrNull<Label>(TitreLabelPath);
 		if (InstructionsLabelPath != null) instructionsLabel = GetNodeOrNull<Label>(InstructionsLabelPath);
 		if (EtatLabelPath != null) etatLabel = GetNodeOrNull<Label>(EtatLabelPath);
-		if (MessageLabelPath != null) messageLabel = GetNodeOrNull<Label>(MessageLabelPath);
 		if (IconePath != null) icone = GetNodeOrNull<TextureRect>(IconePath);
 
 		if (labyrinthe != null)
@@ -55,7 +47,6 @@ public partial class LabyrintheHud : CanvasLayer
 
 		if (titre != null) titre.Text = "🧩 LABYRINTHE";
 		if (instructionsLabel != null) instructionsLabel.Text = "← ↑ → ↓  déplace la bille";
-		if (messageLabel != null) messageLabel.Text = "";
 
 		RafraichirEtat();
 
@@ -64,20 +55,6 @@ public partial class LabyrintheHud : CanvasLayer
 		{
 			icone.Texture = ImageLabyrinthe;
 			icone.Visible = false;
-		}
-
-		// État initial : caché si on attend d'être dans la zone
-		if (VisibleSeulementDansZone)
-			Visible = false;
-	}
-
-	public override void _Process(double delta)
-	{
-		if (messageTimer > 0f)
-		{
-			messageTimer -= (float)delta;
-			if (messageTimer <= 0f && messageLabel != null)
-				messageLabel.Text = "";
 		}
 	}
 
@@ -109,21 +86,10 @@ public partial class LabyrintheHud : CanvasLayer
 			ShowMessage("↺ Bille remise au départ", 1.2f);
 	}
 
-	private void OnJoueurEntreZone()
+	protected override void OnJoueurEntreZone()
 	{
-		if (VisibleSeulementDansZone) Visible = true;
+		base.OnJoueurEntreZone();
 		if (icone != null) icone.Visible = true;
 		RafraichirEtat();
-	}
-
-	private void OnJoueurSortZone()
-	{
-		if (VisibleSeulementDansZone) Visible = false;
-	}
-
-	private void ShowMessage(string msg, float duration)
-	{
-		if (messageLabel != null) messageLabel.Text = msg;
-		messageTimer = duration;
 	}
 }

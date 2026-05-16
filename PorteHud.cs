@@ -7,31 +7,24 @@ using Godot;
 // - Label "BadgeRequis" (ex: "Badge 1 requis" ou "Badge 2 + 6/6 salles")
 // - Label "Message" (feedback scan éphémère)
 // - TextureRect "Icone" (verrou fermé / ouvert)
-public partial class PorteHud : CanvasLayer
+public partial class PorteHud : BasePuzzleHud
 {
 	[Export] public NodePath PortePath;
 	[Export] public NodePath TitreLabelPath;
 	[Export] public NodePath EtatLabelPath;
 	[Export] public NodePath BadgeRequisLabelPath;
-	[Export] public NodePath MessageLabelPath;
 	[Export] public NodePath IconePath;
 
 	[Export] public Texture2D ImageVerrouFerme;
 	[Export] public Texture2D ImageVerrouOuvert;
 
-	// Si true : HUD visible uniquement quand le joueur est dans la zone de la porte.
-	[Export] public bool VisibleSeulementDansZone = true;
-
 	private Porte porte;
 	private Label titre;
 	private Label etatLabel;
 	private Label badgeRequisLabel;
-	private Label messageLabel;
 	private TextureRect icone;
 
-	private float messageTimer = 0f;
-
-	public override void _Ready()
+	protected override void OnHudReady()
 	{
 		if (PortePath != null && !PortePath.IsEmpty)
 			porte = GetNode<Porte>(PortePath);
@@ -39,7 +32,6 @@ public partial class PorteHud : CanvasLayer
 		if (TitreLabelPath != null) titre = GetNodeOrNull<Label>(TitreLabelPath);
 		if (EtatLabelPath != null) etatLabel = GetNodeOrNull<Label>(EtatLabelPath);
 		if (BadgeRequisLabelPath != null) badgeRequisLabel = GetNodeOrNull<Label>(BadgeRequisLabelPath);
-		if (MessageLabelPath != null) messageLabel = GetNodeOrNull<Label>(MessageLabelPath);
 		if (IconePath != null) icone = GetNodeOrNull<TextureRect>(IconePath);
 
 		if (porte != null)
@@ -57,22 +49,10 @@ public partial class PorteHud : CanvasLayer
 			RafraichirBadgeRequis();
 			RafraichirIcone();
 		}
-
-		if (messageLabel != null) messageLabel.Text = "";
-
-		if (VisibleSeulementDansZone)
-			Visible = false;
 	}
 
-	public override void _Process(double delta)
+	protected override void OnHudProcess(double delta)
 	{
-		if (messageTimer > 0f)
-		{
-			messageTimer -= (float)delta;
-			if (messageTimer <= 0f && messageLabel != null)
-				messageLabel.Text = "";
-		}
-
 		// Rafraîchissement dynamique : le statut du prérequis peut changer pendant
 		// que le joueur est dans la zone (porte finale, ou porte avec salle prérequise).
 		if (porte != null && !porte.EstDeverrouille
@@ -145,16 +125,11 @@ public partial class PorteHud : CanvasLayer
 			icone.Texture = ImageVerrouFerme;
 	}
 
-	private void OnJoueurEntreZone()
+	protected override void OnJoueurEntreZone()
 	{
-		if (VisibleSeulementDansZone) Visible = true;
+		base.OnJoueurEntreZone();
 		RafraichirEtat();
 		RafraichirBadgeRequis();
-	}
-
-	private void OnJoueurSortZone()
-	{
-		if (VisibleSeulementDansZone) Visible = false;
 	}
 
 	private void OnPorteDeverrouillee()
@@ -177,11 +152,5 @@ public partial class PorteHud : CanvasLayer
 	private void OnScanRefuse(string raison)
 	{
 		ShowMessage($"✗ {raison}", 2.0f);
-	}
-
-	private void ShowMessage(string msg, float duration)
-	{
-		if (messageLabel != null) messageLabel.Text = msg;
-		messageTimer = duration;
 	}
 }

@@ -7,40 +7,33 @@ using Godot;
 // - Label "Message" (succès/échec éphémère)
 // - TextureRect "Icone" (levier en position / levier activé)
 // - ProgressBar "Manometre" (jauge 0 → Sequence.Length)
-public partial class LevierHud : CanvasLayer
+public partial class LevierHud : BasePuzzleHud
 {
 	[Export] public NodePath LevierPath;
 	[Export] public NodePath TitreLabelPath;
 	[Export] public NodePath ProgressionLabelPath;
-	[Export] public NodePath MessageLabelPath;
 	[Export] public NodePath IconePath;
 	[Export] public NodePath ManometrePath;
 
 	[Export] public Texture2D ImageLevierRepos;
 	[Export] public Texture2D ImageLevierActive;
 
-	[Export] public bool VisibleSeulementDansZone = true;
-	
 	[Export(PropertyHint.MultilineText)] public string IndiceSuivant = "Va voir dans la salle 2 et sois à l'écoute.";
 	[Export] public float DureeMessageActivation = 12f;
 
 	private LevierSequence levier;
 	private Label titre;
 	private Label progressionLabel;
-	private Label messageLabel;
 	private TextureRect icone;
 	private ProgressBar manometre;
 
-	private float messageTimer = 0f;
-
-	public override void _Ready()
+	protected override void OnHudReady()
 	{
 		if (LevierPath != null && !LevierPath.IsEmpty)
 			levier = GetNode<LevierSequence>(LevierPath);
 
 		if (TitreLabelPath != null) titre = GetNodeOrNull<Label>(TitreLabelPath);
 		if (ProgressionLabelPath != null) progressionLabel = GetNodeOrNull<Label>(ProgressionLabelPath);
-		if (MessageLabelPath != null) messageLabel = GetNodeOrNull<Label>(MessageLabelPath);
 		if (IconePath != null) icone = GetNodeOrNull<TextureRect>(IconePath);
 		if (ManometrePath != null) manometre = GetNodeOrNull<ProgressBar>(ManometrePath);
 
@@ -62,25 +55,11 @@ public partial class LevierHud : CanvasLayer
 		}
 
 		if (titre != null) titre.Text = "⚙ LEVIER";
-		if (messageLabel != null) messageLabel.Text = "";
 
 		if (icone != null)
 		{
 			icone.Texture = ImageLevierRepos;
 			icone.Visible = false;
-		}
-
-		if (VisibleSeulementDansZone)
-			Visible = false;
-	}
-
-	public override void _Process(double delta)
-	{
-		if (messageTimer > 0f)
-		{
-			messageTimer -= (float)delta;
-			if (messageTimer <= 0f && messageLabel != null)
-				messageLabel.Text = "";
 		}
 	}
 
@@ -120,20 +99,9 @@ public partial class LevierHud : CanvasLayer
 			icone.Texture = ImageLevierActive;
 	}
 
-	private void OnJoueurEntreZone()
+	protected override void OnJoueurEntreZone()
 	{
-		if (VisibleSeulementDansZone) Visible = true;
+		base.OnJoueurEntreZone();
 		if (icone != null) icone.Visible = true;
-	}
-
-	private void OnJoueurSortZone()
-	{
-		if (VisibleSeulementDansZone) Visible = false;
-	}
-
-	private void ShowMessage(string msg, float duration)
-	{
-		if (messageLabel != null) messageLabel.Text = msg;
-		messageTimer = duration;
 	}
 }

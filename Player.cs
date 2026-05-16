@@ -17,8 +17,13 @@ public partial class Player : CharacterBody3D
 	[Export] public float TorchMinRange = 2.0f;   // portée mini (capteur éclairé)
 	[Export] public float TorchMaxRange = 15.0f;  // portée maxi (capteur couvert)
 	[Export] public NodePath TorchLightPath;
- 
+
+	// Son joué au clic droit (allumage/extinction de la torche en mode clavier-souris).
+	[Export] public AudioStream FlashlightSound;
+	[Export] public float FlashlightSoundVolumeDb = -6f;
+
 	private SpotLight3D torch;
+	private AudioStreamPlayer flashlightPlayer;
  
 	// --- Lift ultrason ---
 	[Export] public int UltraMinCm = 5;       // en-dessous : considéré comme "main collée" → lift max
@@ -57,6 +62,15 @@ public partial class Player : CharacterBody3D
 			arduino = GetNode<Node3d>(ArduinoPath);
 		if (TorchLightPath != null && !TorchLightPath.IsEmpty)
 			torch = GetNode<SpotLight3D>(TorchLightPath);
+
+		if (FlashlightSound == null)
+			FlashlightSound = GD.Load<AudioStream>("res://Son/Flashlight.mp3");
+		flashlightPlayer = new AudioStreamPlayer
+		{
+			Stream = FlashlightSound,
+			VolumeDb = FlashlightSoundVolumeDb,
+		};
+		AddChild(flashlightPlayer);
 		if (LiftTargetPath != null && !LiftTargetPath.IsEmpty)
 		{
 			liftTarget = GetNode<Node3D>(LiftTargetPath);
@@ -112,6 +126,16 @@ public partial class Player : CharacterBody3D
 			&& Input.MouseMode != Input.MouseModeEnum.Captured)
 		{
 			Input.MouseMode = Input.MouseModeEnum.Captured;
+		}
+
+		// Clic droit (press ET release) → son de lampe torche.
+		// Joué seulement quand la souris est capturée (en jeu, pas en menu).
+		if (@event is InputEventMouseButton mbTorch
+			&& mbTorch.ButtonIndex == MouseButton.Right
+			&& Input.MouseMode == Input.MouseModeEnum.Captured
+			&& flashlightPlayer != null)
+		{
+			flashlightPlayer.Play();
 		}
 	}
  

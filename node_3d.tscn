@@ -413,6 +413,9 @@ size = Vector3(1, 1.9992676, 1.3383789)
 [sub_resource type="SphereShape3D" id="SphereShape3D_827e5"]
 radius = 4.5
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_b2564"]
+size = Vector3(1, 4.6848145, 2.5819092)
+
 [sub_resource type="BoxMesh" id="BoxMesh_cdqbm"]
 size = Vector3(4, 10, 0.2)
 
@@ -950,7 +953,7 @@ text = "Pour la salle 3
 font_size = 64
 
 [node name="Blank Picture Frame" parent="Node3D salle 1_2/Salle1" unique_id=1945314872 instance=ExtResource("64_b2564")]
-transform = Transform3D(-2.1855695e-07, 0.46185297, -4.9786234, 0, 4.9786234, 0.46185297, 5, 2.0188233e-08, -2.1762254e-07, 0.72371715, 1.861, 17)
+transform = Transform3D(-2.1855695e-07, 0.46185297, -4.9786234, 0, 4.9786234, 0.46185297, 5, 2.0188233e-08, -2.1762254e-07, 0.9309884, 1.861, 17)
 
 [node name="Blank Picture Frame2" parent="Node3D salle 1_2/Salle1" unique_id=567034523 instance=ExtResource("64_b2564")]
 transform = Transform3D(-1.7484555e-07, -0.36948237, 3.9828987, 0, 3.9828987, 0.36948237, -4, 1.6150587e-08, -1.7409803e-07, 9.9025, 1.861, 18.232)
@@ -1012,10 +1015,10 @@ PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
+MessageLabelPath = NodePath("Message")
 
 [node name="Icon" type="TextureRect" parent="Node3D salle 1_2/Salle1/Porte salle 1/PorteHud 1" unique_id=862959111]
 anchors_preset = 8
@@ -1275,6 +1278,12 @@ monitorable = false
 transform = Transform3D(1.2873217, 0.0030489282, -0.7699309, -0.008324042, 1.4999558, -0.007977928, 0.7698923, 0.011119399, 1.2873002, 1.4702768, -1.6676831, -1.201889)
 shape = SubResource("SphereShape3D_827e5")
 
+[node name="MeshInstance3D" type="StaticBody3D" parent="Node3D salle 1_2/Salle2/Vanne" unique_id=870982135]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 1_2/Salle2/Vanne/MeshInstance3D" unique_id=302520572]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.77551275, -0.27301025)
+shape = SubResource("BoxShape3D_b2564")
+
 [node name="SonFuite" type="AudioStreamPlayer3D" parent="Node3D salle 1_2/Salle2/Vanne" unique_id=1293900553]
 stream = ExtResource("43_bihgt")
 volume_db = -8.0
@@ -1303,10 +1312,10 @@ VannePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 ProgressionLabelPath = NodePath("Progression")
 BarrePath = NodePath("ProgressBar")
-MessageLabelPath = NodePath("Message")
 VanneImagePath = NodePath("Img")
 ImageVanneOuverte = ExtResource("26_riyl1")
 ImageVanneFermee = ExtResource("27_pb8dk")
+MessageLabelPath = NodePath("Message")
 
 [node name="Titre" type="Label" parent="Node3D salle 1_2/Salle2/Vanne/VanneHud" unique_id=2016544348]
 anchors_preset = 5
@@ -1439,10 +1448,10 @@ PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
+MessageLabelPath = NodePath("Message")
 
 [node name="Icon" type="TextureRect" parent="Node3D salle 1_2/Salle2/Porte salle 2/PorteHud 2" unique_id=870675440]
 anchors_preset = 8
@@ -1771,10 +1780,10 @@ PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
+MessageLabelPath = NodePath("Message")
 
 [node name="Icon" type="TextureRect" parent="Node3D salle 3_4/Salle3/Porte salle 3/PorteHud 3" unique_id=1961048606]
 anchors_preset = 8
@@ -1988,12 +1997,12 @@ CoffrePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 CombinaisonLabelPath = NodePath("Combinaison")
 ProgressionLabelPath = NodePath("Progression")
-MessageLabelPath = NodePath("Message")
 VerrouImagePath = NodePath("Verrou")
 IndicePath = NodePath("Indice")
 ImageVerrou = ExtResource("13_s7uix")
 ImageCode = ExtResource("6_4arys")
 MasquerCombinaison = true
+MessageLabelPath = NodePath("Message")
 
 [node name="Verrou" type="TextureRect" parent="Node3D salle 3_4/Salle4/Coffre/CoffreHud" unique_id=1735236471]
 anchors_preset = 8
@@ -2132,10 +2141,10 @@ PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
+MessageLabelPath = NodePath("Message")
 
 [node name="Icon" type="TextureRect" parent="Node3D salle 3_4/Salle4/Porte salle 4/PorteHud 4" unique_id=1569418975]
 anchors_preset = 8
@@ -2400,11 +2409,11 @@ script = ExtResource("12_pb8dk")
 LevierPath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 ProgressionLabelPath = NodePath("Progression")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Img")
 ManometrePath = NodePath("ProgressBar")
 ImageLevierRepos = ExtResource("18_4hyfj")
 ImageLevierActive = ExtResource("13_dhlwf")
+MessageLabelPath = NodePath("Message")
 
 [node name="Img" type="TextureRect" parent="Node3D salle 5_6/Salle5/Lever/LeverHud" unique_id=251245604]
 anchors_preset = 8
@@ -2561,7 +2570,7 @@ material_override = ExtResource("37_3s0n5")
 mesh = SubResource("BoxMesh_a0tk4")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 5_6/Salle5/Porte salle 5/Pivot" unique_id=664693973]
-transform = Transform3D(1, 0, 0, 0, 1, -3.469447e-16, 0, -3.469447e-16, 1, 1, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, -3.469447e-16, 0, -3.469447e-16, 1, -1, 0, 0)
 shape = SubResource("BoxShape3D_jka67")
 
 [node name="ZoneInteraction" type="Area3D" parent="Node3D salle 5_6/Salle5/Porte salle 5" unique_id=1845820922]
@@ -2582,10 +2591,10 @@ PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
+MessageLabelPath = NodePath("Message")
 
 [node name="Icon" type="TextureRect" parent="Node3D salle 5_6/Salle5/Porte salle 5/PorteHud 5" unique_id=1367239439]
 anchors_preset = 8
@@ -2813,10 +2822,10 @@ PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("44_sivbr")
 ImageVerrouOuvert = ExtResource("45_4yprr")
+MessageLabelPath = NodePath("Message")
 
 [node name="Icon" type="TextureRect" parent="Node3D salle 5_6/Salle6/Porte salle 6/PorteHud 6" unique_id=1805102808]
 anchors_preset = 8
@@ -2945,8 +2954,8 @@ LabyrinthePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 InstructionsLabelPath = NodePath("Instructions")
 EtatLabelPath = NodePath("Etat")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("")
+MessageLabelPath = NodePath("Message")
 
 [node name="Titre" type="Label" parent="Node3D salle 5_6/Salle6/Labyrinthe/LabyrintheHud" unique_id=173493806]
 anchors_preset = 5
@@ -3242,10 +3251,10 @@ PortePath = NodePath("..")
 TitreLabelPath = NodePath("Titre")
 EtatLabelPath = NodePath("Etat")
 BadgeRequisLabelPath = NodePath("BadgeRequis")
-MessageLabelPath = NodePath("Message")
 IconePath = NodePath("Icon")
 ImageVerrouFerme = ExtResource("23_nu31w")
 ImageVerrouOuvert = ExtResource("24_obt1j")
+MessageLabelPath = NodePath("Message")
 
 [node name="Icon" type="TextureRect" parent="Node3D sortie/Porte sortie/PorteHud sortie" unique_id=935245006]
 anchors_preset = 8

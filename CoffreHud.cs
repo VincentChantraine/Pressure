@@ -8,13 +8,12 @@ using System.Text;
 // - Label "Progression" (affiche le chiffre courant + crans + sens)
 // - Label "Message" (succès / échec)
 // - TextureRect "VerrouImage" (affiche le verrou fermé puis le code après ouverture)
-public partial class CoffreHud : CanvasLayer
+public partial class CoffreHud : BasePuzzleHud
 {
 	[Export] public NodePath CoffrePath;
 	[Export] public NodePath TitreLabelPath;
 	[Export] public NodePath CombinaisonLabelPath;
 	[Export] public NodePath ProgressionLabelPath;
-	[Export] public NodePath MessageLabelPath;
 	[Export] public NodePath VerrouImagePath;
 	[Export] public NodePath IndicePath;
 
@@ -26,27 +25,20 @@ public partial class CoffreHud : CanvasLayer
 	// À utiliser quand la combinaison sera écrite sur un mur ailleurs.
 	[Export] public bool MasquerCombinaison = false;
 
-	// Si true : la HUD n'est visible que quand le joueur est dans la zone du coffre.
-	[Export] public bool VisibleSeulementDansZone = true;
-
 	private Coffre coffre;
 	private Label titre;
 	private Label combinaisonLabel;
 	private Label progressionLabel;
-	private Label messageLabel;
 	private TextureRect verrouImage;
 	private TextureRect indice;
 
-	private float messageTimer = 0f;
-
-	public override void _Ready()
+	protected override void OnHudReady()
 	{
 		if (CoffrePath != null && !CoffrePath.IsEmpty)
 			coffre = GetNode<Coffre>(CoffrePath);
 		if (TitreLabelPath != null) titre = GetNodeOrNull<Label>(TitreLabelPath);
 		if (CombinaisonLabelPath != null) combinaisonLabel = GetNodeOrNull<Label>(CombinaisonLabelPath);
 		if (ProgressionLabelPath != null) progressionLabel = GetNodeOrNull<Label>(ProgressionLabelPath);
-		if (MessageLabelPath != null) messageLabel = GetNodeOrNull<Label>(MessageLabelPath);
 		if (VerrouImagePath != null) verrouImage = GetNodeOrNull<TextureRect>(VerrouImagePath);
 		if (IndicePath != null) indice = GetNodeOrNull<TextureRect>(IndicePath);
 
@@ -63,7 +55,6 @@ public partial class CoffreHud : CanvasLayer
 		}
 
 		if (titre != null) titre.Text = "🔒 COFFRE";
-		if (messageLabel != null) messageLabel.Text = "";
 
 		// Image : verrou par défaut, cachée au départ (n'apparaît que dans la zone)
 		if (verrouImage != null)
@@ -73,20 +64,6 @@ public partial class CoffreHud : CanvasLayer
 		}
 
 		if (indice != null) indice.Visible = false;
-
-		// État initial : caché si on attend d'être dans la zone
-		if (VisibleSeulementDansZone)
-			Visible = false;
-	}
-
-	public override void _Process(double delta)
-	{
-		if (messageTimer > 0f)
-		{
-			messageTimer -= (float)delta;
-			if (messageTimer <= 0f && messageLabel != null)
-				messageLabel.Text = "";
-		}
 	}
 
 	private void AfficherCombinaison()
@@ -133,21 +110,12 @@ public partial class CoffreHud : CanvasLayer
 		if (indice != null) indice.Visible = true;
 	}
 
-	private void OnJoueurEntreZone()
+	protected override void OnJoueurEntreZone()
 	{
-		if (VisibleSeulementDansZone) Visible = true;
+		base.OnJoueurEntreZone();
 		if (verrouImage != null) verrouImage.Visible = true;
 	}
 
-	private void OnJoueurSortZone()
-	{
-		if (VisibleSeulementDansZone) Visible = false;
-		// On garde verrouImage.Visible tel quel, il sera caché avec tout le CanvasLayer
-	}
-
-	private void ShowMessage(string msg, float duration)
-	{
-		if (messageLabel != null) messageLabel.Text = msg;
-		messageTimer = duration;
-	}
+	// OnJoueurSortZone hérité tel quel : on garde verrouImage.Visible inchangé,
+	// il sera caché avec tout le CanvasLayer.
 }
