@@ -1,0 +1,327 @@
+[gd_scene format=3 uid="uid://djbhcvxrhf8ae"]
+
+[ext_resource type="Script" uid="uid://bq6466cfty41a" path="res://MenuPrincipal.cs" id="1_menu"]
+[ext_resource type="AudioStream" uid="uid://bpkgro6n06qd6" path="res://Son/underwater_ambience.ogg" id="2_ba235"]
+
+[sub_resource type="StyleBoxFlat" id="SB_Fond"]
+bg_color = Color(0.025, 0.035, 0.055, 1)
+
+[sub_resource type="Gradient" id="Grad_Glow"]
+interpolation_color_space = 1
+colors = PackedColorArray(0.18, 0.55, 0.7, 0.18, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="Tex_Glow"]
+gradient = SubResource("Grad_Glow")
+width = 512
+height = 512
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Grad_Vignette"]
+interpolation_color_space = 1
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.02, 0.05, 0.08, 0.45, 0, 0, 0, 0.95)
+
+[sub_resource type="GradientTexture2D" id="Tex_Vignette"]
+gradient = SubResource("Grad_Vignette")
+width = 1024
+height = 1024
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Normal"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.06, 0.1, 0.13, 0.55)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.31, 0.78, 0.88, 0.55)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Pressed"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.31, 0.78, 0.88, 0.4)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7, 0.97, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Hover"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+bg_color = Color(0.18, 0.6, 0.72, 0.22)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.93, 1, 0.95)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Focus"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.93, 1, 0.85)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="Animation" id="Anim_FadeIn"]
+resource_name = "fade_in"
+length = 1.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CenterContainer:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Glow:modulate")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimLib"]
+_data = {
+&"fade_in": SubResource("Anim_FadeIn")
+}
+
+[node name="MenuPrincipal" type="Control" unique_id=711350671]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+BoutonJouerPath = NodePath("CenterContainer/VBox/BoutonJouer")
+BoutonQuitterPath = NodePath("CenterContainer/VBox/BoutonQuitter")
+
+[node name="Fond" type="Panel" parent="." unique_id=2102532736]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_Fond")
+
+[node name="Glow" type="TextureRect" parent="." unique_id=1795659071]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("Tex_Glow")
+expand_mode = 1
+
+[node name="Vignette" type="TextureRect" parent="." unique_id=1833725596]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("Tex_Vignette")
+expand_mode = 1
+
+[node name="HautGauche" type="Label" parent="." unique_id=512133029]
+layout_mode = 1
+offset_left = 36.0
+offset_top = 28.0
+offset_right = 600.0
+offset_bottom = 64.0
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.65)
+theme_override_font_sizes/font_size = 22
+text = "[ DEEP DIVE PROTOCOL // 2026 ]"
+
+[node name="HautDroite" type="Label" parent="." unique_id=1235070593]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -460.0
+offset_top = 28.0
+offset_right = -36.0
+offset_bottom = 64.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.65)
+theme_override_font_sizes/font_size = 22
+text = "PROFONDEUR : -∞ M"
+horizontal_alignment = 2
+
+[node name="BasGauche" type="Label" parent="." unique_id=2063625376]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = -64.0
+offset_right = 600.0
+offset_bottom = -28.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.55)
+theme_override_font_sizes/font_size = 20
+text = "STATUT : EN ATTENTE D'OPÉRATEUR"
+
+[node name="BasDroite" type="Label" parent="." unique_id=1509596916]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -460.0
+offset_top = -64.0
+offset_right = -36.0
+offset_bottom = -28.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.55)
+theme_override_font_sizes/font_size = 20
+text = "ESC : QUITTER"
+horizontal_alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=2070932644]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer" unique_id=193777163]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="TitreBox" type="VBoxContainer" parent="CenterContainer/VBox" unique_id=1860055125]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Surtitre" type="Label" parent="CenterContainer/VBox/TitreBox" unique_id=1216196110]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.55, 0.93, 1, 0.75)
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 16
+text = "—  S U B M E R G E D  —"
+horizontal_alignment = 1
+
+[node name="Titre" type="Label" parent="CenterContainer/VBox/TitreBox" unique_id=640821144]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.95, 0.99, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.18, 0.7, 0.85, 0.5)
+theme_override_colors/font_outline_color = Color(0.04, 0.07, 0.1, 1)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_outline_size = 18
+theme_override_font_sizes/font_size = 128
+text = "PRESSURE"
+horizontal_alignment = 1
+
+[node name="Ligne" type="ColorRect" parent="CenterContainer/VBox/TitreBox" unique_id=72247635]
+custom_minimum_size = Vector2(380, 1)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.31, 0.78, 0.88, 0.55)
+
+[node name="SousTitre" type="Label" parent="CenterContainer/VBox" unique_id=1933783698]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.78, 0.92, 1, 0.85)
+theme_override_font_sizes/font_size = 22
+text = "Échappez-vous avant que la pression vous écrase."
+horizontal_alignment = 1
+
+[node name="Espace" type="Control" parent="CenterContainer/VBox" unique_id=462219328]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+
+[node name="BoutonJouer" type="Button" parent="CenterContainer/VBox" unique_id=1825686870]
+custom_minimum_size = Vector2(320, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.85, 0.97, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.05, 0.1, 0.13, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("SB_Btn_Normal")
+theme_override_styles/pressed = SubResource("SB_Btn_Pressed")
+theme_override_styles/hover = SubResource("SB_Btn_Hover")
+theme_override_styles/focus = SubResource("SB_Btn_Focus")
+text = "▶  DÉMARRER"
+
+[node name="BoutonQuitter" type="Button" parent="CenterContainer/VBox" unique_id=450512857]
+custom_minimum_size = Vector2(320, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.7, 0.85, 0.92, 0.9)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.05, 0.1, 0.13, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("SB_Btn_Normal")
+theme_override_styles/pressed = SubResource("SB_Btn_Pressed")
+theme_override_styles/hover = SubResource("SB_Btn_Hover")
+theme_override_styles/focus = SubResource("SB_Btn_Focus")
+text = "✕  QUITTER"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1816954132]
+libraries/ = SubResource("AnimLib")
+autoplay = &"fade_in"
+
+[node name="MusiqueAmbiance" type="AudioStreamPlayer" parent="." unique_id=2076274652]
+stream = ExtResource("2_ba235")
+volume_db = -5.0
+autoplay = true

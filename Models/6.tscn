@@ -1,0 +1,191 @@
+[gd_scene format=3 uid="uid://d0vm2c7ffol13"]
+
+[ext_resource type="PackedScene" uid="uid://dyx3lib7fdk4s" path="res://Models/XR Pixel Block Font/XR Pixel Block Font.glb" id="1_i8efc"]
+
+[node name="XR Pixel Block Font" unique_id=649532917 instance=ExtResource("1_i8efc")]
+
+[node name="group1988139522" parent="." index="0" unique_id=1398197443]
+visible = false
+
+[node name="group1271302001" parent="." index="1" unique_id=924260562]
+visible = false
+
+[node name="group604159031" parent="." index="2" unique_id=122861486]
+visible = false
+
+[node name="group1647568728" parent="." index="3" unique_id=691996036]
+visible = false
+
+[node name="group1757119848" parent="." index="4" unique_id=276780361]
+visible = false
+
+[node name="group1885707814" parent="." index="5" unique_id=1552542824]
+visible = false
+
+[node name="group579038781" parent="." index="6" unique_id=134093136]
+visible = false
+
+[node name="group678896807" parent="." index="7" unique_id=305125256]
+visible = false
+
+[node name="group2004007255" parent="." index="8" unique_id=1456585614]
+visible = false
+
+[node name="group267688025" parent="." index="9" unique_id=1465073219]
+visible = false
+
+[node name="group830808334" parent="." index="10" unique_id=446920429]
+visible = false
+
+[node name="group937553211" parent="." index="11" unique_id=1893271619]
+visible = false
+
+[node name="group2118279761" parent="." index="12" unique_id=430863167]
+visible = false
+
+[node name="group966301810" parent="." index="13" unique_id=1600038679]
+visible = false
+
+[node name="group1517293575" parent="." index="14" unique_id=1297688324]
+visible = false
+
+[node name="group1865693091" parent="." index="15" unique_id=65840618]
+visible = false
+
+[node name="group1316023058" parent="." index="16" unique_id=2051485950]
+visible = false
+
+[node name="group1291499274" parent="." index="17" unique_id=1604849522]
+visible = false
+
+[node name="group202857479" parent="." index="18" unique_id=2115871342]
+visible = false
+
+[node name="group1608348865" parent="." index="19" unique_id=181539406]
+visible = false
+
+[node name="group437535007" parent="." index="20" unique_id=65383215]
+visible = false
+
+[node name="group1772492216" parent="." index="21" unique_id=1165697713]
+visible = false
+
+[node name="group220818933" parent="." index="22" unique_id=539188346]
+visible = false
+
+[node name="group1729293016" parent="." index="23" unique_id=574822323]
+visible = false
+
+[node name="group1485708525" parent="." index="24" unique_id=235171196]
+visible = false
+
+[node name="group773887554" parent="." index="25" unique_id=1588424432]
+visible = false
+
+[node name="group1247303077" parent="." index="26" unique_id=1992836204]
+visible = false
+
+[node name="group1039211757" parent="." index="27" unique_id=580760281]
+visible = false
+
+[node name="group1331996405" parent="." index="28" unique_id=195193436]
+visible = false
+
+[node name="group803201360" parent="." index="29" unique_id=2051176995]
+visible = false
+
+[node name="group1513231048" parent="." index="30" unique_id=1802100092]
+visible = false
+
+[node name="group1436047641" parent="." index="31" unique_id=1562249047]
+visible = false
+
+[node name="group657338586" parent="." index="32" unique_id=332217299]
+visible = false
+
+[node name="group407909650" parent="." index="33" unique_id=456605635]
+visible = false
+
+[node name="group1845569001" parent="." index="34" unique_id=863768234]
+visible = false
+
+[node name="group1228295017" parent="." index="35" unique_id=1837153104]
+visible = false
+
+[node name="group1130643509" parent="." index="36" unique_id=2021227783]
+visible = false
+
+[node name="group1896681084" parent="." index="37" unique_id=1243811310]
+visible = false
+
+[node name="group394986949" parent="." index="38" unique_id=1035924047]
+visible = false
+
+[node name="group1591728205" parent="." index="39" unique_id=1336465042]
+visible = false
+
+[node name="group2072533568" parent="." index="40" unique_id=1661079592]
+visible = false
+
+[node name="group298754547" parent="." index="41" unique_id=549186396]
+visible = false
+
+[node name="group2013792649" parent="." index="42" unique_id=495789668]
+visible = false
+
+[node name="group211542974" parent="." index="43" unique_id=1263722222]
+visible = false
+
+[node name="group1660358542" parent="." index="44" unique_id=477763054]
+visible = false
+
+[node name="group483727154" parent="." index="45" unique_id=1669134893]
+visible = false
+
+[node name="group1334123712" parent="." index="46" unique_id=983361762]
+visible = false
+
+[node name="group371379791" parent="." index="47" unique_id=1205129465]
+visible = false
+
+[node name="group1406465897" parent="." index="48" unique_id=1558316330]
+visible = false
+
+[node name="group1286569050" parent="." index="49" unique_id=1881911652]
+visible = false
+
+[node name="group895436136" parent="." index="50" unique_id=1166084215]
+visible = false
+
+[node name="group464533433" parent="." index="51" unique_id=494441143]
+visible = false
+
+[node name="group1285194742" parent="." index="52" unique_id=983970591]
+visible = false
+
+[node name="group376982161" parent="." index="53" unique_id=296366008]
+visible = false
+
+[node name="group1807333798" parent="." index="54" unique_id=2029902478]
+visible = false
+
+[node name="group868867676" parent="." index="55" unique_id=1580978764]
+visible = false
+
+[node name="group1506317285" parent="." index="56" unique_id=816095429]
+visible = false
+
+[node name="group1666288950" parent="." index="57" unique_id=159554108]
+visible = false
+
+[node name="group1272577297" parent="." index="59" unique_id=468567173]
+visible = false
+
+[node name="group155494949" parent="." index="60" unique_id=1201691953]
+visible = false
+
+[node name="group936171397" parent="." index="61" unique_id=1309997642]
+visible = false
+
+[node name="group1333311947" parent="." index="62" unique_id=1877382493]
+visible = false

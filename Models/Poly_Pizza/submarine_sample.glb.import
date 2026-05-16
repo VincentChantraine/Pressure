@@ -1,0 +1,51 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://d3rons5nxak54"
+path="res://.godot/imported/submarine_sample.glb-70902afadd95871483341860c3acd7eb.scn"
+
+[deps]
+
+source_file="res://Models/Poly_Pizza/submarine_sample.glb"
+dest_files=["res://.godot/imported/submarine_sample.glb-70902afadd95871483341860c3acd7eb.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"nodes": {
+"PATH:Sketchfab_model/e547065917bf48339ac215e3996c2dc5_fbx/RootNode/boiler001/Object_4/boiler001_Material #217_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/e547065917bf48339ac215e3996c2dc5_fbx/RootNode/submarine001/Object_7/submarine001_Material #216_0": {
+"generate/physics": true
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1

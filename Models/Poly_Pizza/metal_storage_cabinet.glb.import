@@ -1,0 +1,93 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://g6vb1qeyffcu"
+path="res://.godot/imported/metal_storage_cabinet.glb-3cca93762ddd428fd122c4096eb48b80.scn"
+
+[deps]
+
+source_file="res://Models/Poly_Pizza/metal_storage_cabinet.glb"
+dest_files=["res://.godot/imported/metal_storage_cabinet.glb-3cca93762ddd428fd122c4096eb48b80.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"nodes": {
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/Material2104": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/Material2105": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/group_0/Material2": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/group_1/Material22": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/group_2/Material23": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material24": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material25": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material26": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material27": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material3": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material32": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material33": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_0/Material34": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_1/Material28": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_1/Material29": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/Collada visual scene group/SketchUp/instance_1/Material35": {
+"generate/physics": true
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1

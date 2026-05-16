@@ -1,0 +1,210 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://cf7w87g7p6qgd"
+path="res://.godot/imported/Stair case.glb-861c501be9b2bcc6b925910782b61a81.scn"
+
+[deps]
+
+source_file="res://Models/Poly_Pizza/Stair case.glb"
+dest_files=["res://.godot/imported/Stair case.glb-861c501be9b2bcc6b925910782b61a81.scn"]
+
+[params]
+
+nodes/root_type="StaticBody3D"
+nodes/root_name=""
+nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"nodes": {
+"PATH:group104557017": {
+"generate/physics": true
+},
+"PATH:group1084402389": {
+"generate/physics": true
+},
+"PATH:group1152531768": {
+"generate/physics": true
+},
+"PATH:group1216452208": {
+"generate/physics": true
+},
+"PATH:group1284833742": {
+"generate/physics": true
+},
+"PATH:group136650122": {
+"generate/physics": true
+},
+"PATH:group138080859": {
+"generate/physics": true
+},
+"PATH:group1384595755": {
+"generate/physics": true
+},
+"PATH:group1416356983": {
+"generate/physics": true
+},
+"PATH:group1485357491": {
+"generate/physics": true
+},
+"PATH:group1568269791": {
+"generate/physics": true
+},
+"PATH:group1583702691": {
+"generate/physics": true
+},
+"PATH:group1584530293": {
+"generate/physics": true
+},
+"PATH:group1590180330": {
+"generate/physics": true
+},
+"PATH:group1659435450": {
+"generate/physics": true
+},
+"PATH:group1679589134": {
+"generate/physics": true
+},
+"PATH:group1723525818": {
+"generate/physics": true
+},
+"PATH:group1738013377": {
+"generate/physics": true
+},
+"PATH:group1788755622": {
+"generate/physics": true
+},
+"PATH:group1796218867": {
+"generate/physics": true
+},
+"PATH:group1808820538": {
+"generate/physics": true
+},
+"PATH:group1830146341": {
+"generate/physics": true
+},
+"PATH:group1902687767": {
+"generate/physics": true
+},
+"PATH:group1990299698": {
+"generate/physics": true
+},
+"PATH:group2003695839": {
+"generate/physics": true
+},
+"PATH:group200523749": {
+"generate/physics": true
+},
+"PATH:group2014138159": {
+"generate/physics": true
+},
+"PATH:group2018382538": {
+"generate/physics": true
+},
+"PATH:group2054190842": {
+"generate/physics": true
+},
+"PATH:group2054199299": {
+"generate/physics": true
+},
+"PATH:group209763037": {
+"generate/physics": true
+},
+"PATH:group210972342": {
+"generate/physics": true
+},
+"PATH:group2117385104": {
+"generate/physics": true
+},
+"PATH:group2124434320": {
+"generate/physics": true
+},
+"PATH:group2126949820": {
+"generate/physics": true
+},
+"PATH:group287605356": {
+"generate/physics": true
+},
+"PATH:group291138120": {
+"generate/physics": true
+},
+"PATH:group303345618": {
+"generate/physics": true
+},
+"PATH:group336207207": {
+"generate/physics": true
+},
+"PATH:group342812529": {
+"generate/physics": true
+},
+"PATH:group394649199": {
+"generate/physics": true
+},
+"PATH:group428330614": {
+"generate/physics": true
+},
+"PATH:group496766241": {
+"generate/physics": true
+},
+"PATH:group5330712": {
+"generate/physics": true
+},
+"PATH:group548991622": {
+"generate/physics": true
+},
+"PATH:group590486525": {
+"generate/physics": true
+},
+"PATH:group621161223": {
+"generate/physics": true
+},
+"PATH:group640423659": {
+"generate/physics": true
+},
+"PATH:group766336675": {
+"generate/physics": true
+},
+"PATH:group788186835": {
+"generate/physics": true
+},
+"PATH:group80279028": {
+"generate/physics": true
+},
+"PATH:group903054655": {
+"generate/physics": true
+},
+"PATH:group909186897": {
+"generate/physics": true
+},
+"PATH:group92132964": {
+"generate/physics": true
+},
+"PATH:group9910309": {
+"generate/physics": true
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1

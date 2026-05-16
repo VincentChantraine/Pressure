@@ -1,0 +1,78 @@
+using Godot;
+
+// À attacher à un CanvasLayer.
+// Enfants attendus (tous optionnels) :
+// - Label "Titre"      (ex: "COMMANDES")
+// - Label "Prompt"     (ex: "Appuie sur le bouton joystick pour reprendre les commandes")
+// - TextureRect "Icone" (image à afficher quand le joueur est dans la zone)
+public partial class VictoireCommandeHud : CanvasLayer
+{
+	[Export] public NodePath TriggerPath;
+	[Export] public NodePath TitreLabelPath;
+	[Export] public NodePath PromptLabelPath;
+	[Export] public NodePath IconePath;
+
+	[Export] public Texture2D ImageCommande;
+
+	[Export] public string TitreTexte = "🎛️ COMMANDES";
+	[Export] public string PromptTexte = "Reprendre les commandes";
+
+	// Si true : HUD visible uniquement quand le joueur est dans la zone.
+	[Export] public bool VisibleSeulementDansZone = true;
+
+	private VictoireCommandeTrigger trigger;
+	private Label titre;
+	private Label prompt;
+	private TextureRect icone;
+
+	public override void _Ready()
+	{
+		if (TriggerPath != null && !TriggerPath.IsEmpty)
+			trigger = GetNodeOrNull<VictoireCommandeTrigger>(TriggerPath);
+
+		if (TitreLabelPath != null) titre = GetNodeOrNull<Label>(TitreLabelPath);
+		if (PromptLabelPath != null) prompt = GetNodeOrNull<Label>(PromptLabelPath);
+		if (IconePath != null) icone = GetNodeOrNull<TextureRect>(IconePath);
+
+		if (titre != null) titre.Text = TitreTexte;
+		if (prompt != null) prompt.Text = PromptTexte;
+
+		if (icone != null)
+		{
+			if (ImageCommande != null) icone.Texture = ImageCommande;
+			icone.Visible = false;
+		}
+
+		if (trigger != null)
+		{
+			trigger.JoueurEntreZone += OnJoueurEntreZone;
+			trigger.JoueurSortZone += OnJoueurSortZone;
+			trigger.VictoireDeclenchee += OnVictoireDeclenchee;
+		}
+		else
+		{
+			GD.PrintErr("[VictoireCommandeHud] TriggerPath non assigné ou nœud introuvable.");
+		}
+
+		if (VisibleSeulementDansZone)
+			Visible = false;
+	}
+
+	private void OnJoueurEntreZone()
+	{
+		if (VisibleSeulementDansZone) Visible = true;
+		if (icone != null) icone.Visible = true;
+		if (prompt != null) prompt.Text = PromptTexte;
+	}
+
+	private void OnJoueurSortZone()
+	{
+		if (VisibleSeulementDansZone) Visible = false;
+		if (icone != null) icone.Visible = false;
+	}
+
+	private void OnVictoireDeclenchee()
+	{
+		if (prompt != null) prompt.Text = "✓ Commandes reprises";
+	}
+}

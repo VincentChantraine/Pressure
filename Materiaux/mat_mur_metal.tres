@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dn123ps6gypdc"]
+
+[ext_resource type="Texture2D" uid="uid://c4wksltcuxsnb" path="res://Materiaux/rusty_metal_grid_diff_2k.jpg" id="1_bdrhf"]
+[ext_resource type="Texture2D" uid="uid://dgrtaodrhut6s" path="res://Materiaux/rusty_metal_grid_arm_2k.jpg" id="2_vfr3n"]
+[ext_resource type="Texture2D" uid="uid://hl28dv0qj0j7" path="res://Materiaux/rusty_metal_grid_nor_gl_2k.jpg" id="3_242xw"]
+
+[resource]
+albedo_texture = ExtResource("1_bdrhf")
+metallic = 1.0
+metallic_texture = ExtResource("2_vfr3n")
+roughness_texture = ExtResource("2_vfr3n")
+roughness_texture_channel = 2
+normal_enabled = true
+normal_texture = ExtResource("3_242xw")
+ao_enabled = true
+ao_texture = ExtResource("2_vfr3n")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true

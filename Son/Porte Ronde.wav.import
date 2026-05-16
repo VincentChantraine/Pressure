@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://b2giyfrjlsess"
+path="res://.godot/imported/Porte Ronde.wav-3bf301bcaf4ef6c8ca3897322d1c70be.sample"
+
+[deps]
+
+source_file="res://Son/Porte Ronde.wav"
+dest_files=["res://.godot/imported/Porte Ronde.wav-3bf301bcaf4ef6c8ca3897322d1c70be.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

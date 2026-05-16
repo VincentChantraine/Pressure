@@ -1,0 +1,135 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://ce68it2vmwgll"
+path="res://.godot/imported/bt-01.glb-0bc5810e63e845184b92802ba16f49a9.scn"
+
+[deps]
+
+source_file="res://Models/BT-01/bt-01.glb"
+dest_files=["res://.godot/imported/bt-01.glb-0bc5810e63e845184b92802ba16f49a9.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"nodes": {
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Baloon TOPO/Baloon TOPO_Main2_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cube_016/Cube_016_Interior computer_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cube_020/Cube_020_Interior props_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cube_020/Cube_020_Interior props_02": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cube_021/Cube_021_Interior cabin_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cube_315/Cube_315_Interior glass_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder/Cylinder_Interior hatch_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_002/Cylinder_002_hand2_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_014/Cylinder_014_Interior lights_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_018/Cylinder_018_Interior tube_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_022/Cylinder_022_Interior screw_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_024/Cylinder_024_Glass_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_101/Cylinder_101_Propellers_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_137/Cylinder_137_hand3_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_168/Cylinder_168_right hand_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_188/Cylinder_188_mechanical hands_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_201/Cylinder_201_Rope_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_216/Cylinder_216_Dekor_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_244/Cylinder_244_Hatch_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_259/Cylinder_259_Technical details_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_272/Cylinder_272_Window_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_276/Cylinder_276_screw_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_531/Cylinder_531_Interior handling_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_622/Cylinder_622_Interior dekor_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Cylinder_753/Cylinder_753_Interior wires_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/MAIN TOPO/MAIN TOPO_main_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Plane_002/Plane_002_Bed details_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Plane_006/Plane_006_Soft furniture_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Plane_053/Plane_053_Interior soft furniture_0": {
+"generate/physics": true
+},
+"PATH:Sketchfab_model/acdb87f6c20b4bd6954ea74de2a76d2d_fbx/RootNode/Plane_162/Plane_162_left drill_0": {
+"generate/physics": true
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1

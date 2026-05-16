@@ -1,0 +1,319 @@
+[gd_scene format=3 uid="uid://djbhcvxrhf8af"]
+
+[ext_resource type="Script" uid="uid://1ww2o3jvagct" path="res://EcranFin.cs" id="1_fin"]
+[ext_resource type="AudioStream" uid="uid://bpkgro6n06qd6" path="res://Son/underwater_ambience.ogg" id="2_4m2ht"]
+
+[sub_resource type="StyleBoxFlat" id="SB_Fond"]
+bg_color = Color(0.018, 0.025, 0.04, 1)
+
+[sub_resource type="Gradient" id="Grad_Vignette"]
+interpolation_color_space = 1
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.01, 0.03, 0.05, 0.55, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="Tex_Vignette"]
+gradient = SubResource("Grad_Vignette")
+width = 1024
+height = 1024
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="SB_Panneau"]
+content_margin_left = 48.0
+content_margin_top = 40.0
+content_margin_right = 48.0
+content_margin_bottom = 40.0
+bg_color = Color(0.04, 0.07, 0.1, 0.55)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.31, 0.78, 0.88, 0.35)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Normal"]
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.06, 0.1, 0.13, 0.55)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.31, 0.78, 0.88, 0.55)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Pressed"]
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.31, 0.78, 0.88, 0.4)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7, 0.97, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Hover"]
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.18, 0.6, 0.72, 0.22)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.93, 1, 0.95)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="SB_Btn_Focus"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.93, 1, 0.85)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="Animation" id="Anim_FadeIn"]
+resource_name = "fade_in"
+length = 1.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CenterContainer:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimLib"]
+_data = {
+&"fade_in": SubResource("Anim_FadeIn")
+}
+
+[node name="EcranFin" type="Control" unique_id=1114771848]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fin")
+TitreLabelPath = NodePath("CenterContainer/Panneau/VBox/Titre")
+SousTitreLabelPath = NodePath("CenterContainer/Panneau/VBox/SousTitre")
+TempsLabelPath = NodePath("CenterContainer/Panneau/VBox/Stats/StatsBox/Temps")
+BoutonRejouerPath = NodePath("CenterContainer/Panneau/VBox/Boutons/BoutonRejouer")
+BoutonMenuPath = NodePath("CenterContainer/Panneau/VBox/Boutons/BoutonMenu")
+BoutonQuitterPath = NodePath("CenterContainer/Panneau/VBox/Boutons/BoutonQuitter")
+
+[node name="Fond" type="Panel" parent="." unique_id=2107276933]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SB_Fond")
+
+[node name="Vignette" type="TextureRect" parent="." unique_id=1341773477]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("Tex_Vignette")
+expand_mode = 1
+
+[node name="HautGauche" type="Label" parent="." unique_id=1950492209]
+layout_mode = 1
+offset_left = 36.0
+offset_top = 28.0
+offset_right = 600.0
+offset_bottom = 64.0
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.65)
+theme_override_font_sizes/font_size = 22
+text = "[ DEEP DIVE PROTOCOL // 2026 ]"
+
+[node name="HautDroite" type="Label" parent="." unique_id=821646144]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -460.0
+offset_top = 28.0
+offset_right = -36.0
+offset_bottom = 64.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.65)
+theme_override_font_sizes/font_size = 22
+text = "FIN DE MISSION"
+horizontal_alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1066843174]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panneau" type="PanelContainer" parent="CenterContainer" unique_id=344774064]
+layout_mode = 2
+theme_override_styles/panel = SubResource("SB_Panneau")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Panneau" unique_id=1850543034]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Surtitre" type="Label" parent="CenterContainer/Panneau/VBox" unique_id=907657559]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.55, 0.93, 1, 0.7)
+theme_override_font_sizes/font_size = 14
+text = "—  RAPPORT DE MISSION  —"
+horizontal_alignment = 1
+
+[node name="Titre" type="Label" parent="CenterContainer/Panneau/VBox" unique_id=380744618]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.95, 0.99, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.18, 0.7, 0.85, 0.55)
+theme_override_colors/font_outline_color = Color(0.04, 0.07, 0.1, 1)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_outline_size = 18
+theme_override_font_sizes/font_size = 96
+text = "PARTIE TERMINÉE"
+horizontal_alignment = 1
+
+[node name="Ligne" type="ColorRect" parent="CenterContainer/Panneau/VBox" unique_id=1676249411]
+custom_minimum_size = Vector2(380, 1)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.31, 0.78, 0.88, 0.45)
+
+[node name="SousTitre" type="Label" parent="CenterContainer/Panneau/VBox" unique_id=47988621]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.85, 0.94, 1, 0.9)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+
+[node name="Stats" type="PanelContainer" parent="CenterContainer/Panneau/VBox" unique_id=215417435]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="StatsBox" type="HBoxContainer" parent="CenterContainer/Panneau/VBox/Stats" unique_id=1124840562]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="LabelStats" type="Label" parent="CenterContainer/Panneau/VBox/Stats/StatsBox" unique_id=227345164]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.85)
+theme_override_font_sizes/font_size = 18
+text = "TEMPS ÉCOULÉ"
+
+[node name="Sep" type="ColorRect" parent="CenterContainer/Panneau/VBox/Stats/StatsBox" unique_id=359677174]
+custom_minimum_size = Vector2(1, 22)
+layout_mode = 2
+color = Color(0.31, 0.78, 0.88, 0.45)
+
+[node name="Temps" type="Label" parent="CenterContainer/Panneau/VBox/Stats/StatsBox" unique_id=145531279]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "00:00"
+
+[node name="Espace" type="Control" parent="CenterContainer/Panneau/VBox" unique_id=171454430]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="Boutons" type="HBoxContainer" parent="CenterContainer/Panneau/VBox" unique_id=198908274]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="BoutonRejouer" type="Button" parent="CenterContainer/Panneau/VBox/Boutons" unique_id=1806244822]
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.97, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.05, 0.1, 0.13, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("SB_Btn_Normal")
+theme_override_styles/pressed = SubResource("SB_Btn_Pressed")
+theme_override_styles/hover = SubResource("SB_Btn_Hover")
+theme_override_styles/focus = SubResource("SB_Btn_Focus")
+text = "↻  REJOUER"
+
+[node name="BoutonMenu" type="Button" parent="CenterContainer/Panneau/VBox/Boutons" unique_id=2070869435]
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.97, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.05, 0.1, 0.13, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("SB_Btn_Normal")
+theme_override_styles/pressed = SubResource("SB_Btn_Pressed")
+theme_override_styles/hover = SubResource("SB_Btn_Hover")
+theme_override_styles/focus = SubResource("SB_Btn_Focus")
+text = "⌂  MENU PRINCIPAL"
+
+[node name="BoutonQuitter" type="Button" parent="CenterContainer/Panneau/VBox/Boutons" unique_id=534842127]
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 0.92, 0.9)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.05, 0.1, 0.13, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("SB_Btn_Normal")
+theme_override_styles/pressed = SubResource("SB_Btn_Pressed")
+theme_override_styles/hover = SubResource("SB_Btn_Hover")
+theme_override_styles/focus = SubResource("SB_Btn_Focus")
+text = "✕  QUITTER"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=706158453]
+libraries/ = SubResource("AnimLib")
+autoplay = &"fade_in"
+
+[node name="MusiqueAmbiance" type="AudioStreamPlayer" parent="." unique_id=1408680390]
+stream = ExtResource("2_4m2ht")
+volume_db = -5.0
+autoplay = true

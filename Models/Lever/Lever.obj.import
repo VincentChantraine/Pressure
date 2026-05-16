@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dxhgv7uq0ssnu"
+path="res://.godot/imported/Lever.obj-51d523857fbdb79f06c95b674ce529de.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Lever.obj-51d523857fbdb79f06c95b674ce529de.mesh"]
+
+source_file="res://Models/Lever/Lever.obj"
+dest_files=["res://.godot/imported/Lever.obj-51d523857fbdb79f06c95b674ce529de.mesh", "res://.godot/imported/Lever.obj-51d523857fbdb79f06c95b674ce529de.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
