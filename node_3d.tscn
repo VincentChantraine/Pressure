@@ -577,7 +577,7 @@ radius = 0.3
 [sub_resource type="BoxShape3D" id="BoxShape3D_3ku12"]
 size = Vector3(0.3, 0.42, 0.3)
 
-[node name="Node3D" type="Node3D" unique_id=876975544]
+[node name="ArduinoInput" type="Node3D" unique_id=876975544]
 script = ExtResource("1_a202f")
 
 [node name="SonDeFond" type="AudioStreamPlayer2D" parent="." unique_id=561902285]

@@ -184,8 +184,8 @@ public partial class VanneRotation : Node3D
 
 	private int QuadrantCourant(int x, int y)
 	{
-		int dx = x - 512;
-		int dy = y - 512;
+		int dx = x - ArduinoConfig.AnalogCenter;
+		int dy = y - ArduinoConfig.AnalogCenter;
 
 		if (Mathf.Abs(dx) < DeadzoneRaw && Mathf.Abs(dy) < DeadzoneRaw)
 			return -1;

@@ -5,6 +5,23 @@ using System.IO.Ports;
 public partial class Node3d : Node3D
 {
 	// =========================
+	// CONNEXION SÉRIE
+	// =========================
+	// Port à essayer en premier. Éditable depuis l'inspecteur Godot,
+	// ce qui évite de recompiler quand l'Arduino n'est pas sur COM5.
+	[Export] public string ComPort = "COM5";
+	[Export] public int BaudRate = 115200;
+	// Si l'ouverture du port configuré échoue, on tente automatiquement
+	// les autres ports détectés par le système. Le handshake "READY" du firmware
+	// fait office de vérification — un port qui n'est pas notre Arduino
+	// ne renverra jamais "READY" donc on peut le laisser ouvert sans dégât
+	// (le fallback clavier prend le relais).
+	[Export] public bool AutoDetectPortIfMissing = true;
+	// Active le log à chaque ligne série reçue (très verbeux, ~60 Hz).
+	// Laisse à false en production pour ne pas spammer la console.
+	[Export] public bool DebugSerialLog = false;
+
+	// =========================
 	// FALLBACK CLAVIER
 	// =========================
 	[Export] public bool UseKeyboardFallback = true;
@@ -34,24 +51,35 @@ public partial class Node3d : Node3D
 	// =========================
 	private SerialPort serialPort;
 
-	public int joystickX = 512;
-	public int joystickY = 512;
-	public int sliderValue = 512;
+	// Buffer d'accumulation des octets reçus du port série.
+	// On lit avec ReadExisting() (non-bloquant) plutôt que ReadLine() (peut bloquer
+	// jusqu'à ReadTimeout=500ms si la ligne courante n'a pas encore son \n).
+	// On découpe nous-mêmes par \n dans ce buffer, en conservant la dernière ligne
+	// partielle pour la frame suivante.
+	private string serialReadBuffer = "";
+
+	// Garde-fou contre un buffer qui grossit indéfiniment si le parser ne suit pas
+	// (très improbable, mais évite une fuite mémoire en cas de bug).
+	private const int SERIAL_BUFFER_MAX = 16 * 1024;
+
+	public int joystickX = ArduinoConfig.AnalogCenter;
+	public int joystickY = ArduinoConfig.AnalogCenter;
+	public int sliderValue = ArduinoConfig.AnalogCenter;
 	public bool isButtonPressed = false;
 	// Bouton "interaction" : isButtonPressed (Shift / bouton Arduino) OU clic gauche souris.
 	// Volontairement séparé pour que le clic gauche ne déclenche PAS le sprint.
 	public bool isInteractPressed = false;
-	public int lightValue = 512;
+	public int lightValue = ArduinoConfig.AnalogCenter;
 	public int ultraDistCm = -1;
 	public bool arduinoReady = false;
 
 	// Valeurs brutes reçues de l'Arduino avant override clavier
 	// (utile si tu veux un jour logguer ou afficher les deux)
-	private int arduinoJoystickX = 512;
-	private int arduinoJoystickY = 512;
-	private int arduinoSliderValue = 512;
+	private int arduinoJoystickX = ArduinoConfig.AnalogCenter;
+	private int arduinoJoystickY = ArduinoConfig.AnalogCenter;
+	private int arduinoSliderValue = ArduinoConfig.AnalogCenter;
 	private bool arduinoButtonPressed = false;
-	private int arduinoLightValue = 512;
+	private int arduinoLightValue = ArduinoConfig.AnalogCenter;
 	private int arduinoUltraDistCm = -1;
 
 	// =========================
@@ -84,22 +112,45 @@ public partial class Node3d : Node3D
 		string[] ports = SerialPort.GetPortNames();
 		GD.Print("Ports détectés : " + string.Join(", ", ports));
 
+		if (!TryOpenPort(ComPort) && AutoDetectPortIfMissing)
+		{
+			foreach (string p in ports)
+			{
+				if (p == ComPort) continue; // déjà essayé
+				GD.Print($"[Arduino] Tentative auto sur {p}...");
+				if (TryOpenPort(p))
+				{
+					GD.Print($"[Arduino] Connecté sur {p} (fallback auto).");
+					break;
+				}
+			}
+		}
+
+		if (serialPort == null || !serialPort.IsOpen)
+			GD.Print("(Aucun port série ouvert — Fallback clavier actif : " + UseKeyboardFallback + ")");
+	}
+
+	private bool TryOpenPort(string portName)
+	{
+		if (string.IsNullOrEmpty(portName)) return false;
 		try
 		{
-			serialPort = new SerialPort("COM5", 115200)
+			var sp = new SerialPort(portName, BaudRate)
 			{
 				ReadTimeout = 500,
 				WriteTimeout = 200,
 				DtrEnable = true,
 				RtsEnable = true
 			};
-			serialPort.Open();
-			GD.Print("Port série ouvert ! (attente handshake READY...)");
+			sp.Open();
+			serialPort = sp;
+			GD.Print($"Port série {portName} ouvert ! (attente handshake READY...)");
+			return true;
 		}
 		catch (Exception e)
 		{
-			GD.PrintErr("Erreur ouverture port : " + e.Message);
-			GD.Print("(Fallback clavier actif : " + UseKeyboardFallback + ")");
+			GD.PrintErr($"Erreur ouverture {portName} : {e.Message}");
+			return false;
 		}
 	}
 
@@ -149,10 +200,38 @@ public partial class Node3d : Node3D
 
 		try
 		{
-			while (serialPort.BytesToRead > 0)
+			// 1) Lecture NON-BLOQUANTE de tout ce qui est dans le buffer du port.
+			// ReadExisting() retourne immédiatement (vs ReadLine qui peut bloquer
+			// jusqu'à 500ms si la ligne n'a pas encore son \n — cause possible de
+			// micro-stutters à 60Hz si l'Arduino redémarre / le câble bouge).
+			if (serialPort.BytesToRead > 0)
 			{
-				string message = serialPort.ReadLine().Trim();
-				GD.Print("Reçu : " + message);
+				serialReadBuffer += serialPort.ReadExisting();
+
+				// Garde-fou : si le buffer dépasse la limite (parser bloqué, bug...),
+				// on tronque proprement à la dernière ligne complète pour ne pas
+				// fuir de mémoire indéfiniment.
+				if (serialReadBuffer.Length > SERIAL_BUFFER_MAX)
+				{
+					int lastNl = serialReadBuffer.LastIndexOf('\n');
+					serialReadBuffer = lastNl >= 0
+						? serialReadBuffer.Substring(lastNl + 1)
+						: "";
+					GD.PrintErr("[Arduino] Buffer série débordé — vidé.");
+				}
+			}
+
+			// 2) Découpe en lignes complètes ; la dernière partielle reste dans le buffer.
+			int newlineIdx;
+			while ((newlineIdx = serialReadBuffer.IndexOf('\n')) >= 0)
+			{
+				string message = serialReadBuffer.Substring(0, newlineIdx).Trim();
+				serialReadBuffer = serialReadBuffer.Substring(newlineIdx + 1);
+
+				if (string.IsNullOrEmpty(message)) continue;
+
+				if (DebugSerialLog)
+					GD.Print("Reçu : " + message);
 
 				if (message.StartsWith("RFID:"))
 				{
@@ -162,16 +241,16 @@ public partial class Node3d : Node3D
 					continue;
 				}
 
-			if (message.Contains("READY"))
-			{
-				if (!arduinoReady)
+				if (message.Contains("READY"))
 				{
-					arduinoReady = true;
-					GD.Print("[Arduino] Handshake reçu.");
+					if (!arduinoReady)
+					{
+						arduinoReady = true;
+						GD.Print("[Arduino] Handshake reçu.");
+					}
+					// On ne continue PAS : la ligne peut contenir des données valides avant/après READY
+					// On laisse le parseur ci-dessous tenter d'extraire ce qu'il peut
 				}
-				// On ne continue PAS : la ligne peut contenir des données valides avant/après READY
-				// On laisse le parseur ci-dessous tenter d'extraire ce qu'il peut
-			}
 
 				string[] parts = message.Split(
 					new[] { ' ', '\t' },
@@ -218,8 +297,8 @@ public partial class Node3d : Node3D
 		// --- Joystick X (Q/D) ---
 		bool q = Input.IsKeyPressed(Key.Q);
 		bool d = Input.IsKeyPressed(Key.D);
-		if (q && !d) joystickX = 512 - KB_AXIS_AMPLITUDE;
-		else if (d && !q) joystickX = 512 + KB_AXIS_AMPLITUDE;
+		if (q && !d) joystickX = ArduinoConfig.AnalogCenter - KB_AXIS_AMPLITUDE;
+		else if (d && !q) joystickX = ArduinoConfig.AnalogCenter + KB_AXIS_AMPLITUDE;
 		// sinon : on garde la valeur Arduino déjà copiée
 
 		// --- Joystick Y (Z/S) ---
@@ -228,8 +307,8 @@ public partial class Node3d : Node3D
 		// joystickY > 512 = on pousse dans un sens, < 512 = l'autre. Tu ajusteras si c'est inversé avec `InvertSlider`-style.
 		bool z = Input.IsKeyPressed(Key.Z);
 		bool s = Input.IsKeyPressed(Key.S);
-		if (z && !s) joystickY = 512 - KB_AXIS_AMPLITUDE;
-		else if (s && !z) joystickY = 512 + KB_AXIS_AMPLITUDE;
+		if (z && !s) joystickY = ArduinoConfig.AnalogCenter - KB_AXIS_AMPLITUDE;
+		else if (s && !z) joystickY = ArduinoConfig.AnalogCenter + KB_AXIS_AMPLITUDE;
 
 		// --- Slider rotation caméra (A/E) ---
 		//bool a = Input.IsKeyPressed(Key.A);
@@ -240,8 +319,8 @@ public partial class Node3d : Node3D
 		// --- Slider (A/E) ---
 		bool a = Input.IsKeyPressed(Key.A);
 		bool e = Input.IsKeyPressed(Key.E);
-		if (a && !e) sliderValue = 0;       // butée gauche franche
-		else if (e && !a) sliderValue = 1023; // butée droite franche
+		if (a && !e) sliderValue = ArduinoConfig.AnalogMin;       // butée gauche franche
+		else if (e && !a) sliderValue = ArduinoConfig.AnalogMax; // butée droite franche
 
 		// --- Bouton joystick (Shift) = sprint / interaction porte ---
 		// OR logique : si Shift OU bouton Arduino pressé

@@ -6,12 +6,12 @@ public partial class Player : CharacterBody3D
 	[Export] public float SprintMultiplier = 2.0f;
  
 	[Export] public float RotationSpeed = 2.5f;        // rad/s à fond
-	[Export] public int SliderCenter = 512;            // à calibrer (cf. moniteur série)
+	[Export] public int SliderCenter = ArduinoConfig.AnalogCenter; // à calibrer (cf. moniteur série)
 	[Export] public int SliderDeadzone = 100;          // large pour tolérer la dérive
 	[Export] public bool InvertSlider = false;
- 
+
 	[Export] public int LdrMin = 150;
-	[Export] public int LdrMax = 1023;
+	[Export] public int LdrMax = ArduinoConfig.AnalogMax;
 	[Export] public float TorchMinEnergy = 0.0f;
 	[Export] public float TorchMaxEnergy = 4.0f;
 	[Export] public float TorchMinRange = 2.0f;   // portée mini (capteur éclairé)
@@ -164,22 +164,22 @@ public partial class Player : CharacterBody3D
 			float rawSlider = arduino.sliderValue - SliderCenter;
 			if (Mathf.Abs(rawSlider) < SliderDeadzone) rawSlider = 0;
  
-			float sliderNorm = rawSlider / (512f - SliderDeadzone);
+			float sliderNorm = rawSlider / (float)(ArduinoConfig.AnalogCenter - SliderDeadzone);
 			sliderNorm = Mathf.Clamp(sliderNorm, -1f, 1f);
 			if (InvertSlider) sliderNorm = -sliderNorm;
  
 			RotateY(-sliderNorm * RotationSpeed * (float)delta);
  
 			// --- DÉPLACEMENT (joystick → vitesse en coords LOCALES du Player) ---
-			float rawX = arduino.joystickX - 512;
-			float rawY = arduino.joystickY - 512;
+			float rawX = arduino.joystickX - ArduinoConfig.AnalogCenter;
+			float rawY = arduino.joystickY - ArduinoConfig.AnalogCenter;
 			float deadzone = 100;
- 
+
 			if (Mathf.Abs(rawX) < deadzone) rawX = 0;
 			if (Mathf.Abs(rawY) < deadzone) rawY = 0;
- 
-			float inputX = rawX / 512f;
-			float inputZ = rawY / 512f;
+
+			float inputX = rawX / (float)ArduinoConfig.AnalogCenter;
+			float inputZ = rawY / (float)ArduinoConfig.AnalogCenter;
  
 			float currentSpeed = Speed;
 			if (arduino.isButtonPressed)
@@ -221,7 +221,17 @@ public partial class Player : CharacterBody3D
  
 	public void TeleporterA(Vector3 cible)
 	{
-		// TODO : implémenter la téléportation (désactiver la physique le temps du snap, etc.)
+		// Reset Velocity + lift : sinon la vélocité résiduelle ferait glisser le joueur
+		// au point d'arrivée, et le lift ultrason resterait actif (joueur "en l'air").
+		// Pour un TP "fluide" (fondu noir), le caller doit en plus désactiver _PhysicsProcess
+		// autour de l'appel — cf. PorteRondeTP.LancerSequence().
 		GlobalPosition = cible;
+		Velocity = Vector3.Zero;
+
+		if (liftTarget != null)
+		{
+			currentLift = 0f;
+			liftTarget.Position = liftTargetBasePos;
+		}
 	}
 }

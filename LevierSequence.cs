@@ -127,7 +127,7 @@ public partial class LevierSequence : Node3D
 		if (active || arduino == null || !joueurDansZone) return;
 
 		int v = arduino.sliderValue;
-		if (InvertSlider) v = 1023 - v;
+		if (InvertSlider) v = ArduinoConfig.AnalogMax - v;
 
 		switch (etatSlider)
 		{

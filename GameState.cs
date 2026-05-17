@@ -30,9 +30,17 @@ public partial class GameState : Node
 	public HashSet<string> PortesDeverrouilles = new HashSet<string>();
 	public HashSet<string> SallesVisitees = new HashSet<string>();
 
-	// Événement du dernier scan
-	public string PendingRfidUid = "";
-	public bool HasPendingRfid => !string.IsNullOrEmpty(PendingRfidUid);
+	// File des scans RFID en attente de consommation.
+	// On utilise une file (FIFO) plutôt qu'un seul UID pour ne plus PERDRE
+	// les scans rapides : si le joueur scanne deux badges avant d'atteindre
+	// une porte, les deux sont conservés et traités dans l'ordre.
+	// L'API publique (HasPendingRfid, PendingRfidUid, ConsumePendingRfid)
+	// reste identique à l'ancienne version "string unique" pour ne rien casser
+	// côté consommateurs (Porte.cs).
+	private Queue<string> rfidQueue = new Queue<string>();
+
+	public string PendingRfidUid => rfidQueue.Count > 0 ? rfidQueue.Peek() : "";
+	public bool HasPendingRfid => rfidQueue.Count > 0;
 
 	// Signaux
 	[Signal] public delegate void ScanValideEventHandler(string porteId);
@@ -48,13 +56,21 @@ public partial class GameState : Node
 
 	public void NotifyRfidScan(string uid)
 	{
-		PendingRfidUid = uid.Trim().ToUpper();
-		GD.Print($"[GameState] Scan RFID reçu : {PendingRfidUid}");
+		string clean = uid?.Trim().ToUpper();
+		if (string.IsNullOrEmpty(clean)) return;
+
+		// Dédoublonnage défensif : si ce même UID est déjà en file d'attente,
+		// inutile de l'empiler à nouveau (ex: scan répété, rebond capteur).
+		if (rfidQueue.Contains(clean)) return;
+
+		rfidQueue.Enqueue(clean);
+		GD.Print($"[GameState] Scan RFID reçu : {clean} (file : {rfidQueue.Count})");
 	}
 
 	public void ConsumePendingRfid()
 	{
-		PendingRfidUid = "";
+		if (rfidQueue.Count > 0)
+			rfidQueue.Dequeue();
 	}
 
 	public void MarquerPorteDeverrouille(string porteId, bool estFinale = false)
@@ -110,7 +126,7 @@ public partial class GameState : Node
 	{
 		PortesDeverrouilles.Clear();
 		SallesVisitees.Clear();
-		PendingRfidUid = "";
+		rfidQueue.Clear();
 		DernierResultat = ResultatPartie.Aucun;
 		DernierTempsEcoule = 0f;
 		GD.Print("[GameState] Partie réinitialisée.");
