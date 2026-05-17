@@ -15,7 +15,9 @@ public partial class VictoireCommandeHud : CanvasLayer
 	[Export] public Texture2D ImageCommande;
 
 	[Export] public string TitreTexte = "🎛️ COMMANDES";
-	[Export] public string PromptTexte = "Reprendre les commandes";
+	// Vide par défaut : doublon avec le libellé du SurvolHud
+	// ("Reprendre les commandes"). Le titre, lui, reste unique.
+	[Export] public string PromptTexte = "";
 
 	// Si true : HUD visible uniquement quand le joueur est dans la zone.
 	[Export] public bool VisibleSeulementDansZone = true;

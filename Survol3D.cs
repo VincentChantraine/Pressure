@@ -18,6 +18,10 @@ public partial class Survol3D : Node
 	[Export] public uint MaskCollision = uint.MaxValue;
 	[Export] public Color CouleurOverlay = new Color(0.55f, 0.93f, 1f, 1f);
 	[Export] public float IntensiteEmission = 1.8f;
+	// Quand le joueur est collé à un objet, la caméra peut se retrouver pile sur
+	// (voire dans) son collider. Sans recul, le ray part trop loin et rate l'objet
+	// derrière soi. On démarre légèrement en arrière de la caméra.
+	[Export] public float ReculOrigine = 0.4f;
 
 	// État courant lu par SurvolHud. Statique pour éviter de tirer une référence.
 	public static Node3D CibleCourante { get; private set; }
@@ -47,13 +51,20 @@ public partial class Survol3D : Node
 		var camera = GetViewport()?.GetCamera3D();
 		if (camera == null) { ChangerCible(null); return; }
 
-		Vector3 from = camera.GlobalPosition;
-		Vector3 to = from + (-camera.GlobalTransform.Basis.Z) * PorteeMax;
+		Vector3 forward = -camera.GlobalTransform.Basis.Z;
+		// Recul de l'origine : compense le cas "joueur collé" où la caméra est
+		// dans/au ras du collider — sans ça, IntersectRay manque l'objet juste
+		// devant. Le ray reste de longueur PorteeMax côté utile (devant).
+		Vector3 from = camera.GlobalPosition - forward * ReculOrigine;
+		Vector3 to = camera.GlobalPosition + forward * PorteeMax;
 
 		var space = camera.GetWorld3D().DirectSpaceState;
 		var query = PhysicsRayQueryParameters3D.Create(from, to, MaskCollision);
 		query.CollideWithAreas = true;
 		query.CollideWithBodies = true;
+		// Détecte aussi les colliders dans lesquels l'origine du ray se trouve
+		// (cas "caméra clippée dans la cible quand on est collé").
+		query.HitFromInside = true;
 		var hit = space.IntersectRay(query);
 
 		Node3D cible = null;

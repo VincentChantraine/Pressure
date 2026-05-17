@@ -65,7 +65,6 @@ public partial class Player : CharacterBody3D
 	private float shakeAmplitude = 0f;
 	private float shakeDureeRestante = 0f;
 	private float shakeDureeTotale = 0f;
-	private Vector3 cameraBasePos;
 
 	/// <summary>
 	/// Déclenche un screen shake : la caméra tremble pendant `duree` secondes

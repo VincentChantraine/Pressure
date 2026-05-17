@@ -26,6 +26,9 @@ public partial class VictoireCommandeTrigger : Area3D
 
 		BodyEntered += OnBodyEntered;
 		BodyExited += OnBodyExited;
+
+		AddToGroup("interactif");
+		SetMeta("libelle_interaction", "Reprendre les commandes");
 	}
 
 	private void OnBodyEntered(Node3D body)

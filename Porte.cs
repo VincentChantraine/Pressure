@@ -31,6 +31,12 @@ public partial class Porte : Node3D
 	// Numéro affiché dans le HUD pour la salle prérequise (1..6). 0 = pas affiché.
 	[Export] public int NumeroSallePrerequise = 0;
 
+	// Salle située DE L'AUTRE CÔTÉ de cette porte (ex: "salle_1" si la porte mène
+	// vers la salle 1). Vide = porte sans salle associée (porte interne, porte finale).
+	// Utilisé par la boussole : elle pointe vers cette porte tant que la salle n'est
+	// pas validée. Préféré aux puzzles eux-mêmes pour éviter de spoiler la solution.
+	[Export] public string SalleQueProtege = "";
+
 	[Signal] public delegate void JoueurEntreZoneEventHandler();
 	[Signal] public delegate void JoueurSortZoneEventHandler();
 	[Signal] public delegate void PorteDeverrouilleeEventHandler();
@@ -78,6 +84,44 @@ public partial class Porte : Node3D
 
 		if (!NecessiteBadge1 && !EstPorteFinale)
 			estDeverrouille = true;
+
+		// Registre la porte comme ancre boussole pour la salle qu'elle protège.
+		// Écrase l'ancre puzzle (placée par le puzzle dans son _Ready) — c'est voulu :
+		// pointer vers la porte est moins spoilant que pointer vers l'objet à manipuler.
+		// Fallback : si SalleQueProtege n'est pas configuré dans l'inspecteur, on
+		// déduit la salle depuis PorteId (convention "porte_N" → "salle_N").
+		// Évite d'avoir à éditer chaque .tscn pour les 6 portes existantes.
+		string salleCible = SalleQueProtege;
+		if (string.IsNullOrEmpty(salleCible)
+			&& !string.IsNullOrEmpty(PorteId)
+			&& PorteId.StartsWith("porte_", System.StringComparison.OrdinalIgnoreCase))
+		{
+			string suffixe = PorteId.Substring("porte_".Length);
+			if (int.TryParse(suffixe, out _))
+				salleCible = "salle_" + suffixe;
+		}
+		// Cas spécial : la porte de sortie n'a pas de salle_N associée, elle est
+		// la cible de la phase "toutes les salles validées" de la boussole.
+		// Id réservé "exit_door" — cf. BoussoleHud.
+		if (string.IsNullOrEmpty(salleCible)
+			&& PorteId == "porte_sortie")
+		{
+			salleCible = "exit_door";
+		}
+		if (!string.IsNullOrEmpty(salleCible))
+		{
+			GameState.Instance?.RegistrerAncreSalle(salleCible, this);
+			GD.Print($"[Porte] {PorteId} → boussole pour {salleCible}.");
+		}
+		else
+		{
+			GD.Print($"[Porte] {PorteId} : pas d'ancre boussole (PorteId hors convention 'porte_N').");
+		}
+
+		// Survol : ce nœud est "regardable" — le raycast caméra l'affichera comme cible.
+		AddToGroup("interactif");
+		SetMeta("libelle_interaction",
+			EstPorteFinale ? "Scanner le badge final" : "Ouvrir / Fermer");
 	}
 
 	private AudioStreamPlayer3D CreerPlayer(AudioStream stream, float volumeDb)
@@ -137,6 +181,11 @@ public partial class Porte : Node3D
 				{
 					JouerSon(playerOuverture);
 					EmitSignal(SignalName.PorteOuverte);
+
+					// Phase finale de la boussole : ouvrir porte_sortie = on
+					// s'engage dans le sas → la boussole bascule sur PorteRonde.
+					if (PorteId == "porte_sortie" && GameState.Instance != null)
+						GameState.Instance.PorteSortieFranchie = true;
 				}
 				else
 				{

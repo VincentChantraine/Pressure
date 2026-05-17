@@ -68,6 +68,12 @@ public partial class PorteRondeTP : Area3D
 
 		BodyEntered += OnBodyEntered;
 		BodyExited += OnBodyExited;
+
+		AddToGroup("interactif");
+		SetMeta("libelle_interaction", "Franchir la porte");
+
+		// Cible de boussole pour la phase finale (après franchissement porte_sortie).
+		GameState.Instance?.RegistrerAncreSalle("exit_teleport", this);
 	}
 
 	private void OnBodyEntered(Node3D body)
@@ -80,6 +86,11 @@ public partial class PorteRondeTP : Area3D
 			// Évite un faux déclenchement si le bouton est déjà tenu (ex: Shift maintenu pour sprinter)
 			boutonPrecedent = arduino?.isInteractPressed ?? false;
 			EmitSignal(SignalName.JoueurEntreZone);
+
+			// Approximation simple : entrer dans la zone du sas final = avoir
+			// franchi porte_sortie. La boussole bascule alors sur PorteRonde.
+			if (GameState.Instance != null)
+				GameState.Instance.PorteSortieFranchie = true;
 		}
 	}
 

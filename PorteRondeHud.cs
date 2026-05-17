@@ -8,7 +8,9 @@ public partial class PorteRondeHud : CanvasLayer
 	[Export] public NodePath TriggerPath;     // Vers le Area3DTP qui porte le script PorteRondeTP
 	[Export] public NodePath LabelPath;       // Label à afficher
 
-	[Export] public string TextePrompt = "🔘 Appuie pour passer";
+	// Vide par défaut : doublon avec le libellé du SurvolHud ("Franchir la porte").
+	// Conservé en export pour pouvoir réactiver une phrase spécifique si besoin.
+	[Export] public string TextePrompt = "";
 	[Export] public bool VisibleSeulementDansZone = true;
 
 	private PorteRondeTP trigger;

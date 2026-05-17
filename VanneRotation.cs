@@ -128,7 +128,10 @@ public partial class VanneRotation : Node3D
 		if (SonRotationPath != null && !SonRotationPath.IsEmpty)
 			sonRotation = GetNodeOrNull<AudioStreamPlayer3D>(SonRotationPath);
 
-		GameState.Instance?.RegistrerAncreSalle(SalleIdAValider, this);
+		GameState.Instance?.RegistrerCentreSalle(SalleIdAValider, this);
+
+		AddToGroup("interactif");
+		SetMeta("libelle_interaction", "Tourner la vanne (Z Q S D)");
 	}
 
 	public override void _Process(double delta)

@@ -26,6 +26,14 @@ public partial class GameState : Node
 	public ResultatPartie DernierResultat = ResultatPartie.Aucun;
 	public float DernierTempsEcoule = 0f;
 
+	// Étapes de fin de partie pour la boussole (post-6-salles).
+	// PorteSortieFranchie : true quand le joueur a passé la porte_sortie
+	//   (détecté par l'entrée dans la zone PorteRondeTP).
+	// SortieFinaleAtteinte : true quand JoueurEntreeBT01 a été émis
+	//   (téléportation effectuée vers le BT-01).
+	public bool PorteSortieFranchie { get; set; } = false;
+	public bool SortieFinaleAtteinte { get; set; } = false;
+
 	// Référence au chrono courant : injectée par PartieManager au démarrage de la
 	// partie. Permet à MarquerSalleVisitee de capter l'elapsed sans coupler les
 	// callsites de puzzle au timer.
@@ -35,10 +43,17 @@ public partial class GameState : Node
 	public HashSet<string> PortesDeverrouilles = new HashSet<string>();
 	public HashSet<string> SallesVisitees = new HashSet<string>();
 
-	// Position 3D de chaque salle, indexée par son id ("salle_1", ...).
-	// Rempli par chaque puzzle dans _Ready via RegistrerAncreSalle.
-	// Utilisé par BoussoleHud pour pointer la salle non-validée la plus proche.
+	// Ancres "cible" de la boussole, rempli par les Portes uniquement.
+	// La boussole pointe vers ces nœuds (= portes menant aux salles à valider).
+	// Si une salle n'a pas de porte associée (ex: salle_1 dans le hub), pas
+	// de flèche pour cette salle — c'est volontaire (pas de spoil).
 	public Dictionary<string, Node3D> AncresSalles = new Dictionary<string, Node3D>();
+
+	// Centres de salle (= position des puzzles), rempli par les puzzles eux-mêmes.
+	// Sert UNIQUEMENT à la détection de proximité : si le joueur est près d'un
+	// puzzle, il est dans la salle correspondante → la boussole se masque pour
+	// ne pas donner la solution.
+	public Dictionary<string, Node3D> CentresSalles = new Dictionary<string, Node3D>();
 
 	// Chrono des validations : ordre + temps écoulé à la validation de chaque salle.
 	// L'ordre suit la séquence réelle de résolution des puzzles (utile pour calculer
@@ -72,18 +87,30 @@ public partial class GameState : Node
 	{
 		Instance = this;
 		InputBindings.EnregistrerActionsParDefaut();
+		RemapJeu.Charger(); // écrase les défauts par les overrides utilisateur
 		ParametresJeu.Charger();
 	}
 
 	/// <summary>
-	/// Enregistre la position 3D d'une salle (typiquement appelé par le puzzle
-	/// principal de la salle dans _Ready). Idempotent : un même salleId écrase
-	/// l'ancien (cas du reset de scène).
+	/// Enregistre la CIBLE de boussole d'une salle — typiquement la porte qui
+	/// y mène. Appelé par Porte._Ready. La boussole pointera vers cette ancre
+	/// tant que la salle n'est pas validée.
 	/// </summary>
 	public void RegistrerAncreSalle(string salleId, Node3D ancre)
 	{
 		if (string.IsNullOrEmpty(salleId) || ancre == null) return;
 		AncresSalles[salleId] = ancre;
+	}
+
+	/// <summary>
+	/// Enregistre le CENTRE physique d'une salle (typiquement le puzzle principal).
+	/// Appelé par les puzzles dans _Ready. Utilisé uniquement par BoussoleHud
+	/// pour le masquage de proximité — JAMAIS comme cible de flèche.
+	/// </summary>
+	public void RegistrerCentreSalle(string salleId, Node3D centre)
+	{
+		if (string.IsNullOrEmpty(salleId) || centre == null) return;
+		CentresSalles[salleId] = centre;
 	}
 
 	public void NotifyRfidScan(string uid)
@@ -117,6 +144,7 @@ public partial class GameState : Node
 
 	public void NotifierEntreeBT01()
 	{
+		SortieFinaleAtteinte = true;
 		EmitSignal(SignalName.JoueurEntreeBT01);
 	}
 
@@ -167,9 +195,12 @@ public partial class GameState : Node
 		OrdreSallesValidees.Clear();
 		TempsValidationParSalle.Clear();
 		AncresSalles.Clear();
+		CentresSalles.Clear();
 		rfidQueue.Clear();
 		DernierResultat = ResultatPartie.Aucun;
 		DernierTempsEcoule = 0f;
+		PorteSortieFranchie = false;
+		SortieFinaleAtteinte = false;
 		// Timer non remis à null : la nouvelle scène de jeu réinjectera la référence
 		// via PartieManager._Ready(). Conserver l'ancienne ne sert à rien mais ne
 		// nuit pas (elle sera écrasée).

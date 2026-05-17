@@ -14,8 +14,17 @@ public abstract partial class BasePuzzleHud : CanvasLayer
 	[Export] public NodePath MessageLabelPath;
 	[Export] public bool VisibleSeulementDansZone = true;
 
+	// Compteur global de HUDs actifs (= joueur dans la zone d'un puzzle).
+	// Lu par SurvolHud pour masquer son label texte quand un puzzle HUD
+	// affiche déjà l'info détaillée — évite la redondance.
+	// Le réticule + le glow 3D du SurvolHud restent, eux, toujours utiles.
+	public static int NbHudsActifs { get; private set; } = 0;
+
 	protected Label messageLabel;
 	private float messageTimer = 0f;
+	// Garde si ce HUD a déjà compté son "entrée zone" — évite les doubles
+	// décréments en cas de signaux redondants ou d'exit-tree.
+	private bool compteCommeActif = false;
 
 	public override void _Ready()
 	{
@@ -52,10 +61,31 @@ public abstract partial class BasePuzzleHud : CanvasLayer
 	protected virtual void OnJoueurEntreZone()
 	{
 		if (VisibleSeulementDansZone) Visible = true;
+		if (!compteCommeActif)
+		{
+			compteCommeActif = true;
+			NbHudsActifs++;
+		}
 	}
 
 	protected virtual void OnJoueurSortZone()
 	{
 		if (VisibleSeulementDansZone) Visible = false;
+		if (compteCommeActif)
+		{
+			compteCommeActif = false;
+			NbHudsActifs = Mathf.Max(0, NbHudsActifs - 1);
+		}
+	}
+
+	public override void _ExitTree()
+	{
+		// Filet de sécurité : si on change de scène alors que le joueur est
+		// encore dans une zone, le décrément n'aurait jamais lieu.
+		if (compteCommeActif)
+		{
+			compteCommeActif = false;
+			NbHudsActifs = Mathf.Max(0, NbHudsActifs - 1);
+		}
 	}
 }

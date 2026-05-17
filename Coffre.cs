@@ -90,7 +90,10 @@ public partial class Coffre : Node3D
 		if (SonOuverturePath != null && !SonOuverturePath.IsEmpty)
 			sonOuverture = GetNodeOrNull<AudioStreamPlayer3D>(SonOuverturePath);
 
-		GameState.Instance?.RegistrerAncreSalle(SalleIdAValider, this);
+		GameState.Instance?.RegistrerCentreSalle(SalleIdAValider, this);
+
+		AddToGroup("interactif");
+		SetMeta("libelle_interaction", "Molette ← / →  ·  Entrée pour valider");
 	}
 
 	public override void _Process(double delta)

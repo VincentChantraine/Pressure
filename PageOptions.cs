@@ -117,6 +117,10 @@ public partial class PageOptions : Control
         hboxBtn.AddThemeConstantOverride("separation", 12);
         hboxBtn.Alignment = BoxContainer.AlignmentMode.Center;
 
+        var btnRemap = CreerBouton("REMAP TOUCHES");
+        btnRemap.Pressed += OnRemapPressed;
+        hboxBtn.AddChild(btnRemap);
+
         var btnAppliquer = CreerBouton("APPLIQUER");
         btnAppliquer.Pressed += OnAppliquerPressed;
         hboxBtn.AddChild(btnAppliquer);
@@ -128,6 +132,18 @@ public partial class PageOptions : Control
         vbox.AddChild(hboxBtn);
 
         btnAppliquer.GrabFocus();
+    }
+
+    // Page de remap ouverte par-dessus celle-ci : on garde la ref pour bloquer
+    // la fermeture d'Options tant que Remap est ouverte (Échap retombe sur elle).
+    private PageRemap pageRemapOuverte;
+
+    private void OnRemapPressed()
+    {
+        if (pageRemapOuverte != null) return;
+        pageRemapOuverte = new PageRemap();
+        AddChild(pageRemapOuverte);
+        pageRemapOuverte.Ferme += () => { pageRemapOuverte = null; };
     }
 
     public override void _UnhandledInput(InputEvent @event)

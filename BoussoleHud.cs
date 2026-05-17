@@ -18,6 +18,25 @@ public partial class BoussoleHud : Control
 	// on masque la flèche — inutile de désigner un objet déjà visible et proche.
 	[Export] public float DistanceMasquage = 5f;
 
+	// Si le joueur est dans un rayon de RayonSalle mètres autour du centre
+	// d'une salle (= la position du puzzle), il est considéré "dans la salle"
+	// et la boussole se masque entièrement. Évite de pointer vers le puzzle
+	// quand on y est déjà (= éviter de donner la solution).
+	// À ajuster selon la taille moyenne d'une salle dans node_3d.tscn.
+	// 18m = couvre largement une salle moyenne ; baisser si ça déborde
+	// trop sur le hub, monter si la boussole reste visible une fois dedans.
+	[Export] public float RayonSalle = 18f;
+
+	// Ordre IMPOSÉ des salles : la boussole pointe vers la première non-validée
+	// dans cette liste (et non la plus proche). Reflète le parcours scénarisé
+	// (les prérequis SallePrerequise des portes imposent : 1 → 3 → 4 → 5 → 2 → 6).
+	// Modifiable dans l'inspecteur si l'ordre éditorial change.
+	[Export] public string[] OrdreSalles = new[]
+	{
+		"salle_1", "salle_3", "salle_4",
+		"salle_5", "salle_2", "salle_6",
+	};
+
 	private Camera3D camera;
 	private Label labelDistance;
 
@@ -47,13 +66,20 @@ public partial class BoussoleHud : Control
 	{
 		if (!ParametresJeu.AfficherBoussole) { labelDistance.Visible = false; return; }
 		if (GameState.Instance == null)      { labelDistance.Visible = false; return; }
+		// Masquée hors du hub : éviter de pointer vers le puzzle quand on est
+		// déjà dans la salle (ça donnerait directement la solution).
+		if (!HubZone.JoueurDansHub)          { labelDistance.Visible = false; return; }
 
 		// Récupère la caméra active (peut changer : labyrinthe top-down, fin de partie).
 		var viewport = GetViewport();
 		camera = viewport?.GetCamera3D();
 		if (camera == null) { labelDistance.Visible = false; return; }
 
-		Node3D ancre = TrouverAncrePlusProche(camera.GlobalPosition);
+		// Auto-hide quand le joueur est près d'un puzzle (= il est dans une salle).
+		// Indépendant de HubZone — fonctionne sans setup éditeur.
+		if (JoueurDansUneSalle(camera.GlobalPosition)) { labelDistance.Visible = false; return; }
+
+		Node3D ancre = TrouverProchaineAncre();
 		if (ancre == null) { labelDistance.Visible = false; return; }
 
 		Vector3 vers = ancre.GlobalPosition - camera.GlobalPosition;
@@ -90,22 +116,59 @@ public partial class BoussoleHud : Control
 		labelDistance.Position = pointe + new Vector2(-size.X * 0.5f, TailleFleche * 0.6f);
 	}
 
-	private Node3D TrouverAncrePlusProche(Vector3 depuis)
+	private bool JoueurDansUneSalle(Vector3 posJoueur)
 	{
-		Node3D meilleur = null;
-		float meilleurD2 = float.MaxValue;
-		foreach (var (id, ancre) in GameState.Instance.AncresSalles)
+		// Si le joueur est à moins de RayonSalle mètres d'un centre de salle
+		// (= position d'un puzzle), il est considéré "dans la salle".
+		float r2 = RayonSalle * RayonSalle;
+		foreach (var (_, centre) in GameState.Instance.CentresSalles)
 		{
-			if (ancre == null || !IsInstanceValid(ancre)) continue;
-			if (GameState.Instance.SallesVisitees.Contains(id)) continue;
-			float d2 = depuis.DistanceSquaredTo(ancre.GlobalPosition);
-			if (d2 < meilleurD2)
-			{
-				meilleurD2 = d2;
-				meilleur = ancre;
-			}
+			if (centre == null || !IsInstanceValid(centre)) continue;
+			if (posJoueur.DistanceSquaredTo(centre.GlobalPosition) <= r2)
+				return true;
 		}
-		return meilleur;
+		return false;
+	}
+
+	private Node3D TrouverProchaineAncre()
+	{
+		var gs = GameState.Instance;
+
+		// Phase 1 — salles non-validées : la cible suit OrdreSalles, qui reflète
+		// le parcours scénarisé imposé par les SallePrerequise des portes.
+		if (gs.SallesVisitees.Count < 6)
+		{
+			foreach (var id in OrdreSalles)
+			{
+				if (gs.SallesVisitees.Contains(id)) continue;
+				if (!gs.AncresSalles.TryGetValue(id, out var ancre)) continue;
+				if (ancre == null || !IsInstanceValid(ancre)) continue;
+				return ancre;
+			}
+			return null;
+		}
+
+		// Phase 2 — toutes les salles sont validées : on guide vers la porte
+		// de sortie tant que le joueur ne l'a pas franchie.
+		if (!gs.PorteSortieFranchie
+			&& gs.AncresSalles.TryGetValue("exit_door", out var porteSortie)
+			&& porteSortie != null && IsInstanceValid(porteSortie))
+		{
+			return porteSortie;
+		}
+
+		// Phase 3 — porte_sortie franchie : on guide vers la PorteRonde
+		// (sas final → téléportation BT-01).
+		if (!gs.SortieFinaleAtteinte
+			&& gs.AncresSalles.TryGetValue("exit_teleport", out var porteRonde)
+			&& porteRonde != null && IsInstanceValid(porteRonde))
+		{
+			return porteRonde;
+		}
+
+		// Phase 4 — téléportation effectuée : boussole inutile, l'écran de
+		// commandes BT-01 prend le relais.
+		return null;
 	}
 
 	private void DessinerFleche(Vector2 centre, Vector2 pointe, float angle)

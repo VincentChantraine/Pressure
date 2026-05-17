@@ -946,33 +946,6 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("14_ars1g")
 
-[node name="Label3DSalle1" type="Label3D" parent="Node3D salle 1_2/Salle1" unique_id=882435970]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.9999986, 12.20955, 29.5)
-text = "Pour la salle 3
-éclairer les murs"
-font_size = 64
-
-[node name="Blank Picture Frame" parent="Node3D salle 1_2/Salle1" unique_id=1945314872 instance=ExtResource("64_b2564")]
-transform = Transform3D(-2.1855695e-07, 0.46185297, -4.9786234, 0, 4.9786234, 0.46185297, 5, 2.0188233e-08, -2.1762254e-07, 0.9309884, 1.861, 17)
-
-[node name="Blank Picture Frame2" parent="Node3D salle 1_2/Salle1" unique_id=567034523 instance=ExtResource("64_b2564")]
-transform = Transform3D(-1.7484555e-07, -0.36948237, 3.9828987, 0, 3.9828987, 0.36948237, -4, 1.6150587e-08, -1.7409803e-07, 9.9025, 1.861, 18.232)
-
-[node name="Armoire" parent="Node3D salle 1_2/Salle1" unique_id=1405751263 instance=ExtResource("48_a41ck")]
-transform = Transform3D(-8.742278e-08, 0, -2, 0, 2, 0, 2, 0, -8.742278e-08, 9.254, -2.882, 24.699)
-
-[node name="Armoire2" parent="Node3D salle 1_2/Salle1" unique_id=752273278 instance=ExtResource("48_a41ck")]
-transform = Transform3D(-8.742278e-08, 0, 2, 0, 2, 0, -2, 0, -8.742278e-08, 0.683, -2.882, 24.699)
-
-[node name="Arrow" parent="Node3D salle 1_2/Salle1" unique_id=439633708 instance=ExtResource("26_j3e5s")]
-transform = Transform3D(-4.371139e-07, -10, 0, 10, -4.371139e-07, 0, 0, 0, 10, 5, 3.4925122, 29.593754)
-
-[node name="Wall Art 06" parent="Node3D salle 1_2/Salle1" unique_id=1433345208 instance=ExtResource("24_8jhw1")]
-transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 7.8458605, 2.5120509, 29.809769)
-
-[node name="Wall Art 07" parent="Node3D salle 1_2/Salle1" unique_id=1330341821 instance=ExtResource("24_8jhw1")]
-transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 2.237457, 2.5120509, 29.809769)
-
 [node name="Porte salle 1" type="Node3D" parent="Node3D salle 1_2/Salle1" unique_id=392638476]
 transform = Transform3D(-1, -3.82137e-15, -7.1054274e-15, 3.821371e-15, -1, -8.742278e-08, -7.1054274e-15, -8.742278e-08, 1, 4.45, -1, 10)
 script = ExtResource("3_a0tk4")
@@ -1082,6 +1055,33 @@ offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 64
+
+[node name="Label3DSalle1" type="Label3D" parent="Node3D salle 1_2/Salle1" unique_id=882435970]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.9999986, 12.20955, 29.5)
+text = "Pour la salle 3
+éclairer les murs"
+font_size = 64
+
+[node name="Blank Picture Frame" parent="Node3D salle 1_2/Salle1" unique_id=1945314872 instance=ExtResource("64_b2564")]
+transform = Transform3D(-2.1855695e-07, 0.46185297, -4.9786234, 0, 4.9786234, 0.46185297, 5, 2.0188233e-08, -2.1762254e-07, 0.9309884, 1.861, 17)
+
+[node name="Blank Picture Frame2" parent="Node3D salle 1_2/Salle1" unique_id=567034523 instance=ExtResource("64_b2564")]
+transform = Transform3D(-1.7484555e-07, -0.36948237, 3.9828987, 0, 3.9828987, 0.36948237, -4, 1.6150587e-08, -1.7409803e-07, 9.9025, 1.861, 18.232)
+
+[node name="Armoire" parent="Node3D salle 1_2/Salle1" unique_id=1405751263 instance=ExtResource("48_a41ck")]
+transform = Transform3D(-8.742278e-08, 0, -2, 0, 2, 0, 2, 0, -8.742278e-08, 9.254, -2.882, 24.699)
+
+[node name="Armoire2" parent="Node3D salle 1_2/Salle1" unique_id=752273278 instance=ExtResource("48_a41ck")]
+transform = Transform3D(-8.742278e-08, 0, 2, 0, 2, 0, -2, 0, -8.742278e-08, 0.683, -2.882, 24.699)
+
+[node name="Arrow" parent="Node3D salle 1_2/Salle1" unique_id=439633708 instance=ExtResource("26_j3e5s")]
+transform = Transform3D(-4.371139e-07, -10, 0, 10, -4.371139e-07, 0, 0, 0, 10, 5, 3.4925122, 29.593754)
+
+[node name="Wall Art 06" parent="Node3D salle 1_2/Salle1" unique_id=1433345208 instance=ExtResource("24_8jhw1")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 7.8458605, 2.5120509, 29.809769)
+
+[node name="Wall Art 07" parent="Node3D salle 1_2/Salle1" unique_id=1330341821 instance=ExtResource("24_8jhw1")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 2.237457, 2.5120509, 29.809769)
 
 [node name="MurRust1" type="StaticBody3D" parent="Node3D salle 1_2/Salle1" unique_id=309657822]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 12, 26.5)

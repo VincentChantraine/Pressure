@@ -77,6 +77,13 @@ public partial class PartieManager : Node
 		var canvasBoussole = new CanvasLayer { Layer = 35 };
 		AddChild(canvasBoussole);
 		canvasBoussole.AddChild(new BoussoleHud());
+
+		// Survol 3D : raycast depuis la caméra → glow sur les nœuds du groupe
+		// "interactif" + libellé contextuel via SurvolHud (réticule + prompt).
+		AddChild(new Survol3D());
+		var canvasSurvol = new CanvasLayer { Layer = 36 };
+		AddChild(canvasSurvol);
+		canvasSurvol.AddChild(new SurvolHud());
 	}
 
 	private void OnSalleValidee(string salleId)

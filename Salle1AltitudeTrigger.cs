@@ -37,10 +37,11 @@ public partial class Salle1AltitudeTrigger : Node3D
 		if (forme == null || forme.Shape == null)
 			GD.PushWarning($"[Salle1AltitudeTrigger] {Name} : forme/shape introuvable via FormePath.");
 
-		// L'ancre pointée par la boussole est la zone aérienne (forme) si dispo,
-		// sinon le trigger lui-même. La forme reflète mieux le "but" visuellement.
-		Node3D ancre = forme != null ? (Node3D)forme : this;
-		GameState.Instance?.RegistrerAncreSalle(SalleId, ancre);
+		// Centre boussole (proximité-only) : la zone aérienne si dispo,
+		// sinon le trigger lui-même. JAMAIS cible de flèche — salle_1 n'a
+		// pas de porte associée, le joueur explore le hub pour la trouver.
+		Node3D centre = forme != null ? (Node3D)forme : this;
+		GameState.Instance?.RegistrerCentreSalle(SalleId, centre);
 	}
 
 	public override void _Process(double delta)

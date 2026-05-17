@@ -121,7 +121,10 @@ public partial class LevierSequence : Node3D
 		if (SonAmbiant2Path != null && !SonAmbiant2Path.IsEmpty)
 			sonAmbiant2 = GetNodeOrNull<AudioStreamPlayer3D>(SonAmbiant2Path);
 
-		GameState.Instance?.RegistrerAncreSalle(SalleIdAValider, this);
+		GameState.Instance?.RegistrerCentreSalle(SalleIdAValider, this);
+
+		AddToGroup("interactif");
+		SetMeta("libelle_interaction", "Actionner le levier (A / E)");
 	}
 
 	public override void _Process(double delta)

@@ -82,6 +82,9 @@ public partial class LightSwitch : Node3D
 		// État initial.
 		allumee = AllumeAuDemarrage;
 		AppliquerEtat();
+
+		AddToGroup("interactif");
+		SetMeta("libelle_interaction", "Interrupteur");
 	}
 
 	private void OnBodyEntered(Node3D body)

@@ -117,10 +117,10 @@ public partial class LabyrintheBille : Node3D
 			zoneActivation.BodyExited  += OnJoueurSort;
 		}
 
-		// Ancre boussole : la zone d'activation est ce qu'il faut atteindre,
-		// sinon le labyrinthe lui-même.
-		Node3D ancre = zoneActivation != null ? (Node3D)zoneActivation : this;
-		GameState.Instance?.RegistrerAncreSalle(SalleIdAValider, ancre);
+		// Centre boussole (proximité-only, jamais cible de flèche) : la zone
+		// d'activation marque le cœur de la salle, sinon le labyrinthe lui-même.
+		Node3D centre = zoneActivation != null ? (Node3D)zoneActivation : this;
+		GameState.Instance?.RegistrerCentreSalle(SalleIdAValider, centre);
 
 		ResetBille();
 	}
