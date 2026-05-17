@@ -38,13 +38,9 @@ public partial class Node3d : Node3D
 	// Encodeur : accumulation des crans clavier à consommer
 	private int kbEncoderPending = 0;
 
-	// État précédent des touches à front montant (bouton encodeur)
-	private bool kbEncoderBtnPrev = false;
+	// Bouton encodeur clavier : levé à true pendant 1 frame quand "valider" est juste pressé,
+	// consommé via EncoderButtonJustPressed.
 	private bool kbEncoderBtnJustPressed = false;
-
-	// RFID clavier : front montant sur 1 et 2
-	private bool kbRfid1Prev = false;
-	private bool kbRfid2Prev = false;
 
 	// =========================
 	// ÉTAT CAPTEURS (inchangé)
@@ -81,6 +77,19 @@ public partial class Node3d : Node3D
 	private bool arduinoButtonPressed = false;
 	private int arduinoLightValue = ArduinoConfig.AnalogCenter;
 	private int arduinoUltraDistCm = -1;
+
+	// =========================
+	// BUFFER D'INTERACTION (pavé tactile / clics très brefs)
+	// =========================
+	// Sur un pavé tactile, un "tap" peut presser + relâcher dans la même
+	// frame Godot. IsActionPressed retourne alors false en _Process car
+	// l'action est déjà inactive. Les consommateurs (Porte, PorteRondeTP…)
+	// détectent un front montant via boutonPrecedent → ratent le tap.
+	// Solution : on capte IsActionJustPressed (qui voit le front même si
+	// release est dans la même frame) et on maintient isInteractPressed
+	// à true pendant quelques frames pour que le front montant soit vu.
+	private const int INTERACT_LATCH_FRAMES = 3;
+	private int interactLatchFrames = 0;
 
 	// =========================
 	// ENCODEUR (nouveau : exposé au Coffre)
@@ -185,13 +194,20 @@ public partial class Node3d : Node3D
 		if (UseKeyboardFallback)
 			AppliquerOverrideClavier((float)delta);
 
-		// --- 4. Interaction : bouton Arduino OU clic gauche souris ---
-		// NB : on lit arduinoButtonPressed (et PAS isButtonPressed) pour exclure le Shift clavier,
+		// --- 4. Interaction : bouton Arduino OU action "interagir" (clic gauche par défaut) ---
+		// NB : on lit arduinoButtonPressed (et PAS isButtonPressed) pour exclure le Sprint clavier,
 		// qui doit continuer à servir au sprint sans déclencher d'interaction.
-		// Pour réactiver Shift comme bouton d'interaction, décommente la ligne ci-dessous.
-		isInteractPressed = arduinoButtonPressed
-			// || Input.IsKeyPressed(Key.Shift)
-			|| Input.IsMouseButtonPressed(MouseButton.Left);
+		bool interactNow = arduinoButtonPressed
+			|| Input.IsActionPressed(InputBindings.Interagir);
+
+		// Latch trackpad : un tap très bref alimente le buffer pour que
+		// le front montant soit vu côté puzzles.
+		if (Input.IsActionJustPressed(InputBindings.Interagir))
+			interactLatchFrames = INTERACT_LATCH_FRAMES;
+		else if (interactLatchFrames > 0 && !interactNow)
+			interactLatchFrames--;
+
+		isInteractPressed = interactNow || interactLatchFrames > 0;
 	}
 
 	private void LireArduino()
@@ -294,84 +310,67 @@ public partial class Node3d : Node3D
 
 	private void AppliquerOverrideClavier(float delta)
 	{
-		// --- Joystick X (Q/D) ---
-		bool q = Input.IsKeyPressed(Key.Q);
-		bool d = Input.IsKeyPressed(Key.D);
-		if (q && !d) joystickX = ArduinoConfig.AnalogCenter - KB_AXIS_AMPLITUDE;
-		else if (d && !q) joystickX = ArduinoConfig.AnalogCenter + KB_AXIS_AMPLITUDE;
+		// --- Joystick X (gauche / droite) ---
+		bool gauche = Input.IsActionPressed(InputBindings.Gauche);
+		bool droite = Input.IsActionPressed(InputBindings.Droite);
+		if (gauche && !droite) joystickX = ArduinoConfig.AnalogCenter - KB_AXIS_AMPLITUDE;
+		else if (droite && !gauche) joystickX = ArduinoConfig.AnalogCenter + KB_AXIS_AMPLITUDE;
 		// sinon : on garde la valeur Arduino déjà copiée
 
-		// --- Joystick Y (Z/S) ---
-		// Convention : Z = avant = Y bas (car le code fait inputZ = rawY/512 et dir.Z négatif = avant en Godot)
-		// Dans ton Player.cs, inputZ positif = avancer ? À vérifier. On suit la convention du joystick physique :
-		// joystickY > 512 = on pousse dans un sens, < 512 = l'autre. Tu ajusteras si c'est inversé avec `InvertSlider`-style.
-		bool z = Input.IsKeyPressed(Key.Z);
-		bool s = Input.IsKeyPressed(Key.S);
-		if (z && !s) joystickY = ArduinoConfig.AnalogCenter - KB_AXIS_AMPLITUDE;
-		else if (s && !z) joystickY = ArduinoConfig.AnalogCenter + KB_AXIS_AMPLITUDE;
+		// --- Joystick Y (avancer / reculer) ---
+		// Convention : avancer = Y bas (car le code fait inputZ = rawY/512 et dir.Z négatif = avant en Godot)
+		bool avancer = Input.IsActionPressed(InputBindings.Avancer);
+		bool reculer = Input.IsActionPressed(InputBindings.Reculer);
+		if (avancer && !reculer) joystickY = ArduinoConfig.AnalogCenter - KB_AXIS_AMPLITUDE;
+		else if (reculer && !avancer) joystickY = ArduinoConfig.AnalogCenter + KB_AXIS_AMPLITUDE;
 
-		// --- Slider rotation caméra (A/E) ---
-		//bool a = Input.IsKeyPressed(Key.A);
-		//bool e = Input.IsKeyPressed(Key.E);
-		//if (a && !e) sliderValue = 512 - KB_AXIS_AMPLITUDE;
-		//else if (e && !a) sliderValue = 512 + KB_AXIS_AMPLITUDE;
+		// --- Slider (rotation Q/E) ---
+		bool rotG = Input.IsActionPressed(InputBindings.RotationGauche);
+		bool rotD = Input.IsActionPressed(InputBindings.RotationDroite);
+		if (rotG && !rotD) sliderValue = ArduinoConfig.AnalogMin;       // butée gauche franche
+		else if (rotD && !rotG) sliderValue = ArduinoConfig.AnalogMax;  // butée droite franche
 
-		// --- Slider (A/E) ---
-		bool a = Input.IsKeyPressed(Key.A);
-		bool e = Input.IsKeyPressed(Key.E);
-		if (a && !e) sliderValue = ArduinoConfig.AnalogMin;       // butée gauche franche
-		else if (e && !a) sliderValue = ArduinoConfig.AnalogMax; // butée droite franche
-
-		// --- Bouton joystick (Shift) = sprint / interaction porte ---
-		// OR logique : si Shift OU bouton Arduino pressé
-		if (Input.IsKeyPressed(Key.Shift))
+		// --- Sprint (Shift) = bouton joystick Arduino côté clavier ---
+		if (Input.IsActionPressed(InputBindings.Sprint))
 			isButtonPressed = true;
 
-		// --- LDR : capteur couvert = lampe max ---
-		// Ancienne touche (L) désactivée temporairement, décommenter pour réactiver :
-		// if (Input.IsKeyPressed(Key.L))
-		//     lightValue = 100;
-		if (Input.IsMouseButtonPressed(MouseButton.Right))
+		// --- Lampe torche (clic droit MAINTENU) : capteur LDR simulé "couvert" ---
+		// Mode transitoire — sera transformé en toggle on/off en phase polish.
+		if (Input.IsActionPressed(InputBindings.LampeTorche))
 			lightValue = 100; // sous LdrMin (150) → InverseLerp clampé à 0 → lampe max
 
-		// --- Ultrason (Espace) : main au-dessus du capteur ---
-		if (Input.IsKeyPressed(Key.Space))
+		// --- Lift (Espace MAINTENU) : main au-dessus du capteur ultrason ---
+		if (Input.IsActionPressed(InputBindings.Lift))
 			ultraDistCm = 10; // valeur arbitraire > 0, dans la plage utile
 
-		// --- Encodeur (flèches ← →) ---
+		// --- Encodeur (← / →) avec cooldown pour éviter le spam ---
 		kbEncoderTimer -= delta;
 		if (kbEncoderTimer <= 0f)
 		{
-			if (Input.IsKeyPressed(Key.Left))
+			if (Input.IsActionPressed(InputBindings.EncodeurGauche))
 			{
 				kbEncoderPending -= 1;
 				kbEncoderTimer = KeyboardEncoderCooldown;
 			}
-			else if (Input.IsKeyPressed(Key.Right))
+			else if (Input.IsActionPressed(InputBindings.EncodeurDroite))
 			{
 				kbEncoderPending += 1;
 				kbEncoderTimer = KeyboardEncoderCooldown;
 			}
 		}
 
-		// --- Bouton encodeur (Entrée) — front montant clavier ---
-		bool enterNow = Input.IsKeyPressed(Key.Enter);
-		if (enterNow && !kbEncoderBtnPrev)
+		// --- Bouton encodeur (Entrée) — front montant géré par Godot ---
+		if (Input.IsActionJustPressed(InputBindings.Valider))
 			kbEncoderBtnJustPressed = true;
-		kbEncoderBtnPrev = enterNow;
 
-		// --- RFID (1 et 2) — front montant uniquement ---
+		// --- RFID (1 et 2) — front montant ---
 		// On envoie les VRAIS UIDs hardcodés dans GameState pour que
 		// EstBadge1()/EstBadge2() matchent en mode clavier.
-		bool k1Now = Input.IsKeyPressed(Key.Key1);
-		if (k1Now && !kbRfid1Prev && GameState.Instance != null)
+		if (Input.IsActionJustPressed(InputBindings.Badge1) && GameState.Instance != null)
 			GameState.Instance.NotifyRfidScan(GameState.BADGE_1_UID);
-		kbRfid1Prev = k1Now;
 
-		bool k2Now = Input.IsKeyPressed(Key.Key2);
-		if (k2Now && !kbRfid2Prev && GameState.Instance != null)
+		if (Input.IsActionJustPressed(InputBindings.Badge2) && GameState.Instance != null)
 			GameState.Instance.NotifyRfidScan(GameState.BADGE_2_UID);
-		kbRfid2Prev = k2Now;
 	}
 
 	public void SendServoSpeed(int speedSigned)

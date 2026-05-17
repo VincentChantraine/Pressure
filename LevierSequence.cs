@@ -120,6 +120,8 @@ public partial class LevierSequence : Node3D
 			sonAmbiant1 = GetNodeOrNull<AudioStreamPlayer3D>(SonAmbiant1Path);
 		if (SonAmbiant2Path != null && !SonAmbiant2Path.IsEmpty)
 			sonAmbiant2 = GetNodeOrNull<AudioStreamPlayer3D>(SonAmbiant2Path);
+
+		GameState.Instance?.RegistrerAncreSalle(SalleIdAValider, this);
 	}
 
 	public override void _Process(double delta)

@@ -71,8 +71,21 @@ public partial class ServoGameTimer : Node
 		alarmeActive = true;
 	}
 
-	public void Pause()   { enPause = true; }
-	public void Reprend() { enPause = false; }
+	public void Pause()
+	{
+		enPause = true;
+		// Suspend aussi le son tic-tac sans le couper (StreamPaused garde la position
+		// de lecture) — pratique pour reprendre exactement où on s'était arrêté.
+		if (sonTicTac is AudioStreamPlayer asp) asp.StreamPaused = true;
+		else if (sonTicTac is AudioStreamPlayer3D asp3) asp3.StreamPaused = true;
+	}
+
+	public void Reprend()
+	{
+		enPause = false;
+		if (sonTicTac is AudioStreamPlayer asp) asp.StreamPaused = false;
+		else if (sonTicTac is AudioStreamPlayer3D asp3) asp3.StreamPaused = false;
+	}
 
 	public void Reset()
 	{

@@ -1,5 +1,7 @@
 # Pressure
 
+Escape-room en 3D (Godot 4 .NET / C#). Six salles à valider en 5 minutes avant que la pression vous écrase.
+
 ## Prérequis
 
 - [Godot 4 .NET](https://godotengine.org/download/) — version **"Godot Engine – .NET"**
@@ -11,27 +13,8 @@
 2. Ouvrir Godot → **Import** → sélectionner le dossier du projet
 3. Lancer le projet
 
----
+## Contrôles
 
-## Contrôles (clavier + souris)
+Tous les contrôles sont consultables depuis le menu principal → **COMMANDES**. Les paramètres (volume, sensibilité souris, FOV, vitesse de rotation, inversion d'axes) se règlent depuis **OPTIONS** et sont persistés dans `user://parametres.cfg`.
 
-| Touche        | Effet                          |
-|---------------|--------------------------------|
-| Z / S / Q / D | Se déplacer                    |
-| Souris        | Regarder autour                |
-| Shift         | Sprinter                       |
-| Clic gauche   | Interagir                      |
-| Échap         | Libérer / recapturer la souris |
-
-### Touches de puzzle
-
-Ces touches simulent les capteurs physiques de la boîte Arduino.
-
-| Touche     | Capteur simulé   |
-|------------|------------------|
-| A / E      | Slider           |
-| ← / →      | Encodeur rotatif |
-| Entrée     | Bouton encodeur  |
-| Espace     | Capteur ultrason |
-| Clic droit | Capteur lumière  |
-| 1 / 2      | Badge RFID       |
+En jeu, **Échap** ouvre le menu pause.

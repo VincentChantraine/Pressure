@@ -2570,7 +2570,7 @@ material_override = ExtResource("37_3s0n5")
 mesh = SubResource("BoxMesh_a0tk4")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 5_6/Salle5/Porte salle 5/Pivot" unique_id=664693973]
-transform = Transform3D(1, 0, 0, 0, 1, -3.469447e-16, 0, -3.469447e-16, 1, -1, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, -3.469447e-16, 0, -3.469447e-16, 1, 1, 0, 0)
 shape = SubResource("BoxShape3D_jka67")
 
 [node name="ZoneInteraction" type="Area3D" parent="Node3D salle 5_6/Salle5/Porte salle 5" unique_id=1845820922]

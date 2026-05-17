@@ -4,7 +4,8 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\chant\\\\Documents\\\\GitHub\\\\Pressure\\\\\" -Recurse -Name | head -50)",
       "Bash(ls -la \"C:\\\\Users\\\\chant\\\\Documents\\\\GitHub\\\\Pressure\\\\\" | head -30)",
       "Bash(dotnet build *)",
-      "Bash(command -v dotnet)"
+      "Bash(command -v dotnet)",
+      "PowerShell(dotnet build \"Arduino Test.csproj\" -nologo -clp:NoSummary -v:q)"
     ]
   }
 }

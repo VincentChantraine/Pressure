@@ -89,6 +89,8 @@ public partial class Coffre : Node3D
 			sonChiffreValide = GetNodeOrNull<AudioStreamPlayer3D>(SonChiffreValidePath);
 		if (SonOuverturePath != null && !SonOuverturePath.IsEmpty)
 			sonOuverture = GetNodeOrNull<AudioStreamPlayer3D>(SonOuverturePath);
+
+		GameState.Instance?.RegistrerAncreSalle(SalleIdAValider, this);
 	}
 
 	public override void _Process(double delta)

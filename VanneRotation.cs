@@ -127,6 +127,8 @@ public partial class VanneRotation : Node3D
 
 		if (SonRotationPath != null && !SonRotationPath.IsEmpty)
 			sonRotation = GetNodeOrNull<AudioStreamPlayer3D>(SonRotationPath);
+
+		GameState.Instance?.RegistrerAncreSalle(SalleIdAValider, this);
 	}
 
 	public override void _Process(double delta)

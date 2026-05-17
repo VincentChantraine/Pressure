@@ -45,6 +45,7 @@ public partial class Player : CharacterBody3D
 	[Export] public bool MouseLookEnabled = true;
 	[Export] public float MouseSensitivity = 0.0025f;   // rad / pixel
 	[Export] public bool InvertMouseY = false;
+	[Export] public bool InvertMouseX = false;
 	[Export] public float PitchMinDeg = -80f;
 	[Export] public float PitchMaxDeg = 80f;
 	[Export] public NodePath CameraPath;                // si vide → "Camera3D"
@@ -55,6 +56,30 @@ public partial class Player : CharacterBody3D
 	// Si vrai, le joueur ne peut plus bouger ni regarder autour.
 	// Utilisé pendant la séquence de fin (DepthBomb + fondu noir).
 	public bool Frozen { get; set; } = false;
+
+	// --- Screen shake (caméra) ---
+	// Décalage local appliqué à la caméra par-dessus sa position de base
+	// (laquelle peut être modifiée par le Lift). Stocké séparément pour
+	// pouvoir le composer sans corrompre liftTargetBasePos / Position.
+	private Vector3 shakeOffset = Vector3.Zero;
+	private float shakeAmplitude = 0f;
+	private float shakeDureeRestante = 0f;
+	private float shakeDureeTotale = 0f;
+	private Vector3 cameraBasePos;
+
+	/// <summary>
+	/// Déclenche un screen shake : la caméra tremble pendant `duree` secondes
+	/// avec une amplitude qui décroît linéairement.
+	/// </summary>
+	public void Trembler(float amplitude, float duree)
+	{
+		// Si un shake plus fort est en cours, on garde le plus impactant.
+		if (duree <= 0f || amplitude <= 0f) return;
+		if (amplitude * duree < shakeAmplitude * shakeDureeRestante) return;
+		shakeAmplitude = amplitude;
+		shakeDureeTotale = duree;
+		shakeDureeRestante = duree;
+	}
 
 	public override void _Ready()
 	{
@@ -83,8 +108,31 @@ public partial class Player : CharacterBody3D
 		if (cameraNode != null)
 			cameraPitch = cameraNode.Rotation.X;
 
+		// Surcharge les valeurs inspecteur par les paramètres utilisateur sauvegardés.
+		AppliquerParametres();
+		ParametresJeu.Changes += AppliquerParametres;
+
 		if (MouseLookEnabled)
 			Input.MouseMode = Input.MouseModeEnum.Captured;
+	}
+
+	private void AppliquerParametres()
+	{
+		MouseSensitivity = ParametresJeu.SensibiliteSouris;
+		InvertMouseY     = ParametresJeu.InvertY;
+		InvertMouseX     = ParametresJeu.InvertX;
+		RotationSpeed    = ParametresJeu.VitesseRotation;
+		Speed            = ParametresJeu.VitesseMarche;
+		SprintMultiplier = ParametresJeu.MultiplicateurSprint;
+		if (cameraNode != null)
+			cameraNode.Fov = ParametresJeu.FOV;
+	}
+
+	public override void _ExitTree()
+	{
+		// Désabonnement obligatoire : event statique → ParametresJeu garderait
+		// sinon une référence sur ce Player après destruction (fuite mémoire).
+		ParametresJeu.Changes -= AppliquerParametres;
 	}
 
 	public override void _Input(InputEvent @event)
@@ -96,7 +144,10 @@ public partial class Player : CharacterBody3D
 			&& Input.MouseMode == Input.MouseModeEnum.Captured)
 		{
 			// Yaw : on tourne le Player (additif avec le slider Arduino)
-			RotateY(-motion.Relative.X * MouseSensitivity);
+			// Signe négatif par défaut pour que "souris à droite" → "vue à droite".
+			float dx = -motion.Relative.X * MouseSensitivity;
+			if (InvertMouseX) dx = -dx;
+			RotateY(dx);
 
 			// Pitch : on tourne la caméra seule, clampé
 			if (cameraNode != null)
@@ -113,13 +164,8 @@ public partial class Player : CharacterBody3D
 			}
 		}
 
-		// Esc : libérer / re-capturer la souris (utile pour alt-tab)
-		if (@event is InputEventKey k && k.Pressed && !k.Echo && k.Keycode == Key.Escape)
-		{
-			Input.MouseMode = (Input.MouseMode == Input.MouseModeEnum.Captured)
-				? Input.MouseModeEnum.Visible
-				: Input.MouseModeEnum.Captured;
-		}
+		// Échap est désormais géré par PartieManager qui ouvre le menu pause
+		// (lequel libère la souris). On garde uniquement la recapture au clic.
 
 		// Clic dans la fenêtre quand la souris est libre → on recapture
 		if (@event is InputEventMouseButton mb && mb.Pressed
@@ -128,10 +174,9 @@ public partial class Player : CharacterBody3D
 			Input.MouseMode = Input.MouseModeEnum.Captured;
 		}
 
-		// Clic droit (press ET release) → son de lampe torche.
+		// Action "lampe_torche" (clic droit par défaut) → son de lampe torche.
 		// Joué seulement quand la souris est capturée (en jeu, pas en menu).
-		if (@event is InputEventMouseButton mbTorch
-			&& mbTorch.ButtonIndex == MouseButton.Right
+		if (@event.IsActionPressed(InputBindings.LampeTorche)
 			&& Input.MouseMode == Input.MouseModeEnum.Captured
 			&& flashlightPlayer != null)
 		{
@@ -141,6 +186,14 @@ public partial class Player : CharacterBody3D
  
 	public override void _PhysicsProcess(double delta)
 	{
+		// Annule le shake de la frame précédente avant d'appliquer la nouvelle logique
+		// (lift + recalcul du shake) : sinon le shake s'accumulerait à la position de base.
+		if (cameraNode != null && shakeOffset != Vector3.Zero)
+		{
+			cameraNode.Position -= shakeOffset;
+			shakeOffset = Vector3.Zero;
+		}
+
 		if (Frozen)
 		{
 			Vector3 v = Velocity;
@@ -217,8 +270,38 @@ public partial class Player : CharacterBody3D
  
 		Velocity = velocity;
 		MoveAndSlide();
+
+		// Met à jour le shake et applique l'offset à la caméra. À faire APRÈS
+		// MoveAndSlide pour rester au-dessus du lift / de la rotation de pitch.
+		AppliquerShake((float)delta);
 	}
- 
+
+	private void AppliquerShake(float delta)
+	{
+		if (cameraNode == null) return;
+		if (shakeDureeRestante <= 0f) return;
+
+		shakeDureeRestante -= delta;
+		if (shakeDureeRestante <= 0f)
+		{
+			shakeDureeRestante = 0f;
+			shakeAmplitude = 0f;
+			return;
+		}
+
+		// Décroissance linéaire de l'amplitude jusqu'à 0.
+		float t = shakeDureeRestante / shakeDureeTotale;
+		float amp = shakeAmplitude * t;
+
+		// Vecteur aléatoire dans une sphère unitaire, projeté sur le plan local
+		// de la caméra (X/Y) — pas de Z pour éviter le "near plane" qui clipperait.
+		shakeOffset = new Vector3(
+			(float)GD.RandRange(-1.0, 1.0) * amp,
+			(float)GD.RandRange(-1.0, 1.0) * amp,
+			0f);
+		cameraNode.Position += shakeOffset;
+	}
+
 	public void TeleporterA(Vector3 cible)
 	{
 		// Reset Velocity + lift : sinon la vélocité résiduelle ferait glisser le joueur

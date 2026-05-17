@@ -134,6 +134,8 @@ TempsLabelPath = NodePath("CenterContainer/Panneau/VBox/Stats/StatsBox/Temps")
 BoutonRejouerPath = NodePath("CenterContainer/Panneau/VBox/Boutons/BoutonRejouer")
 BoutonMenuPath = NodePath("CenterContainer/Panneau/VBox/Boutons/BoutonMenu")
 BoutonQuitterPath = NodePath("CenterContainer/Panneau/VBox/Boutons/BoutonQuitter")
+DetailsSallesPath = NodePath("CenterContainer/Panneau/VBox/DetailsSalles")
+RecordLabelPath = NodePath("CenterContainer/Panneau/VBox/Record")
 
 [node name="Fond" type="Panel" parent="." unique_id=2107276933]
 layout_mode = 1
@@ -257,6 +259,20 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 26
 text = "00:00"
+
+[node name="DetailsSalles" type="VBoxContainer" parent="CenterContainer/Panneau/VBox"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 6
+
+[node name="Record" type="Label" parent="CenterContainer/Panneau/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 0.85)
+theme_override_font_sizes/font_size = 18
+text = "Meilleur temps : —"
+horizontal_alignment = 1
 
 [node name="Espace" type="Control" parent="CenterContainer/Panneau/VBox" unique_id=171454430]
 custom_minimum_size = Vector2(0, 16)

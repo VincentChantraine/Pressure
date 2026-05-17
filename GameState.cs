@@ -26,9 +26,25 @@ public partial class GameState : Node
 	public ResultatPartie DernierResultat = ResultatPartie.Aucun;
 	public float DernierTempsEcoule = 0f;
 
+	// Référence au chrono courant : injectée par PartieManager au démarrage de la
+	// partie. Permet à MarquerSalleVisitee de capter l'elapsed sans coupler les
+	// callsites de puzzle au timer.
+	public ServoGameTimer Timer { get; set; }
+
 	// Suivi de progression
 	public HashSet<string> PortesDeverrouilles = new HashSet<string>();
 	public HashSet<string> SallesVisitees = new HashSet<string>();
+
+	// Position 3D de chaque salle, indexée par son id ("salle_1", ...).
+	// Rempli par chaque puzzle dans _Ready via RegistrerAncreSalle.
+	// Utilisé par BoussoleHud pour pointer la salle non-validée la plus proche.
+	public Dictionary<string, Node3D> AncresSalles = new Dictionary<string, Node3D>();
+
+	// Chrono des validations : ordre + temps écoulé à la validation de chaque salle.
+	// L'ordre suit la séquence réelle de résolution des puzzles (utile pour calculer
+	// la durée passée par salle dans EcranFin).
+	public List<string> OrdreSallesValidees = new List<string>();
+	public Dictionary<string, float> TempsValidationParSalle = new Dictionary<string, float>();
 
 	// File des scans RFID en attente de consommation.
 	// On utilise une file (FIFO) plutôt qu'un seul UID pour ne plus PERDRE
@@ -48,10 +64,26 @@ public partial class GameState : Node
 	[Signal] public delegate void PorteFinaleDebloqueeEventHandler();
 	[Signal] public delegate void PorteFinaleOuverteEventHandler();
 	[Signal] public delegate void JoueurEntreeBT01EventHandler();
+	// Émis à chaque salle nouvellement validée (premier appel par id).
+	// Sert au screen shake + flash blanc côté PartieManager.
+	[Signal] public delegate void SalleValideeEventHandler(string salleId);
 
 	public override void _EnterTree()
 	{
 		Instance = this;
+		InputBindings.EnregistrerActionsParDefaut();
+		ParametresJeu.Charger();
+	}
+
+	/// <summary>
+	/// Enregistre la position 3D d'une salle (typiquement appelé par le puzzle
+	/// principal de la salle dans _Ready). Idempotent : un même salleId écrase
+	/// l'ancien (cas du reset de scène).
+	/// </summary>
+	public void RegistrerAncreSalle(string salleId, Node3D ancre)
+	{
+		if (string.IsNullOrEmpty(salleId) || ancre == null) return;
+		AncresSalles[salleId] = ancre;
 	}
 
 	public void NotifyRfidScan(string uid)
@@ -99,7 +131,13 @@ public partial class GameState : Node
 	public void MarquerSalleVisitee(string salleId)
 	{
 		if (SallesVisitees.Add(salleId))
-			GD.Print($"[GameState] Salle {salleId} visitée. Total : {SallesVisitees.Count}/6");
+		{
+			float t = Timer != null ? Timer.GetElapsed() : 0f;
+			OrdreSallesValidees.Add(salleId);
+			TempsValidationParSalle[salleId] = t;
+			GD.Print($"[GameState] Salle {salleId} visitée à {t:F1}s. Total : {SallesVisitees.Count}/6");
+			EmitSignal(SignalName.SalleValidee, salleId);
+		}
 
 		if (SallesVisitees.Count >= 6)
 			EmitSignal(SignalName.PorteFinaleDebloquee);
@@ -126,9 +164,15 @@ public partial class GameState : Node
 	{
 		PortesDeverrouilles.Clear();
 		SallesVisitees.Clear();
+		OrdreSallesValidees.Clear();
+		TempsValidationParSalle.Clear();
+		AncresSalles.Clear();
 		rfidQueue.Clear();
 		DernierResultat = ResultatPartie.Aucun;
 		DernierTempsEcoule = 0f;
+		// Timer non remis à null : la nouvelle scène de jeu réinjectera la référence
+		// via PartieManager._Ready(). Conserver l'ancienne ne sert à rien mais ne
+		// nuit pas (elle sera écrasée).
 		GD.Print("[GameState] Partie réinitialisée.");
 	}
 

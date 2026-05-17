@@ -210,6 +210,24 @@ theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.55)
 theme_override_font_sizes/font_size = 20
 text = "STATUT : EN ATTENTE D'OPÉRATEUR"
 
+[node name="BasCentre" type="Label" parent="." unique_id=1509596920]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -64.0
+offset_right = 300.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.4, 0.78, 0.9, 0.55)
+theme_override_font_sizes/font_size = 18
+text = "UN JEU DE VINCENT CHANTRAINE"
+horizontal_alignment = 1
+
 [node name="BasDroite" type="Label" parent="." unique_id=1509596916]
 layout_mode = 1
 anchors_preset = 3

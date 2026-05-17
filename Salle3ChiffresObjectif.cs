@@ -29,6 +29,10 @@ public partial class Salle3ChiffresObjectif : Node
 
 		if (chiffres.Count == 0)
 			GD.PushWarning("[Salle3ChiffresObjectif] Aucun chiffre référencé — l'objectif ne pourra jamais valider.");
+		else
+			// Ce nœud est un Node (pas un Node3D) ; on utilise le premier chiffre
+			// comme ancre boussole — il marque la zone de la salle à éclairer.
+			GameState.Instance?.RegistrerAncreSalle(SalleId, chiffres[0]);
 	}
 
 	public override void _Process(double delta)
