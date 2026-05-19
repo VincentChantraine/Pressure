@@ -12,6 +12,7 @@ public partial class LabyrintheHud : BasePuzzleHud
 	[Export] public NodePath LabyrinthePath;
 	[Export] public NodePath TitreLabelPath;
 	[Export] public NodePath InstructionsLabelPath;
+	[Export] public NodePath ResetHintLabelPath;
 	[Export] public NodePath EtatLabelPath;
 	[Export] public NodePath IconePath;
 
@@ -19,12 +20,13 @@ public partial class LabyrintheHud : BasePuzzleHud
 	[Export] public Texture2D ImageLabyrinthe;   // affichée tant que l'épreuve n'est pas réussie
 	[Export] public Texture2D ImageReussite;     // affichée une fois la sortie atteinte
 
-	[Export(PropertyHint.MultilineText)] public string IndiceSuivant = "Fonce à la sortie.";
+	[Export(PropertyHint.MultilineText)] public string IndiceSuivant = "Récupère le badge 2.";
 	[Export] public float DureeMessageReussite = 12f;
 
 	private LabyrintheBille labyrinthe;
 	private Label titre;
 	private Label instructionsLabel;
+	private Label resetHintLabel;
 	private Label etatLabel;
 	private TextureRect icone;
 
@@ -34,6 +36,7 @@ public partial class LabyrintheHud : BasePuzzleHud
 			labyrinthe = GetNode<LabyrintheBille>(LabyrinthePath);
 		if (TitreLabelPath != null) titre = GetNodeOrNull<Label>(TitreLabelPath);
 		if (InstructionsLabelPath != null) instructionsLabel = GetNodeOrNull<Label>(InstructionsLabelPath);
+		if (ResetHintLabelPath != null) resetHintLabel = GetNodeOrNull<Label>(ResetHintLabelPath);
 		if (EtatLabelPath != null) etatLabel = GetNodeOrNull<Label>(EtatLabelPath);
 		if (IconePath != null) icone = GetNodeOrNull<TextureRect>(IconePath);
 
@@ -46,7 +49,8 @@ public partial class LabyrintheHud : BasePuzzleHud
 		}
 
 		if (titre != null) titre.Text = "🧩 LABYRINTHE";
-		if (instructionsLabel != null) instructionsLabel.Text = "← ↑ → ↓  déplace la bille";
+		if (instructionsLabel != null) instructionsLabel.Text = "← ↑ → ↓  déplacer";
+		if (resetHintLabel != null) resetHintLabel.Text = "[R]  réinitialise la bille";
 
 		RafraichirEtat();
 
@@ -74,6 +78,7 @@ public partial class LabyrintheHud : BasePuzzleHud
 		RafraichirEtat();
 
 		if (instructionsLabel != null) instructionsLabel.Text = "";
+		if (resetHintLabel != null) resetHintLabel.Text = "";
 
 		// Bascule l'image : labyrinthe → réussite
 		if (icone != null && ImageReussite != null)

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cvt4126knl3sq"
-path="res://.godot/imported/Flashlight.glb-a256b13cd4ebcef5d5d447f47c1e5abf.scn"
+uid="uid://c1lp2f15ks5gq"
+path="res://.godot/imported/Biometric Scanner.glb-5ee46e4b8693b5d30e5ba468c6008e01.scn"
 
 [deps]
 
-source_file="res://Models/Poly_Pizza/Flashlight.glb"
-dest_files=["res://.godot/imported/Flashlight.glb-a256b13cd4ebcef5d5d447f47c1e5abf.scn"]
+source_file="res://Models/New/Biometric Scanner.glb"
+dest_files=["res://.godot/imported/Biometric Scanner.glb-5ee46e4b8693b5d30e5ba468c6008e01.scn"]
 
 [params]
 
@@ -37,6 +37,21 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:group1277280098": {
+"generate/physics": true
+},
+"PATH:group1892193414": {
+"generate/physics": true
+},
+"PATH:group2027047789": {
+"generate/physics": true
+},
+"PATH:group593164581": {
+"generate/physics": true
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1

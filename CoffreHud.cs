@@ -44,12 +44,13 @@ public partial class CoffreHud : BasePuzzleHud
 
 		if (coffre != null)
 		{
+			// Visibilité pilotée par le raycast Survol3D (cf. BasePuzzleHud).
+			CibleSurvol = coffre;
+
 			coffre.ChiffreValide += OnChiffreValide;
 			coffre.CombinaisonRatee += OnCombinaisonRatee;
 			coffre.CoffreOuvert += OnCoffreOuvert;
 			coffre.ProgressionChangee += OnProgressionChangee;
-			coffre.JoueurEntreZone += OnJoueurEntreZone;
-			coffre.JoueurSortZone += OnJoueurSortZone;
 
 			AfficherCombinaison();
 		}
@@ -110,12 +111,11 @@ public partial class CoffreHud : BasePuzzleHud
 		if (indice != null) indice.Visible = true;
 	}
 
-	protected override void OnJoueurEntreZone()
+	protected override void OnHudVisible()
 	{
-		base.OnJoueurEntreZone();
 		if (verrouImage != null) verrouImage.Visible = true;
 	}
 
-	// OnJoueurSortZone hérité tel quel : on garde verrouImage.Visible inchangé,
-	// il sera caché avec tout le CanvasLayer.
+	// Visibilité du HUD désormais pilotée par le raycast (cf. BasePuzzleHud) :
+	// verrouImage est rendue visible en même temps que le CanvasLayer.
 }

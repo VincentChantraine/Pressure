@@ -15,13 +15,16 @@ using System.Linq;
 public partial class Coffre : Node3D
 {
 	[Export] public NodePath ArduinoPath;
-	[Export] public NodePath ZonePath;
 
 	// Sons (optionnels). À brancher sur des AudioStreamPlayer3D dans la scène.
 	// SonChiffreValidePath  : joué à chaque chiffre validé (court click/déverrouillage).
 	// SonOuverturePath      : joué une seule fois quand le coffre s'ouvre.
 	[Export] public NodePath SonChiffreValidePath;
 	[Export] public NodePath SonOuverturePath;
+	// Son joué quand un chiffre est raté (combinaison reset). Fallback Rater.mp3
+	// chargé automatiquement si non assigné.
+	[Export] public AudioStream SonRate;
+	[Export] public float VolumeDbRate = -8f;
 
 	// Si renseigné, valide cette salle dans GameState quand le coffre s'ouvre.
 	[Export] public string SalleIdAValider = "";
@@ -41,15 +44,12 @@ public partial class Coffre : Node3D
 	[Signal] public delegate void CombinaisonRateeEventHandler(string raison);
 	[Signal] public delegate void CoffreOuvertEventHandler();
 	[Signal] public delegate void ProgressionChangeeEventHandler(int indexChiffre, int cransCourants, int sensAttendu);
-	[Signal] public delegate void JoueurEntreZoneEventHandler();
-	[Signal] public delegate void JoueurSortZoneEventHandler();
 
 	private Node3d arduino;
-	private Area3D zone;
 	private AudioStreamPlayer3D sonChiffreValide;
 	private AudioStreamPlayer3D sonOuverture;
+	private AudioStreamPlayer3D sonRatePlayer;
 
-	private bool joueurDansZone = false;
 	private bool ouvert = false;
 	private int indexCourant = 0;   // quel chiffre on attend
 	private int cransAccumules = 0; // compteur depuis le dernier clic
@@ -59,36 +59,22 @@ public partial class Coffre : Node3D
 		if (ArduinoPath != null && !ArduinoPath.IsEmpty)
 			arduino = GetNode<Node3d>(ArduinoPath);
 
-		if (ZonePath != null && !ZonePath.IsEmpty)
-		{
-			zone = GetNode<Area3D>(ZonePath);
-			zone.BodyEntered += (Node3D body) =>
-			{
-				if (body is Player)
-				{
-					joueurDansZone = true;
-					EmitSignal(SignalName.JoueurEntreZone);
-				}
-			};
-			zone.BodyExited += (Node3D body) => 
-			{ 
-				if (body is Player) 
-				{
-					joueurDansZone = false;
-					EmitSignal(SignalName.JoueurSortZone);
-				}
-			};
-		}
-		else
-		{
-			// Pas de zone : coffre toujours actif.
-			joueurDansZone = true;
-		}
-
 		if (SonChiffreValidePath != null && !SonChiffreValidePath.IsEmpty)
 			sonChiffreValide = GetNodeOrNull<AudioStreamPlayer3D>(SonChiffreValidePath);
 		if (SonOuverturePath != null && !SonOuverturePath.IsEmpty)
 			sonOuverture = GetNodeOrNull<AudioStreamPlayer3D>(SonOuverturePath);
+
+		if (SonRate == null)
+			SonRate = GD.Load<AudioStream>("res://Son/Rater.mp3");
+		if (SonRate != null)
+		{
+			sonRatePlayer = new AudioStreamPlayer3D
+			{
+				Stream = SonRate,
+				VolumeDb = VolumeDbRate,
+			};
+			AddChild(sonRatePlayer);
+		}
 
 		GameState.Instance?.RegistrerCentreSalle(SalleIdAValider, this);
 
@@ -98,7 +84,11 @@ public partial class Coffre : Node3D
 
 	public override void _Process(double delta)
 	{
-		if (ouvert || arduino == null || !joueurDansZone) return;
+		// Interaction pilotée uniquement par le raycast : il faut regarder le
+		// coffre. La portée du Survol3D (2 m) remplace la zone d'Area3D pour
+		// gérer la distance — et impose en plus que le joueur soit tourné vers
+		// le coffre, évitant qu'un tour d'encodeur "compte" à l'aveugle.
+		if (ouvert || arduino == null || Survol3D.CibleCourante != this) return;
 
 		// 1) Consommer les crans depuis la dernière frame
 		int d = arduino.ConsumeEncoderDelta();
@@ -139,6 +129,11 @@ public partial class Coffre : Node3D
 		if (!bonSens || diff > Tolerance)
 		{
 			EmitSignal(SignalName.CombinaisonRatee, $"Chiffre {indexCourant + 1} raté");
+			if (sonRatePlayer != null)
+			{
+				if (sonRatePlayer.Playing) sonRatePlayer.Stop();
+				sonRatePlayer.Play();
+			}
 			Reset();
 			return;
 		}

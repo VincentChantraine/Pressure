@@ -13,8 +13,15 @@ public partial class PorteRondeHud : CanvasLayer
 	[Export] public string TextePrompt = "";
 	[Export] public bool VisibleSeulementDansZone = true;
 
+	// Pilotage raycast : le HUD apparaît quand le joueur regarde la porte ronde.
+	// On garde quand même un délai de masquage pour éviter le clignotement quand
+	// on tourne brièvement la tête.
+	[Export] public float DelaiMasquage = 0.25f;
+
 	private PorteRondeTP trigger;
 	private Label label;
+	private float tempsHorsRegard = 0f;
+	private bool teleportationLancee = false;
 
 	public override void _Ready()
 	{
@@ -27,33 +34,38 @@ public partial class PorteRondeHud : CanvasLayer
 		if (label != null)
 			label.Text = TextePrompt;
 
+		// On garde uniquement TeleportationDeclenchee : visibilité passée au raycast.
 		if (trigger != null)
-		{
-			trigger.JoueurEntreZone += OnJoueurEntreZone;
-			trigger.JoueurSortZone += OnJoueurSortZone;
 			trigger.TeleportationDeclenchee += OnTeleportationDeclenchee;
-		}
 
 		if (VisibleSeulementDansZone)
 			Visible = false;
 	}
 
-	private void OnJoueurEntreZone()
+	public override void _Process(double delta)
 	{
-		if (VisibleSeulementDansZone)
+		if (!VisibleSeulementDansZone || trigger == null || teleportationLancee)
+			return;
+
+		bool regarde = Survol3D.CibleCourante == trigger;
+		if (regarde)
+		{
+			tempsHorsRegard = 0f;
 			Visible = true;
-	}
-
-	private void OnJoueurSortZone()
-	{
-		if (VisibleSeulementDansZone)
-			Visible = false;
+		}
+		else
+		{
+			tempsHorsRegard += (float)delta;
+			if (tempsHorsRegard >= DelaiMasquage)
+				Visible = false;
+		}
 	}
 
 	private void OnTeleportationDeclenchee()
 	{
 		// Cache le HUD dès le début de la séquence pour qu'il ne reste pas affiché
-		// par-dessus le fondu noir.
+		// par-dessus le fondu noir, et bloque le pilotage raycast pour la suite.
+		teleportationLancee = true;
 		Visible = false;
 	}
 }

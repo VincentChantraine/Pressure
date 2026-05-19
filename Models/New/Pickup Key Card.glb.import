@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c0ty4xcsqcjsi"
-path="res://.godot/imported/guy.glb-546244f39b8c2b1683deeb3f3e4c3d3b.scn"
+uid="uid://8y2dhafqas17"
+path="res://.godot/imported/Pickup Key Card.glb-f75c37dd5247455fdb9315ff5a16018f.scn"
 
 [deps]
 
-source_file="res://Models/Poly_Pizza/guy.glb"
-dest_files=["res://.godot/imported/guy.glb-546244f39b8c2b1683deeb3f3e4c3d3b.scn"]
+source_file="res://Models/New/Pickup Key Card.glb"
+dest_files=["res://.godot/imported/Pickup Key Card.glb-f75c37dd5247455fdb9315ff5a16018f.scn"]
 
 [params]
 
@@ -39,16 +39,7 @@ materials/extract_format=0
 materials/extract_path=""
 _subresources={
 "nodes": {
-"PATH:polySurface11 polySurface12": {
-"generate/physics": true
-},
-"PATH:polySurface11 polySurface12_1": {
-"generate/physics": true
-},
-"PATH:polySurface13 polySurface14": {
-"generate/physics": true
-},
-"PATH:polySurface13 polySurface14_1": {
+"PATH:RootNode/Pickup_KeyCard": {
 "generate/physics": true
 }
 }

@@ -55,13 +55,19 @@ public partial class VictoireCommandeTrigger : Area3D
 
 	public override void _Process(double delta)
 	{
-		if (declenche || !joueurDansZone || arduino == null) return;
+		if (declenche || arduino == null) return;
 
+		// Suivi continu de boutonPrecedent (hors zone aussi) : sinon un appui
+		// déjà tenu se traduirait par un front montant artificiel dès que le
+		// joueur regarde le trigger. Avec ce suivi, "regarder en tenant le
+		// bouton" ne déclenche rien — il faut relâcher et re-presser.
 		bool boutonActuel = arduino.isInteractPressed;
 		bool frontMontant = boutonActuel && !boutonPrecedent;
 		boutonPrecedent = boutonActuel;
 
-		if (frontMontant)
+		// Interaction pilotée par le raycast Survol3D : il faut regarder les
+		// commandes. La portée 2 m remplace la zone d'Area3D côté action.
+		if (Survol3D.CibleCourante == this && frontMontant)
 		{
 			declenche = true;
 			GD.Print("[VictoireCommandeTrigger] Joueur a repris les commandes — VICTOIRE.");

@@ -155,9 +155,13 @@ public partial class EcranFin : Control
 	{
 		if (recordLabel == null) return;
 
-		// On n'enregistre un record que pour une vraie victoire (temps > 0).
+		// On n'enregistre un record que pour une vraie victoire (temps > 0)
+		// ET si les 6 salles ont effectivement été validées — sinon une partie
+		// "trichée" (collision shape déplacée pour test, raccourci d'éditeur)
+		// pourrait écraser un vrai record.
 		bool nouveauRecord = false;
-		if (resultat == GameState.ResultatPartie.Victoire && temps > 0f)
+		bool toutesSallesValidees = gs != null && gs.SallesVisitees.Count >= 6;
+		if (resultat == GameState.ResultatPartie.Victoire && temps > 0f && toutesSallesValidees)
 		{
 			// Reconstruit le détail "durée par salle" depuis l'ordre chronologique
 			// pour le persister avec le record (affiché ensuite dans MenuPrincipal).

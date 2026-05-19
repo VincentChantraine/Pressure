@@ -21,12 +21,15 @@ public partial class LevierSequence : Node3D
 	// Si renseigné, valide cette salle dans GameState quand le levier s'active.
 	[Export] public string SalleIdAValider = "";
 	[Export] public NodePath ArduinoPath;
-	[Export] public NodePath ZonePath;
 
 	// Son joué à chaque étape validée (AudioStreamPlayer3D).
 	[Export] public NodePath SonEtapePath;
 	// Son joué à l'activation finale du levier (optionnel).
 	[Export] public NodePath SonActivePath;
+	// Son joué quand le joueur rate la séquence. Fallback Rater.mp3 chargé
+	// automatiquement si non assigné.
+	[Export] public AudioStream SonRate;
+	[Export] public float VolumeDbRate = -8f;
 
 	// Sons d'ambiance (AudioStreamPlayer3D) à couper quand le levier est activé.
 	// Ex: arcs électriques sur les PowerVaults qui cessent une fois le courant rétabli.
@@ -56,18 +59,15 @@ public partial class LevierSequence : Node3D
 	[Signal] public delegate void SequenceRateeEventHandler(string raison);
 	[Signal] public delegate void LevierActiveEventHandler(string levierId);
 	[Signal] public delegate void ProgressionChangeeEventHandler(int indexEtape, int sensAttendu);
-	[Signal] public delegate void JoueurEntreZoneEventHandler();
-	[Signal] public delegate void JoueurSortZoneEventHandler();
 
 	private Node3d arduino;
-	private Area3D zone;
 	private ServoGameTimer servoTimer;
 	private AudioStreamPlayer3D sonEtape;
 	private AudioStreamPlayer3D sonActive;
+	private AudioStreamPlayer3D sonRatePlayer;
 	private AudioStreamPlayer3D sonAmbiant1;
 	private AudioStreamPlayer3D sonAmbiant2;
 
-	private bool joueurDansZone = false;
 	private bool active = false;
 	private int indexCourant = 0;
 
@@ -85,36 +85,22 @@ public partial class LevierSequence : Node3D
 		if (ServoGameTimerPath != null && !ServoGameTimerPath.IsEmpty)
 			servoTimer = GetNodeOrNull<ServoGameTimer>(ServoGameTimerPath);
 
-		if (ZonePath != null && !ZonePath.IsEmpty)
-		{
-			zone = GetNode<Area3D>(ZonePath);
-			zone.BodyEntered += (Node3D body) =>
-			{
-				if (body is Player)
-				{
-					joueurDansZone = true;
-					EmitSignal(SignalName.JoueurEntreZone);
-					EmettreProgression();
-				}
-			};
-			zone.BodyExited += (Node3D body) =>
-			{
-				if (body is Player)
-				{
-					joueurDansZone = false;
-					EmitSignal(SignalName.JoueurSortZone);
-				}
-			};
-		}
-		else
-		{
-			joueurDansZone = true;
-		}
-
 		if (SonEtapePath != null && !SonEtapePath.IsEmpty)
 			sonEtape = GetNodeOrNull<AudioStreamPlayer3D>(SonEtapePath);
 		if (SonActivePath != null && !SonActivePath.IsEmpty)
 			sonActive = GetNodeOrNull<AudioStreamPlayer3D>(SonActivePath);
+
+		if (SonRate == null)
+			SonRate = GD.Load<AudioStream>("res://Son/Rater.mp3");
+		if (SonRate != null)
+		{
+			sonRatePlayer = new AudioStreamPlayer3D
+			{
+				Stream = SonRate,
+				VolumeDb = VolumeDbRate,
+			};
+			AddChild(sonRatePlayer);
+		}
 
 		if (SonAmbiant1Path != null && !SonAmbiant1Path.IsEmpty)
 			sonAmbiant1 = GetNodeOrNull<AudioStreamPlayer3D>(SonAmbiant1Path);
@@ -129,9 +115,12 @@ public partial class LevierSequence : Node3D
 
 	public override void _Process(double delta)
 	{
-		if (active || arduino == null || !joueurDansZone) return;
+		// Interaction pilotée uniquement par le raycast : il faut regarder le
+		// levier pour que les butées du slider comptent. La portée Survol3D
+		// (2 m) remplace l'Area3D côté distance.
+		if (active || arduino == null || Survol3D.CibleCourante != this) return;
 
-		int v = arduino.sliderValue;
+		int v = arduino.LeverSliderValue;
 		if (InvertSlider) v = ArduinoConfig.AnalogMax - v;
 
 		switch (etatSlider)
@@ -169,6 +158,11 @@ public partial class LevierSequence : Node3D
 		{
 			string dirFaite = (sens > 0 ? "droite" : "gauche");
 			EmitSignal(SignalName.SequenceRatee, $"Mauvaise direction à l'étape {indexCourant + 1} ({dirFaite})");
+			if (sonRatePlayer != null)
+			{
+				if (sonRatePlayer.Playing) sonRatePlayer.Stop();
+				sonRatePlayer.Play();
+			}
 			Reset();
 			return;
 		}

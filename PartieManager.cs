@@ -103,15 +103,6 @@ public partial class PartieManager : Node
 		}
 	}
 
-	// Pause auto quand la fenêtre perd le focus (alt-tab, clic ailleurs…).
-	// Évite que le chrono continue à tourner pendant qu'on n'est pas devant l'écran.
-	public override void _Notification(int what)
-	{
-		if (what != NotificationApplicationFocusOut) return;
-		if (partieTerminee || menuPauseCourant != null) return;
-		OuvrirMenuPause();
-	}
-
 	private void OuvrirMenuPause()
 	{
 		if (menuPauseCourant != null) return;
@@ -125,6 +116,7 @@ public partial class PartieManager : Node
 
 		menuPauseCourant = new MenuPause();
 		menuPauseCourant.Reprendre     += FermerMenuPause;
+		menuPauseCourant.Rejouer       += SurRejouer;
 		menuPauseCourant.MenuPrincipal += SurMenuPrincipal;
 		canvasMenuPause.AddChild(menuPauseCourant);
 	}
@@ -140,6 +132,14 @@ public partial class PartieManager : Node
 
 		servoTimer?.Reprend();
 		if (joueur != null) joueur.Frozen = false;
+		// Capture différée : sur Windows, juste après un FocusIn la fenêtre
+		// n'est pas toujours prête à accepter la capture, et le MouseMode peut
+		// silencieusement retomber à Visible. Le déferrer évite ça.
+		CallDeferred(nameof(RecapturerSouris));
+	}
+
+	private void RecapturerSouris()
+	{
 		Input.MouseMode = Input.MouseModeEnum.Captured;
 	}
 
@@ -150,6 +150,13 @@ public partial class PartieManager : Node
 		servoTimer?.Reprend();
 		if (joueur != null) joueur.Frozen = false;
 		GameState.Instance?.ChargerMenu();
+	}
+
+	private void SurRejouer()
+	{
+		servoTimer?.Reprend();
+		if (joueur != null) joueur.Frozen = false;
+		GameState.Instance?.LancerPartie();
 	}
 
 	private void OnJoueurEntreeBT01()

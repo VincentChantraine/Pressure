@@ -21,6 +21,19 @@ public partial class ProgressionHud : CanvasLayer
 	[Export] public NodePath LedColorRectPath;
 	[Export] public float LedDureeFlash = 0.6f;
 
+	// Messages éphémères affichés à droite de chaque carte au ramassage.
+	[Export] public NodePath BadgeMessage1Path;
+	[Export] public NodePath BadgeMessage2Path;
+	[Export] public float BadgeMessageDuree = 3.5f;
+
+	// Inventaire bas-gauche : deux slots permanents empilés verticalement,
+	// un par badge ramassé. Chaque NodePath pointe vers un TextureRect.
+	[Export] public NodePath BadgeIcone1Path;
+	[Export] public NodePath BadgeIcone2Path;
+	// Texture utilisée pour les icônes ; assignée dans l'inspecteur ou
+	// chargée par fallback depuis res://IMG/Pickup Key Card.png.
+	[Export] public Texture2D TextureBadge;
+
 	[Export] public float DureeTotaleFallback = 300.0f;
 	[Export] public float SeuilUrgence = 60.0f; // secondes restantes → pulse rouge
 
@@ -41,6 +54,12 @@ public partial class ProgressionHud : CanvasLayer
 	private Label barreLabel;
 	private ServoGameTimer servoTimer;
 	private ColorRect led;
+	private Label badgeMessage1;
+	private Label badgeMessage2;
+	private float badgeMessage1Timer = 0f;
+	private float badgeMessage2Timer = 0f;
+	private TextureRect badgeIcone1;
+	private TextureRect badgeIcone2;
 
 	private HashSet<string> idsNormalesSet;
 
@@ -55,13 +74,35 @@ public partial class ProgressionHud : CanvasLayer
 
 	public override void _Ready()
 	{
-		chronoLabel   = GetNodeOrNull<Label>(ChronoLabelPath);
-		niveauEauRect = GetNodeOrNull<ColorRect>(NiveauEauRectPath);
-		barreLabel    = GetNodeOrNull<Label>(BarreLabelPath);
-		servoTimer    = GetNodeOrNull<ServoGameTimer>(ServoGameTimerPath);
-		led           = GetNodeOrNull<ColorRect>(LedColorRectPath);
+		chronoLabel       = GetNodeOrNull<Label>(ChronoLabelPath);
+		niveauEauRect     = GetNodeOrNull<ColorRect>(NiveauEauRectPath);
+		barreLabel        = GetNodeOrNull<Label>(BarreLabelPath);
+		servoTimer        = GetNodeOrNull<ServoGameTimer>(ServoGameTimerPath);
+		led               = GetNodeOrNull<ColorRect>(LedColorRectPath);
+		badgeMessage1     = GetNodeOrNull<Label>(BadgeMessage1Path);
+		badgeMessage2     = GetNodeOrNull<Label>(BadgeMessage2Path);
 
 		if (led != null) led.Color = new Color(0, 0, 0, 0);
+		if (badgeMessage1 != null)
+		{
+			badgeMessage1.Visible = false;
+			badgeMessage1.Modulate = new Color(1f, 1f, 1f, 0f);
+		}
+		if (badgeMessage2 != null)
+		{
+			badgeMessage2.Visible = false;
+			badgeMessage2.Modulate = new Color(1f, 1f, 1f, 0f);
+		}
+
+		// --- Inventaire de cartes (deux slots permanents) ---
+		badgeIcone1 = GetNodeOrNull<TextureRect>(BadgeIcone1Path);
+		badgeIcone2 = GetNodeOrNull<TextureRect>(BadgeIcone2Path);
+		// Fallback : si la texture n'est pas assignée dans l'inspecteur, on tente
+		// res://IMG/Pickup Key Card.png.
+		if (TextureBadge == null)
+			TextureBadge = GD.Load<Texture2D>("res://IMG/Pickup Key Card.png");
+		InitSlotBadge(badgeIcone1, GameState.Instance?.BadgeRamasse1 ?? false);
+		InitSlotBadge(badgeIcone2, GameState.Instance?.BadgeRamasse2 ?? false);
 
 		fallbackActif = (servoTimer == null);
 		if (fallbackActif)
@@ -75,6 +116,7 @@ public partial class ProgressionHud : CanvasLayer
 			GameState.Instance.ScanInvalide += OnScanInvalide;
 			GameState.Instance.PorteFinaleDebloquee += OnPorteFinaleDebloquee;
 			GameState.Instance.JoueurEntreeBT01 += OnJoueurEntreeBT01;
+			GameState.Instance.BadgeRamasse += OnBadgeRamasse;
 		}
 
 		// Le ColorRect couvre tout l'écran ; le shader gère lui-même la zone eau.
@@ -107,11 +149,89 @@ public partial class ProgressionHud : CanvasLayer
 		RafraichirBarreLabel();
 	}
 
+	private void InitSlotBadge(TextureRect slot, bool ramasse)
+	{
+		if (slot == null) return;
+		if (TextureBadge != null) slot.Texture = TextureBadge;
+		slot.Visible = ramasse;
+		slot.Modulate = new Color(1f, 1f, 1f, ramasse ? 1f : 0f);
+	}
+
+	public override void _ExitTree()
+	{
+		// Désabonnement : sinon GameState (autoload, survit aux changements de
+		// scène) garde des callbacks sur un HUD dont les nodes natifs sont déjà
+		// freed → ObjectDisposedException sur TextureRect/Label/ColorRect.
+		if (GameState.Instance != null)
+		{
+			GameState.Instance.ScanValide -= OnScanValide;
+			GameState.Instance.ScanInvalide -= OnScanInvalide;
+			GameState.Instance.PorteFinaleDebloquee -= OnPorteFinaleDebloquee;
+			GameState.Instance.JoueurEntreeBT01 -= OnJoueurEntreeBT01;
+			GameState.Instance.BadgeRamasse -= OnBadgeRamasse;
+		}
+	}
+
 	public override void _Process(double delta)
 	{
 		RafraichirBarreLabel();
 		RafraichirChronoEtEau((float)delta);
 		RafraichirLed((float)delta);
+		RafraichirBadgeMessage((float)delta);
+	}
+
+	// =========================================================================
+	// Message ramassage badge (bas-gauche, fade-out)
+	// =========================================================================
+	private void RafraichirBadgeMessage(float delta)
+	{
+		// Chaque message a son propre timer indépendant.
+		FadeUnMessage(badgeMessage1, ref badgeMessage1Timer, delta);
+		FadeUnMessage(badgeMessage2, ref badgeMessage2Timer, delta);
+	}
+
+	private void FadeUnMessage(Label label, ref float timer, float delta)
+	{
+		if (label == null || timer <= 0f) return;
+		timer -= delta;
+		float t = Mathf.Clamp(timer / Mathf.Max(0.001f, BadgeMessageDuree), 0f, 1f);
+		float alpha = t > 0.66f ? 1f : t / 0.66f;
+		label.Modulate = new Color(1f, 1f, 1f, alpha);
+		if (timer <= 0f)
+		{
+			label.Visible = false;
+			label.Modulate = new Color(1f, 1f, 1f, 0f);
+		}
+	}
+
+	private void OnBadgeRamasse(int numero)
+	{
+		if (hudEauMasque) return;
+
+		// Slot d'inventaire correspondant + petit "pop" d'apparition.
+		TextureRect slot = numero == 1 ? badgeIcone1 : (numero == 2 ? badgeIcone2 : null);
+		if (slot != null)
+		{
+			slot.Visible = true;
+			slot.Modulate = new Color(1f, 1f, 1f, 1f);
+			slot.PivotOffset = slot.Size * 0.5f;
+			slot.Scale = Vector2.One * 1.3f;
+			var tween = CreateTween();
+			tween.TweenProperty(slot, "scale", Vector2.One, 0.25f)
+				.SetTrans(Tween.TransitionType.Back)
+				.SetEase(Tween.EaseType.Out);
+		}
+
+		// Message texte associé à la bonne carte (s'auto-efface).
+		Label msg = numero == 1 ? badgeMessage1 : (numero == 2 ? badgeMessage2 : null);
+		if (msg != null)
+		{
+			msg.Text = $"Badge {numero} ramassé";
+			msg.Visible = true;
+			msg.Modulate = new Color(1f, 1f, 1f, 1f);
+		}
+		if (numero == 1) badgeMessage1Timer = BadgeMessageDuree;
+		else if (numero == 2) badgeMessage2Timer = BadgeMessageDuree;
 	}
 
 	// =========================================================================
@@ -119,7 +239,7 @@ public partial class ProgressionHud : CanvasLayer
 	// =========================================================================
 	private void RafraichirLed(float delta)
 	{
-		if (led == null || ledTimer <= 0f) return;
+		if (!GodotObject.IsInstanceValid(led) || ledTimer <= 0f) return;
 
 		ledTimer -= delta;
 		float t = Mathf.Clamp(ledTimer / Mathf.Max(0.001f, LedDureeFlash), 0f, 1f);
@@ -133,7 +253,10 @@ public partial class ProgressionHud : CanvasLayer
 
 	private void DeclencherFlashLed(Color couleur)
 	{
-		if (led == null) return;
+		// IsInstanceValid : le signal peut arriver après que le HUD a été freed
+		// (changement de scène, fin de partie) — led.Color toucherait un wrapper
+		// C# encore vivant mais dont l'objet natif est disposé.
+		if (!GodotObject.IsInstanceValid(led)) return;
 		ledCouleur = couleur;
 		ledTimer = LedDureeFlash;
 		led.Color = new Color(couleur.R, couleur.G, couleur.B, 0.6f);

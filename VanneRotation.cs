@@ -29,7 +29,6 @@ public partial class VanneRotation : Node3D
 	// Si renseigné, valide cette salle dans GameState quand la vanne se ferme.
 	[Export] public string SalleIdAValider = "";
 	[Export] public NodePath ArduinoPath;
-	[Export] public NodePath ZoneInteractionPath;
 	[Export] public NodePath SonFuitePath;
 	[Export] public NodePath SonActivationPath;
 	// Son joué en boucle pendant que le joueur tourne la vanne (stick hors deadzone).
@@ -58,20 +57,16 @@ public partial class VanneRotation : Node3D
 	// Volume (dB) du son de fuite quand la vanne est totalement fermée.
 	[Export] public float VolumeDbFerme = -40f;
 
-	[Signal] public delegate void JoueurEntreZoneEventHandler();
-	[Signal] public delegate void JoueurSortZoneEventHandler();
 	[Signal] public delegate void QuartValideEventHandler(int quartsTotal, int quartsRequis);
 	[Signal] public delegate void VanneFermeeEventHandler(string vanneId);
 
 	private Node3d arduino;
-	private Area3D zone;
 	private AudioStreamPlayer3D sonFuite;
 	private AudioStreamPlayer3D sonActivation;
 	private AudioStreamPlayer3D sonRotation;
 	private float tempsSansMouvement = 0f;
 	private ServoGameTimer servoTimer;
 
-	private bool joueurDansZone = false;
 	private bool fermee = false;
 
 	// Quadrants : 0=N (Y haut), 1=E (X droite), 2=S (Y bas), 3=O (X gauche).
@@ -85,32 +80,6 @@ public partial class VanneRotation : Node3D
 
 		if (ServoGameTimerPath != null && !ServoGameTimerPath.IsEmpty)
 			servoTimer = GetNodeOrNull<ServoGameTimer>(ServoGameTimerPath);
-
-		if (ZoneInteractionPath != null && !ZoneInteractionPath.IsEmpty)
-		{
-			zone = GetNode<Area3D>(ZoneInteractionPath);
-			zone.BodyEntered += (Node3D body) =>
-			{
-				if (body is Player)
-				{
-					joueurDansZone = true;
-					EmitSignal(SignalName.JoueurEntreZone);
-				}
-			};
-			zone.BodyExited += (Node3D body) =>
-			{
-				if (body is Player)
-				{
-					joueurDansZone = false;
-					quadrantPrecedent = -1;
-					EmitSignal(SignalName.JoueurSortZone);
-				}
-			};
-		}
-		else
-		{
-			joueurDansZone = true;
-		}
 
 		if (SonFuitePath != null && !SonFuitePath.IsEmpty)
 		{
@@ -136,7 +105,15 @@ public partial class VanneRotation : Node3D
 
 	public override void _Process(double delta)
 	{
-		if (fermee || arduino == null || !joueurDansZone) return;
+		// Interaction pilotée uniquement par le raycast : il faut regarder la
+		// vanne pour que les quarts de tour comptent. Quand on détourne le
+		// regard on coupe aussi le son de rotation, sinon il resterait actif
+		// (early return ci-dessous). La portée Survol3D (2 m) remplace l'Area3D.
+		bool regarde = Survol3D.CibleCourante == this;
+		if (!regarde && sonRotation != null && sonRotation.Playing)
+			sonRotation.Stop();
+
+		if (fermee || arduino == null || !regarde) return;
 
 		int q = QuadrantCourant(arduino.joystickX, arduino.joystickY);
 

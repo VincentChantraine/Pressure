@@ -27,7 +27,7 @@ public static class InputBindings
     // === Actions ===
     public const string Sprint       = "sprint";
     public const string Interagir    = "interagir";     // clic gauche : ouvrir porte, etc.
-    public const string LampeTorche  = "lampe_torche";  // clic droit (sera toggle en phase 2)
+    public const string LampeTorche  = "lampe_torche";  // F par défaut (hold)
     public const string Lift         = "lift";          // ancien ultrason : monter
     public const string Pause        = "pause";
 
@@ -54,8 +54,8 @@ public static class InputBindings
         BindKey(Lift,   Key.Space);
         BindKey(Pause,  Key.Escape);
 
-        BindMouse(Interagir,   MouseButton.Left);
-        BindMouse(LampeTorche, MouseButton.Right);
+        BindMouse(Interagir, MouseButton.Left);
+        BindKey(LampeTorche, Key.F);
 
         BindKey(EncodeurGauche, Key.Left);
         BindKey(EncodeurDroite, Key.Right);

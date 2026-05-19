@@ -134,6 +134,11 @@ public partial class BoussoleHud : Control
 	{
 		var gs = GameState.Instance;
 
+		// Phase 0 — Badge 1 pas encore ramassé : on aiguille vers le badge dans
+		// le hub. Sans lui, aucun lecteur ne fonctionnera de toute façon.
+		if (!gs.BadgeRamasse1 && gs.BadgeCible != null && IsInstanceValid(gs.BadgeCible))
+			return gs.BadgeCible;
+
 		// Phase 1 — salles non-validées : la cible suit OrdreSalles, qui reflète
 		// le parcours scénarisé imposé par les SallePrerequise des portes.
 		if (gs.SallesVisitees.Count < 6)
@@ -148,8 +153,14 @@ public partial class BoussoleHud : Control
 			return null;
 		}
 
-		// Phase 2 — toutes les salles sont validées : on guide vers la porte
-		// de sortie tant que le joueur ne l'a pas franchie.
+		// Phase 2a — toutes les salles validées mais Badge 2 pas encore ramassé :
+		// le badge vient de réapparaître quelque part, on l'indique avant
+		// d'aiguiller vers la porte de sortie (qui le refuserait sinon).
+		if (!gs.BadgeRamasse2 && gs.BadgeCible != null && IsInstanceValid(gs.BadgeCible))
+			return gs.BadgeCible;
+
+		// Phase 2b — Badge 2 en poche : on guide vers la porte de sortie tant
+		// que le joueur ne l'a pas franchie.
 		if (!gs.PorteSortieFranchie
 			&& gs.AncresSalles.TryGetValue("exit_door", out var porteSortie)
 			&& porteSortie != null && IsInstanceValid(porteSortie))

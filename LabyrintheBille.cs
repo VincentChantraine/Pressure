@@ -17,6 +17,9 @@ public partial class LabyrintheBille : Node3D
 
 	[Export] public float Vitesse = 1.5f;             // Vitesse de déplacement de la bille
 
+	// Touche (clavier) pour réinitialiser la bille au point de départ (bille tombée/coincée).
+	[Export] public Key ToucheResetManuel = Key.R;
+
 	[Export] public NodePath ChiffreRevelePath;       // Optionnel : Label/Control 2D (ex: dans un CanvasLayer) ou Node3D à afficher à la réussite
 	[Export] public string SalleIdAValider = "salle_6";
 
@@ -58,6 +61,7 @@ public partial class LabyrintheBille : Node3D
 	private Camera3D cameraPrecedente;
 	private bool epreuveReussie = false;
 	private bool joueurDansZone = false;
+	private bool resetKeyPrecedent = false;
 
 	public bool EstReussie => epreuveReussie;
 	public bool JoueurDansZone => joueurDansZone;
@@ -132,6 +136,15 @@ public partial class LabyrintheBille : Node3D
 			StopperSonRoulement();
 			return;
 		}
+
+		// Reset manuel par touche (bille tombée ou coincée).
+		bool resetKey = Input.IsPhysicalKeyPressed(ToucheResetManuel);
+		if (resetKey && !resetKeyPrecedent)
+		{
+			GD.Print("[LabyrintheBille] Reset manuel demandé.");
+			ResetBille();
+		}
+		resetKeyPrecedent = resetKey;
 
 		Vector2 input = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 		// Caméra tournée 90° → on mappe input.Y sur X monde et -input.X sur Z monde,

@@ -10,6 +10,16 @@ public partial class Player : CharacterBody3D
 	[Export] public int SliderDeadzone = 100;          // large pour tolérer la dérive
 	[Export] public bool InvertSlider = false;
 
+	// Atténuation des inputs partagés avec un puzzle quand le joueur le regarde :
+	// le slider sert aussi à actionner le LevierSequence et le joystick à tourner
+	// la VanneRotation. Sans atténuation, manipuler le puzzle ferait pivoter /
+	// déplacer le joueur en même temps. 0 = mouvement bloqué pendant l'interaction,
+	// 1 = pas d'atténuation. Deux facteurs séparés car le joueur a besoin de garder
+	// un minimum de mobilité face à la vanne (réajustement) mais peut rester immobile
+	// face au levier sans gêne.
+	[Export(PropertyHint.Range, "0,1,0.01")] public float FacteurAttenuationLevier = 0.15f;
+	[Export(PropertyHint.Range, "0,1,0.01")] public float FacteurAttenuationVanne  = 0.4f;
+
 	[Export] public int LdrMin = 150;
 	[Export] public int LdrMax = ArduinoConfig.AnalogMax;
 	[Export] public float TorchMinEnergy = 0.0f;
@@ -18,7 +28,9 @@ public partial class Player : CharacterBody3D
 	[Export] public float TorchMaxRange = 15.0f;  // portée maxi (capteur couvert)
 	[Export] public NodePath TorchLightPath;
 
-	// Son joué au clic droit (allumage/extinction de la torche en mode clavier-souris).
+	// Son joué quand on commence à "couvrir" le LDR simulé (clic droit pressé).
+	// La torche elle-même rampe ensuite progressivement en énergie / portée :
+	// le son n'est qu'un "tick" haptique au début de l'appui.
 	[Export] public AudioStream FlashlightSound;
 	[Export] public float FlashlightSoundVolumeDb = -6f;
 
@@ -173,9 +185,14 @@ public partial class Player : CharacterBody3D
 			Input.MouseMode = Input.MouseModeEnum.Captured;
 		}
 
-		// Action "lampe_torche" (clic droit par défaut) → son de lampe torche.
+		// Action "lampe_torche" (F par défaut) → "tick" au début ET à la fin
+		// de la couverture du LDR simulé : on entend un clic à l'appui et au relâchement,
+		// comme un vrai interrupteur de torche. La torche elle-même monte / descend en
+		// douceur via la rampe LDR de Node3d.cs entre les deux ticks.
 		// Joué seulement quand la souris est capturée (en jeu, pas en menu).
-		if (@event.IsActionPressed(InputBindings.LampeTorche)
+		bool torchePressEvent = @event.IsActionPressed(InputBindings.LampeTorche)
+			|| @event.IsActionReleased(InputBindings.LampeTorche);
+		if (torchePressEvent
 			&& Input.MouseMode == Input.MouseModeEnum.Captured
 			&& flashlightPlayer != null)
 		{
@@ -212,16 +229,23 @@ public partial class Player : CharacterBody3D
  
 		if (arduino != null)
 		{
+			// Quand le joueur regarde un puzzle qui réutilise les mêmes inputs,
+			// on atténue fortement l'effet correspondant côté player pour éviter
+			// qu'il pivote (Levier ↔ slider) ou se déplace (Vanne ↔ joystick)
+			// pendant qu'il manipule le puzzle.
+			float attenuationSlider   = Survol3D.CibleCourante is LevierSequence ? FacteurAttenuationLevier : 1f;
+			float attenuationJoystick = Survol3D.CibleCourante is VanneRotation  ? FacteurAttenuationVanne  : 1f;
+
 			// --- ROTATION (slider → vitesse angulaire sur Y) ---
 			float rawSlider = arduino.sliderValue - SliderCenter;
 			if (Mathf.Abs(rawSlider) < SliderDeadzone) rawSlider = 0;
- 
+
 			float sliderNorm = rawSlider / (float)(ArduinoConfig.AnalogCenter - SliderDeadzone);
 			sliderNorm = Mathf.Clamp(sliderNorm, -1f, 1f);
 			if (InvertSlider) sliderNorm = -sliderNorm;
- 
-			RotateY(-sliderNorm * RotationSpeed * (float)delta);
- 
+
+			RotateY(-sliderNorm * RotationSpeed * (float)delta * attenuationSlider);
+
 			// --- DÉPLACEMENT (joystick → vitesse en coords LOCALES du Player) ---
 			float rawX = arduino.joystickX - ArduinoConfig.AnalogCenter;
 			float rawY = arduino.joystickY - ArduinoConfig.AnalogCenter;
@@ -230,8 +254,8 @@ public partial class Player : CharacterBody3D
 			if (Mathf.Abs(rawX) < deadzone) rawX = 0;
 			if (Mathf.Abs(rawY) < deadzone) rawY = 0;
 
-			float inputX = rawX / (float)ArduinoConfig.AnalogCenter;
-			float inputZ = rawY / (float)ArduinoConfig.AnalogCenter;
+			float inputX = (rawX / (float)ArduinoConfig.AnalogCenter) * attenuationJoystick;
+			float inputZ = (rawY / (float)ArduinoConfig.AnalogCenter) * attenuationJoystick;
  
 			float currentSpeed = Speed;
 			if (arduino.isButtonPressed)

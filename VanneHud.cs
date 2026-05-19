@@ -39,10 +39,11 @@ public partial class VanneHud : BasePuzzleHud
 
 		if (vanne != null)
 		{
+			// Visibilité pilotée par le raycast Survol3D (cf. BasePuzzleHud).
+			CibleSurvol = vanne;
+
 			vanne.QuartValide += OnQuartValide;
 			vanne.VanneFermee += OnVanneFermee;
-			vanne.JoueurEntreZone += OnJoueurEntreZone;
-			vanne.JoueurSortZone += OnJoueurSortZone;
 		}
 
 		if (titre != null) titre.Text = "🔧 VANNE";
@@ -117,9 +118,8 @@ public partial class VanneHud : BasePuzzleHud
 			vanneImage.Texture = ImageVanneFermee;
 	}
 
-	protected override void OnJoueurEntreZone()
+	protected override void OnHudVisible()
 	{
-		base.OnJoueurEntreZone();
 		if (vanneImage != null) vanneImage.Visible = true;
 	}
 }

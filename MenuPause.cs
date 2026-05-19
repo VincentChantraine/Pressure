@@ -7,6 +7,7 @@ using Godot;
 public partial class MenuPause : Control
 {
     [Signal] public delegate void ReprendreEventHandler();
+    [Signal] public delegate void RejouerEventHandler();
     [Signal] public delegate void MenuPrincipalEventHandler();
 
     private static readonly Color CouleurFond   = new Color(0.025f, 0.035f, 0.055f, 0.97f);
@@ -57,9 +58,17 @@ public partial class MenuPause : Control
         btnOptions.Pressed += OnOptionsPressed;
         vbox.AddChild(btnOptions);
 
+        var btnRejouer = CreerBouton("↻  REJOUER");
+        btnRejouer.Pressed += OnRejouerPressed;
+        vbox.AddChild(btnRejouer);
+
         var btnMenu = CreerBouton("✕  MENU PRINCIPAL");
         btnMenu.Pressed += OnMenuPrincipalPressed;
         vbox.AddChild(btnMenu);
+
+        var btnQuitter = CreerBouton("✕  QUITTER");
+        btnQuitter.Pressed += OnQuitterPressed;
+        vbox.AddChild(btnQuitter);
 
         btnReprendre.GrabFocus();
     }
@@ -99,9 +108,19 @@ public partial class MenuPause : Control
         p.Ferme += () => { pageOuverte = null; };
     }
 
+    private void OnRejouerPressed()
+    {
+        EmitSignal(SignalName.Rejouer);
+    }
+
     private void OnMenuPrincipalPressed()
     {
         EmitSignal(SignalName.MenuPrincipal);
+    }
+
+    private void OnQuitterPressed()
+    {
+        GetTree().Quit();
     }
 
     private static Button CreerBouton(string texte)

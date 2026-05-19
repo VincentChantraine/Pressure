@@ -106,13 +106,24 @@ public partial class PorteRondeTP : Area3D
 
 	public override void _Process(double delta)
 	{
-		if (declenche || !joueurDansZone || arduino == null) return;
+		if (declenche || arduino == null) return;
 
+		// Important : on suit `boutonPrecedent` à CHAQUE frame (et plus seulement
+		// quand le joueur est dans la zone). Sinon, un appui pré-tenu hors zone
+		// se traduirait par un front montant artificiel au premier regard sur la
+		// porte. Avec ce suivi continu, "regarder la porte alors que le bouton
+		// est déjà tenu" ne déclenche rien — il faut relâcher et re-presser.
 		bool boutonActuel = arduino.isInteractPressed;
 		bool frontMontant = boutonActuel && !boutonPrecedent;
 		boutonPrecedent = boutonActuel;
 
-		if (frontMontant)
+		// Interaction pilotée par le raycast Survol3D : il faut regarder la
+		// porte ronde. La portée 2 m remplace la zone d'Area3D côté action.
+		// La zone reste utile pour PorteSortieFranchie (cf. OnBodyEntered) et
+		// pour ne pas TP-er un joueur qui n'est pas DEDANS la porte ronde —
+		// mais ici on veut bien que le regard suffise, donc on retire le gate.
+		// On garde quand même joueurCourant via la zone pour TeleporterA.
+		if (Survol3D.CibleCourante == this && frontMontant)
 		{
 			declenche = true;
 			EmitSignal(SignalName.TeleportationDeclenchee);
@@ -124,7 +135,10 @@ public partial class PorteRondeTP : Area3D
 	{
 		// Capture locale : le joueur va sortir de la zone au moment du TP (BodyExited ->
 		// joueurCourant remis à null), il faut donc garder une référence stable ici.
-		Player joueur = joueurCourant;
+		// Fallback : si le déclenchement vient du raycast (joueur hors zone), on
+		// retrouve le Player via la scène — même pattern que PartieManager.
+		Player joueur = joueurCourant
+			?? GetTree().Root.FindChild("Player", true, false) as Player;
 
 		// Coupe la physique du joueur le temps de la séquence pour éviter qu'il bouge pendant le fondu
 		if (joueur != null)

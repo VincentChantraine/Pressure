@@ -38,6 +38,15 @@ public partial class Node3d : Node3D
 	// Encodeur : accumulation des crans clavier à consommer
 	private int kbEncoderPending = 0;
 
+	// Lampe torche clavier : durée pour "couvrir" puis "découvrir" le LDR simulé.
+	// Plus on tient le bouton, plus le capteur est progressivement masqué → la
+	// portée et l'énergie de la torche montent en douceur (cf. Player.cs).
+	// TorchDischargeTime < TorchChargeTime donne un effet "redécouverte" rapide,
+	// l'inverse simulerait un œil qui s'adapte plus vite que la main ne couvre.
+	[Export] public float TorchChargeTime = 1.2f;
+	[Export] public float TorchDischargeTime = 0.6f;
+	private float kbTorchCharge = 0f; // 0 = capteur éclairé (torche off), 1 = capteur couvert (torche max)
+
 	// Bouton encodeur clavier : levé à true pendant 1 frame quand "valider" est juste pressé,
 	// consommé via EncoderButtonJustPressed.
 	private bool kbEncoderBtnJustPressed = false;
@@ -61,6 +70,24 @@ public partial class Node3d : Node3D
 	public int joystickX = ArduinoConfig.AnalogCenter;
 	public int joystickY = ArduinoConfig.AnalogCenter;
 	public int sliderValue = ArduinoConfig.AnalogCenter;
+
+	// Valeur slider à utiliser pour le LEVIER uniquement : sliderValue de l'Arduino,
+	// overridé par Q/E en mode clavier. Volontairement décorrélé de sliderValue (lu
+	// par Player.cs pour la rotation) pour que les touches Q/E n'aient AUCUN effet
+	// sur la tête du joueur — seulement sur le levier.
+	public int LeverSliderValue
+	{
+		get
+		{
+			int v = sliderValue;
+			if (UseKeyboardFallback)
+			{
+				if (Input.IsActionPressed(InputBindings.RotationGauche)) v = ArduinoConfig.AnalogMin;
+				else if (Input.IsActionPressed(InputBindings.RotationDroite)) v = ArduinoConfig.AnalogMax;
+			}
+			return v;
+		}
+	}
 	public bool isButtonPressed = false;
 	// Bouton "interaction" : isButtonPressed (Shift / bouton Arduino) OU clic gauche souris.
 	// Volontairement séparé pour que le clic gauche ne déclenche PAS le sprint.
@@ -324,22 +351,29 @@ public partial class Node3d : Node3D
 		if (avancer && !reculer) joystickY = ArduinoConfig.AnalogCenter - KB_AXIS_AMPLITUDE;
 		else if (reculer && !avancer) joystickY = ArduinoConfig.AnalogCenter + KB_AXIS_AMPLITUDE;
 
-		// --- Slider (rotation Q/E) ---
-		bool rotG = Input.IsActionPressed(InputBindings.RotationGauche);
-		bool rotD = Input.IsActionPressed(InputBindings.RotationDroite);
-		if (rotG && !rotD) sliderValue = ArduinoConfig.AnalogMin;       // butée gauche franche
-		else if (rotD && !rotG) sliderValue = ArduinoConfig.AnalogMax;  // butée droite franche
+		// Q/E ne touche PLUS sliderValue : la rotation caméra est gérée par la souris,
+		// et on ne veut aucun effet parasite (même atténué) sur la tête du joueur.
+		// L'override Q/E pour le levier est calculé dans LeverSliderValue, lu par
+		// LevierSequence uniquement.
 
 		// --- Sprint (Shift) = bouton joystick Arduino côté clavier ---
 		if (Input.IsActionPressed(InputBindings.Sprint))
 			isButtonPressed = true;
 
-		// --- Lampe torche (clic droit MAINTENU) : capteur LDR simulé "couvert" ---
-		// Mode transitoire — sera transformé en toggle on/off en phase polish.
-		if (Input.IsActionPressed(InputBindings.LampeTorche))
-			lightValue = 100; // sous LdrMin (150) → InverseLerp clampé à 0 → lampe max
+		// --- Lampe torche (F MAINTENU) : capteur LDR simulé progressif ---
+		// Au lieu d'un toggle binaire, on rampe kbTorchCharge entre 0 (capteur
+		// éclairé, torche off) et 1 (capteur entièrement couvert, torche max).
+		// Tenir le bouton "couvre" le LDR sur TorchChargeTime secondes ; le
+		// relâcher le "redécouvre" sur TorchDischargeTime. La conversion en
+		// lightValue passe par les bornes AnalogMax (LDR à fond éclairé) et 100
+		// (sous LdrMin=150 → InverseLerp clampé à 0 dans Player.cs → torche max).
+		bool torcheTenue = Input.IsActionPressed(InputBindings.LampeTorche);
+		float duree = torcheTenue ? TorchChargeTime : TorchDischargeTime;
+		float pas = duree > 0f ? delta / duree : 1f;
+		kbTorchCharge = Mathf.MoveToward(kbTorchCharge, torcheTenue ? 1f : 0f, pas);
+		lightValue = (int)Mathf.Lerp(ArduinoConfig.AnalogMax, 100f, kbTorchCharge);
 
-		// --- Lift (Espace MAINTENU) : main au-dessus du capteur ultrason ---
+		// --- Lift (R MAINTENU) : main au-dessus du capteur ultrason ---
 		if (Input.IsActionPressed(InputBindings.Lift))
 			ultraDistCm = 10; // valeur arbitraire > 0, dans la plage utile
 

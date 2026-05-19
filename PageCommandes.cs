@@ -24,13 +24,12 @@ public partial class PageCommandes : Control
     private static readonly (string Categorie, (string Action, string Libelle, string TouchesFallback)[] Lignes)[] Sections = new[]
     {
         ("DÉPLACEMENT", new[] {
-            (InputBindings.Avancer,        "Avancer",          (string)null),
-            (InputBindings.Reculer,        "Reculer",          (string)null),
-            (InputBindings.Gauche,         "Pas à gauche",     (string)null),
-            (InputBindings.Droite,         "Pas à droite",     (string)null),
-            (InputBindings.Sprint,         "Sprinter",         (string)null),
-            (InputBindings.RotationGauche, "Tourner à gauche", (string)null),
-            (InputBindings.RotationDroite, "Tourner à droite", (string)null),
+            (InputBindings.Avancer, "Avancer",      (string)null),
+            (InputBindings.Reculer, "Reculer",      (string)null),
+            (InputBindings.Gauche,  "Pas à gauche", (string)null),
+            (InputBindings.Droite,  "Pas à droite", (string)null),
+            (InputBindings.Sprint,  "Sprinter",     (string)null),
+            ((string)null,          "Regarder",     "Souris"),
         }),
         ("INTERACTION", new[] {
             (InputBindings.Interagir,   "Interagir / Ouvrir porte", (string)null),
@@ -47,7 +46,7 @@ public partial class PageCommandes : Control
             (InputBindings.Valider,        "Valider le chiffre",          (string)null),
         }),
         ("LABYRINTHE", new[] {
-            ((string)null, "Déplacer la bille", "←  →  ↑  ↓"),
+            ((string)null, "Déplacer", "←  →  ↑  ↓"),
         }),
         ("BADGES RFID", new[] {
             (InputBindings.Badge1, "Présenter badge 1", (string)null),
@@ -180,6 +179,8 @@ public partial class PageCommandes : Control
         Key.S      => "S",
         Key.D      => "D",
         Key.E      => "E",
+        Key.F      => "F",
+        Key.R      => "R",
         Key.Shift  => "Maj",
         Key.Ctrl   => "Ctrl",
         Key.Alt    => "Alt",

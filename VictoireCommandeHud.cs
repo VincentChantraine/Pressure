@@ -19,13 +19,17 @@ public partial class VictoireCommandeHud : CanvasLayer
 	// ("Reprendre les commandes"). Le titre, lui, reste unique.
 	[Export] public string PromptTexte = "";
 
-	// Si true : HUD visible uniquement quand le joueur est dans la zone.
+	// Si true : HUD visible uniquement quand le joueur regarde les commandes
+	// (pilotage raycast Survol3D — anciennement piloté par la zone d'Area3D).
 	[Export] public bool VisibleSeulementDansZone = true;
+	[Export] public float DelaiMasquage = 0.25f;
 
 	private VictoireCommandeTrigger trigger;
 	private Label titre;
 	private Label prompt;
 	private TextureRect icone;
+	private float tempsHorsRegard = 0f;
+	private bool etaitVisible = false;
 
 	public override void _Ready()
 	{
@@ -45,32 +49,43 @@ public partial class VictoireCommandeHud : CanvasLayer
 			icone.Visible = false;
 		}
 
+		// Visibilité pilotée par le raycast (cf. _Process). On garde seulement
+		// le signal de victoire pour mettre à jour le prompt.
 		if (trigger != null)
-		{
-			trigger.JoueurEntreZone += OnJoueurEntreZone;
-			trigger.JoueurSortZone += OnJoueurSortZone;
 			trigger.VictoireDeclenchee += OnVictoireDeclenchee;
-		}
 		else
-		{
 			GD.PrintErr("[VictoireCommandeHud] TriggerPath non assigné ou nœud introuvable.");
-		}
 
 		if (VisibleSeulementDansZone)
 			Visible = false;
 	}
 
-	private void OnJoueurEntreZone()
+	public override void _Process(double delta)
 	{
-		if (VisibleSeulementDansZone) Visible = true;
-		if (icone != null) icone.Visible = true;
-		if (prompt != null) prompt.Text = PromptTexte;
-	}
+		if (!VisibleSeulementDansZone || trigger == null) return;
 
-	private void OnJoueurSortZone()
-	{
-		if (VisibleSeulementDansZone) Visible = false;
-		if (icone != null) icone.Visible = false;
+		bool regarde = Survol3D.CibleCourante == trigger;
+		if (regarde)
+		{
+			tempsHorsRegard = 0f;
+			if (!etaitVisible)
+			{
+				Visible = true;
+				if (icone != null) icone.Visible = true;
+				if (prompt != null) prompt.Text = PromptTexte;
+				etaitVisible = true;
+			}
+		}
+		else
+		{
+			tempsHorsRegard += (float)delta;
+			if (etaitVisible && tempsHorsRegard >= DelaiMasquage)
+			{
+				Visible = false;
+				if (icone != null) icone.Visible = false;
+				etaitVisible = false;
+			}
+		}
 	}
 
 	private void OnVictoireDeclenchee()

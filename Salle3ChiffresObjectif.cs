@@ -13,6 +13,13 @@ public partial class Salle3ChiffresObjectif : Node
 	// Liste des Node3D ChiffreRevelable à surveiller.
 	[Export] public NodePath[] ChiffresPaths = new NodePath[0];
 
+	// Visée précise pour compter un chiffre comme "vu". Le chiffre doit être
+	// visible (révélé par la torche) ET le joueur doit le regarder dans ce
+	// cône resserré centré sur la caméra. Empêche qu'un balayage rapide du
+	// faisceau de torche valide d'un coup tous les chiffres en périphérie.
+	// Mettre à 0 pour désactiver le check (ancien comportement : visible = vu).
+	[Export(PropertyHint.Range, "0,45,0.5")] public float AngleRegardMaxDeg = 6.0f;
+
 	private readonly List<Node3D> chiffres = new List<Node3D>();
 	private readonly HashSet<Node3D> dejaVus = new HashSet<Node3D>();
 	private bool valide = false;
@@ -39,16 +46,28 @@ public partial class Salle3ChiffresObjectif : Node
 	{
 		if (valide) return;
 
+		var cam = AngleRegardMaxDeg > 0f ? GetViewport()?.GetCamera3D() : null;
+		float cosMax = Mathf.Cos(Mathf.DegToRad(AngleRegardMaxDeg));
+
 		foreach (var c in chiffres)
 		{
-			if (c.Visible) dejaVus.Add(c);
+			if (!c.Visible) continue;
+			if (cam == null) { dejaVus.Add(c); continue; }
+
+			// Cône caméra → chiffre : le crosshair doit être sur le chiffre.
+			Vector3 to = c.GlobalPosition - cam.GlobalPosition;
+			float d = to.Length();
+			if (d < 0.001f) { dejaVus.Add(c); continue; }
+			Vector3 dir = to / d;
+			Vector3 fwd = -cam.GlobalTransform.Basis.Z;
+			if (fwd.Dot(dir) >= cosMax)
+				dejaVus.Add(c);
 		}
 
 		if (dejaVus.Count >= chiffres.Count && chiffres.Count > 0)
 		{
 			valide = true;
 			GameState.Instance?.MarquerSalleVisitee(SalleId);
-			GD.Print($"[Salle3ChiffresObjectif] {SalleId} validée (tous les chiffres révélés).");
 		}
 	}
 }

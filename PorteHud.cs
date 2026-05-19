@@ -36,8 +36,11 @@ public partial class PorteHud : BasePuzzleHud
 
 		if (porte != null)
 		{
-			porte.JoueurEntreZone += OnJoueurEntreZone;
-			porte.JoueurSortZone += OnJoueurSortZone;
+			// Visibilité pilotée par le raycast Survol3D : le HUD apparaît
+			// quand le joueur regarde la porte. On ne s'abonne plus aux signaux
+			// de zone pour la visibilité.
+			CibleSurvol = porte;
+
 			porte.PorteDeverrouillee += OnPorteDeverrouillee;
 			porte.PorteOuverte += OnPorteOuverte;
 			porte.PorteFermee += OnPorteFermee;
@@ -89,24 +92,22 @@ public partial class PorteHud : BasePuzzleHud
 		if (porte.EstPorteFinale)
 		{
 			int visitees = GameState.Instance?.SallesVisitees.Count ?? 0;
-			bool pretee = visitees >= 6;
-			string check = pretee ? "✓" : "✗";
-			badgeRequisLabel.Text = $"Badge 2 requis  |  Salles: {visitees}/6 {check}";
+			string check = visitees >= 6 ? "✓" : "✗";
+			badgeRequisLabel.Text = $"Badge 2  |  {visitees}/6 {check}";
 		}
 		else if (porte.NecessiteBadge1)
 		{
 			if (!string.IsNullOrEmpty(porte.SallePrerequise))
 			{
-				bool ok = porte.PrerequisRempli;
-				string check = ok ? "✓" : "✗";
+				string check = porte.PrerequisRempli ? "✓" : "✗";
 				string nomSalle = porte.NumeroSallePrerequise > 0
-					? $"Salle {porte.NumeroSallePrerequise}"
+					? $"S{porte.NumeroSallePrerequise}"
 					: porte.SallePrerequise.Replace("_", " ");
 				badgeRequisLabel.Text = $"Badge 1  |  {nomSalle} {check}";
 			}
 			else
 			{
-				badgeRequisLabel.Text = "Badge 1 requis";
+				badgeRequisLabel.Text = "Badge 1";
 			}
 		}
 		else
@@ -125,9 +126,10 @@ public partial class PorteHud : BasePuzzleHud
 			icone.Texture = ImageVerrouFerme;
 	}
 
-	protected override void OnJoueurEntreZone()
+	protected override void OnHudVisible()
 	{
-		base.OnJoueurEntreZone();
+		// Rafraîchit l'état affiché quand le HUD apparaît (le statut peut avoir
+		// changé entre deux survols : badge récupéré, salle prérequise validée…).
 		RafraichirEtat();
 		RafraichirBadgeRequis();
 	}

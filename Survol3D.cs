@@ -12,9 +12,20 @@ using System.Collections.Generic;
 // Pour qu'un objet soit "interactable", il doit :
 //   - être ajouté au groupe "interactif" (AddToGroup) ;
 //   - exposer (via SetMeta) la clé "libelle_interaction" (string).
+// Optionnel : SetMeta("portee_interaction", float) pour surcharger PorteeMax
+// sur un objet précis (ex. petit interrupteur qu'on ne doit pouvoir activer
+// que collé, ou gros levier dont on veut pouvoir s'éloigner). La portée est
+// mesurée caméra → point d'impact du ray (surface du collider visible).
 public partial class Survol3D : Node
 {
-	[Export] public float PorteeMax = 4.0f;
+	// Portée effective d'interaction : distance caméra → surface du collider
+	// (point d'impact du ray). Surchargeable par objet via meta "portee_interaction".
+	[Export] public float PorteeMax = 3.0f;
+	// Longueur du raycast : volontairement plus longue que PorteeMax pour
+	// pouvoir détecter des objets dont le pivot est éloigné mais dont la
+	// surface visible reste dans la portée. Le filtre par distance est appliqué
+	// après hit, donc augmenter ça ne rend pas l'interaction plus généreuse.
+	[Export] public float LongueurRaycast = 5.0f;
 	[Export] public uint MaskCollision = uint.MaxValue;
 	[Export] public Color CouleurOverlay = new Color(0.55f, 0.93f, 1f, 1f);
 	[Export] public float IntensiteEmission = 1.8f;
@@ -56,7 +67,7 @@ public partial class Survol3D : Node
 		// dans/au ras du collider — sans ça, IntersectRay manque l'objet juste
 		// devant. Le ray reste de longueur PorteeMax côté utile (devant).
 		Vector3 from = camera.GlobalPosition - forward * ReculOrigine;
-		Vector3 to = camera.GlobalPosition + forward * PorteeMax;
+		Vector3 to = camera.GlobalPosition + forward * LongueurRaycast;
 
 		var space = camera.GetWorld3D().DirectSpaceState;
 		var query = PhysicsRayQueryParameters3D.Create(from, to, MaskCollision);
@@ -70,6 +81,19 @@ public partial class Survol3D : Node
 		Node3D cible = null;
 		if (hit.Count > 0 && hit.TryGetValue("collider", out var coll) && coll.Obj is Node nHit)
 			cible = TrouverParentInteractif(nHit);
+
+		// Filtre par distance caméra → point d'impact (= surface du collider).
+		// Permet aux gros objets (porte, coffre) d'être attrapés tant que leur
+		// face visible est à portée, sans dépendre de la position du pivot.
+		if (cible != null && hit.TryGetValue("position", out var posVar))
+		{
+			Vector3 impact = posVar.AsVector3();
+			float portee = cible.HasMeta("portee_interaction")
+				? (float)cible.GetMeta("portee_interaction")
+				: PorteeMax;
+			if (impact.DistanceTo(camera.GlobalPosition) > portee)
+				cible = null;
+		}
 
 		ChangerCible(cible);
 	}

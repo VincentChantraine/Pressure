@@ -3,12 +3,7 @@ using Godot;
 public partial class LightSwitch : Node3D
 {
 	[Export] public NodePath LumierePath;
-	[Export] public NodePath ZonePath;
 	[Export] public NodePath ArduinoPath;
-
-	[Export] public NodePath SpriteEtatPath;
-	[Export] public Texture2D TextureOn;
-	[Export] public Texture2D TextureOff;
 
 	[Export] public bool AllumeAuDemarrage = true;
 
@@ -16,20 +11,14 @@ public partial class LightSwitch : Node3D
 	[Export] public NodePath SonOffPath;
 
 	[Signal] public delegate void LumiereChangeeEventHandler(bool allumee);
-	[Signal] public delegate void JoueurEntreZoneEventHandler();
-	[Signal] public delegate void JoueurSortZoneEventHandler();
 
 	public bool EstAllumee => allumee;
-	public bool JoueurDansZone => joueurDansZone;
 
 	private Node3d arduino;
 	private OmniLight3D lumiere;
-	private Area3D zone;
-	private Sprite3D spriteEtat;
 	private AudioStreamPlayer3D playerOn;
 	private AudioStreamPlayer3D playerOff;
 
-	private bool joueurDansZone = false;
 	private bool boutonPrecedent = false;
 	private bool allumee = true;
 
@@ -56,23 +45,6 @@ public partial class LightSwitch : Node3D
 		if (lumiere == null)
 			GD.PrintErr($"[LightSwitch] {Name} : OmniLight3D introuvable via LumierePath.");
 
-		// Zone : NodePath obligatoire.
-		if (ZonePath != null && !ZonePath.IsEmpty)
-			zone = GetNodeOrNull<Area3D>(ZonePath);
-		if (zone == null)
-		{
-			GD.PrintErr($"[LightSwitch] {Name} : Area3D introuvable via ZonePath.");
-		}
-		else
-		{
-			zone.BodyEntered += OnBodyEntered;
-			zone.BodyExited += OnBodyExited;
-		}
-
-		// Sprite3D d'état (optionnel).
-		if (SpriteEtatPath != null && !SpriteEtatPath.IsEmpty)
-			spriteEtat = GetNodeOrNull<Sprite3D>(SpriteEtatPath);
-
 		// Players audio (NodePaths vers des AudioStreamPlayer3D placés dans la scène).
 		if (SonOnPath != null && !SonOnPath.IsEmpty)
 			playerOn = GetNodeOrNull<AudioStreamPlayer3D>(SonOnPath);
@@ -87,24 +59,6 @@ public partial class LightSwitch : Node3D
 		SetMeta("libelle_interaction", "Interrupteur");
 	}
 
-	private void OnBodyEntered(Node3D body)
-	{
-		if (body is Player)
-		{
-			joueurDansZone = true;
-			EmitSignal(SignalName.JoueurEntreZone);
-		}
-	}
-
-	private void OnBodyExited(Node3D body)
-	{
-		if (body is Player)
-		{
-			joueurDansZone = false;
-			EmitSignal(SignalName.JoueurSortZone);
-		}
-	}
-
 	public override void _Process(double delta)
 	{
 		if (arduino == null) return;
@@ -113,7 +67,9 @@ public partial class LightSwitch : Node3D
 		bool frontMontant = boutonActuel && !boutonPrecedent;
 		boutonPrecedent = boutonActuel;
 
-		if (joueurDansZone && frontMontant)
+		// Interaction pilotée par le raycast Survol3D : il faut regarder
+		// l'interrupteur. La portée de 2 m remplace la zone d'Area3D.
+		if (Survol3D.CibleCourante == this && frontMontant)
 		{
 			allumee = !allumee;
 			AppliquerEtat();
@@ -127,7 +83,5 @@ public partial class LightSwitch : Node3D
 	private void AppliquerEtat()
 	{
 		if (lumiere != null) lumiere.Visible = allumee;
-		if (spriteEtat != null)
-			spriteEtat.Texture = allumee ? TextureOn : TextureOff;
 	}
 }

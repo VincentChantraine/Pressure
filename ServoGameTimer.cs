@@ -48,6 +48,11 @@ public partial class ServoGameTimer : Node
 
 	private Node3d arduino;
 	private float elapsed = 0f;
+	// Temps réel cumulé depuis le démarrage : à l'inverse d'elapsed, n'est JAMAIS
+	// reculé par AjouterTemps. Sert aux statistiques "durée par salle" affichées
+	// sur l'écran de fin, qui doivent rester monotones même si le joueur a gagné
+	// du temps via leviers/vannes entre deux validations.
+	private float tempsReel = 0f;
 	private float sendAccum = 0f;
 	private bool fini = false;
 	private int derniereVitesseEnvoyee = int.MinValue;
@@ -62,6 +67,9 @@ public partial class ServoGameTimer : Node
 	private float alarmeTemps = 0f;
 
 	public float GetElapsed() => elapsed;
+	// Temps réel écoulé depuis le démarrage, insensible aux bonus AjouterTemps.
+	// À utiliser pour mesurer la durée passée par salle.
+	public float GetTempsReel() => tempsReel;
 	public bool EstDemarre()  => !enPause;
 	public bool EstFini()     => fini;
 
@@ -90,6 +98,7 @@ public partial class ServoGameTimer : Node
 	public void Reset()
 	{
 		elapsed = 0f;
+		tempsReel = 0f;
 		sendAccum = 0f;
 		fini = false;
 		derniereVitesseEnvoyee = int.MinValue;
@@ -176,6 +185,7 @@ public partial class ServoGameTimer : Node
 		if (fini || enPause) return;
 
 		elapsed += (float)delta;
+		tempsReel += (float)delta;
 		sendAccum += (float)delta;
 
 		float t = Mathf.Clamp(elapsed / DureeTotale, 0f, 1f);

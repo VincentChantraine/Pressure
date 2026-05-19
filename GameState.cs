@@ -43,6 +43,19 @@ public partial class GameState : Node
 	public HashSet<string> PortesDeverrouilles = new HashSet<string>();
 	public HashSet<string> SallesVisitees = new HashSet<string>();
 
+	// Inventaire badges. Le scan via les touches 1/2 est refusé tant que le
+	// badge correspondant n'a pas été ramassé dans la scène (BadgeRamassable).
+	// Badge 1 : posé dans le hub au démarrage.
+	// Badge 2 : apparaît quand les 6 salles sont validées (PorteFinaleDebloquee).
+	public bool BadgeRamasse1 { get; private set; } = false;
+	public bool BadgeRamasse2 { get; private set; } = false;
+
+	// Référence au badge actuellement présent dans la scène (Node3D du
+	// BadgeRamassable). Vaut le node tant qu'il est actif/visible, null sinon.
+	// Utilisé par la boussole pour pointer vers le badge avant les salles
+	// (Badge 1) et entre les 6 validations et la porte de sortie (Badge 2).
+	public Node3D BadgeCible { get; set; }
+
 	// Ancres "cible" de la boussole, rempli par les Portes uniquement.
 	// La boussole pointe vers ces nœuds (= portes menant aux salles à valider).
 	// Si une salle n'a pas de porte associée (ex: salle_1 dans le hub), pas
@@ -82,6 +95,9 @@ public partial class GameState : Node
 	// Émis à chaque salle nouvellement validée (premier appel par id).
 	// Sert au screen shake + flash blanc côté PartieManager.
 	[Signal] public delegate void SalleValideeEventHandler(string salleId);
+	// Émis quand un badge vient d'être ramassé (numero 1 ou 2). Permet à un
+	// HUD éventuel d'afficher une confirmation. Aucun listener obligatoire.
+	[Signal] public delegate void BadgeRamasseEventHandler(int numero);
 
 	public override void _EnterTree()
 	{
@@ -111,6 +127,15 @@ public partial class GameState : Node
 	{
 		if (string.IsNullOrEmpty(salleId) || centre == null) return;
 		CentresSalles[salleId] = centre;
+	}
+
+	public void RamasserBadge(int numero)
+	{
+		if (numero == 1) BadgeRamasse1 = true;
+		else if (numero == 2) BadgeRamasse2 = true;
+		else return;
+		GD.Print($"[GameState] Badge {numero} ramassé.");
+		EmitSignal(SignalName.BadgeRamasse, numero);
 	}
 
 	public void NotifyRfidScan(string uid)
@@ -160,7 +185,11 @@ public partial class GameState : Node
 	{
 		if (SallesVisitees.Add(salleId))
 		{
-			float t = Timer != null ? Timer.GetElapsed() : 0f;
+			// On stocke le temps réel (monotone, insensible aux bonus de leviers/
+			// vannes) pour que les durées par salle affichées sur l'écran de fin
+			// restent cohérentes même quand des bonus ont été appliqués entre
+			// deux validations.
+			float t = Timer != null ? Timer.GetTempsReel() : 0f;
 			OrdreSallesValidees.Add(salleId);
 			TempsValidationParSalle[salleId] = t;
 			GD.Print($"[GameState] Salle {salleId} visitée à {t:F1}s. Total : {SallesVisitees.Count}/6");
@@ -201,6 +230,9 @@ public partial class GameState : Node
 		DernierTempsEcoule = 0f;
 		PorteSortieFranchie = false;
 		SortieFinaleAtteinte = false;
+		BadgeRamasse1 = false;
+		BadgeRamasse2 = false;
+		BadgeCible = null;
 		// Timer non remis à null : la nouvelle scène de jeu réinjectera la référence
 		// via PartieManager._Ready(). Conserver l'ancienne ne sert à rien mais ne
 		// nuit pas (elle sera écrasée).

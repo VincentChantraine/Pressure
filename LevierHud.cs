@@ -39,12 +39,13 @@ public partial class LevierHud : BasePuzzleHud
 
 		if (levier != null)
 		{
+			// Visibilité pilotée par le raycast Survol3D (cf. BasePuzzleHud).
+			CibleSurvol = levier;
+
 			levier.EtapeValidee += OnEtapeValidee;
 			levier.SequenceRatee += OnSequenceRatee;
 			levier.LevierActive += OnLevierActive;
 			levier.ProgressionChangee += OnProgressionChangee;
-			levier.JoueurEntreZone += OnJoueurEntreZone;
-			levier.JoueurSortZone += OnJoueurSortZone;
 
 			if (manometre != null)
 			{
@@ -99,9 +100,8 @@ public partial class LevierHud : BasePuzzleHud
 			icone.Texture = ImageLevierActive;
 	}
 
-	protected override void OnJoueurEntreZone()
+	protected override void OnHudVisible()
 	{
-		base.OnJoueurEntreZone();
 		if (icone != null) icone.Visible = true;
 	}
 }
