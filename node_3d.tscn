@@ -56,7 +56,7 @@
 [ext_resource type="AudioStream" uid="uid://d1e1j23de2kn2" path="res://Son/Porte-Fermeture.ogg" id="35_ykyjb"]
 [ext_resource type="AudioStream" uid="uid://pyae8d5d4jxa" path="res://Son/Porte-Déverouiller.ogg" id="36_sivbr"]
 [ext_resource type="Material" uid="uid://dn123ps6gypdc" path="res://Materiaux/mat_mur_metal.tres" id="37_3s0n5"]
-[ext_resource type="AudioStream" uid="uid://cqwjpxkm8llfm" path="res://Son/Porte-Refuser.mp3" id="37_4yprr"]
+[ext_resource type="AudioStream" uid="uid://bu7cosnwny0m1" path="res://Son/Porte-Refuser.wav" id="37_4yprr"]
 [ext_resource type="PackedScene" uid="uid://c1lp2f15ks5gq" path="res://Models/New/Biometric Scanner.glb" id="39_xx45s"]
 [ext_resource type="Script" uid="uid://cshseamh3r1d3" path="res://Salle3ChiffresObjectif.cs" id="40_g0276"]
 [ext_resource type="PackedScene" uid="uid://6fi3obk5qbeo" path="res://Models/Safe/Safe2.glb" id="42_5w2ad"]
@@ -114,6 +114,7 @@
 [ext_resource type="AudioStream" uid="uid://b647ix4cd8viu" path="res://Son/ArcElec.wav" id="203_arcelec"]
 [ext_resource type="AudioStream" uid="uid://cwytrl2gjsp8r" path="res://Son/Radio_interferences.wav" id="204_radio"]
 [ext_resource type="Script" uid="uid://dblmihfh0c3sy" path="res://LoopingAudio.cs" id="205_loop"]
+[ext_resource type="Script" uid="uid://vislibe4lru5" path="res://MiniMapHud.cs" id="999_minimap"]
 
 [sub_resource type="Environment" id="Environment_imku0"]
 background_mode = 1
@@ -301,9 +302,6 @@ size = Vector3(20, 0.2, 20)
 [sub_resource type="BoxMesh" id="BoxMesh_r3fl7"]
 material = SubResource("StandardMaterial3D_g4s1x")
 size = Vector3(20, 0.2, 20)
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_g0276"]
-radius = 2.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_a0tk4"]
 size = Vector3(2, 4, 0.1)
@@ -699,7 +697,7 @@ script = ExtResource("2_noarx")
 Speed = 4.0
 RotationSpeed = 1.25
 TorchLightPath = NodePath("Camera3D/SpotLight3D")
-LiftMaxHeight = 10.0
+LiftMaxHeight = 6.5
 LiftTargetPath = NodePath("Camera3D")
 ArduinoPath = NodePath("..")
 CameraPath = NodePath("Camera3D")
@@ -751,6 +749,11 @@ VolumeDbCourse = -12.0
 [node name="SonPat" type="AudioStreamPlayer3D" parent="Player/Footsteps" unique_id=456016110]
 stream = ExtResource("46_s7uix")
 volume_db = -18.0
+
+[node name="MiniMapHud" type="CanvasLayer" parent="Player" unique_id=1196163827]
+script = ExtResource("999_minimap")
+PlayerPath = NodePath("..")
+InclinaisonDeg = 10.0
 
 [node name="Node3D Princ" type="Node3D" parent="." unique_id=2127903066]
 
@@ -909,14 +912,8 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0
 [node name="Salle1" type="Node3D" parent="Node3D salle 1_2" unique_id=1944877530]
 script = ExtResource("10_u8pt3")
 CiblePath = NodePath("../../Player/Camera3D")
-FormePath = NodePath("Area3DTrigger/CollisionTriggerSalle1")
+FormePath = NodePath("")
 CibleRegardPath = NodePath("Label3DSalle1")
-
-[node name="Area3DTrigger" type="Area3D" parent="Node3D salle 1_2/Salle1" unique_id=980272885]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 10, 25)
-
-[node name="CollisionTriggerSalle1" type="CollisionShape3D" parent="Node3D salle 1_2/Salle1/Area3DTrigger" unique_id=1621978650]
-shape = SubResource("SphereShape3D_g0276")
 
 [node name="LightBulb salle 1" parent="Node3D salle 1_2/Salle1" unique_id=1377605734 instance=ExtResource("63_8uyoo")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 5, 5.10511, 20)
@@ -1089,7 +1086,7 @@ transform = Transform3D(-0.8, 1.4210855e-14, -6.993821e-08, 0, 0.8, 2.0658617e-1
 text = "1"
 
 [node name="Label3DSalle1" type="Label3D" parent="Node3D salle 1_2/Salle1" unique_id=882435970]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.9999986, 12.20955, 29.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 9, 23.2)
 text = "Pour la salle 3
 éclairer les murs"
 font_size = 64
@@ -1152,16 +1149,16 @@ skeleton = NodePath("../../Mur Grand")
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -3.5, 0, 5)
 shape = SubResource("BoxShape3D_nrhv2")
 
-[node name="PlafRust" type="StaticBody3D" parent="Node3D salle 1_2/Salle1" unique_id=1307352832]
+[node name="PlafondRust" type="StaticBody3D" parent="Node3D salle 1_2/Salle1" unique_id=1307352832]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 12, 26.5)
 
-[node name="MeshInstance3D5" type="MeshInstance3D" parent="Node3D salle 1_2/Salle1/PlafRust" unique_id=313205024]
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Node3D salle 1_2/Salle1/PlafondRust" unique_id=313205024]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 5, 5)
 material_override = ExtResource("37_3s0n5")
 mesh = SubResource("BoxMesh_u8pt3")
 skeleton = NodePath("../../Mur Grand")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 1_2/Salle1/PlafRust" unique_id=1635591151]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 1_2/Salle1/PlafondRust" unique_id=1635591151]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 5, 5)
 shape = SubResource("BoxShape3D_txrmw")
 
@@ -1310,7 +1307,7 @@ shape = SubResource("BoxShape3D_b2564")
 
 [node name="SonFuite" type="AudioStreamPlayer3D" parent="Node3D salle 1_2/Salle2/Vanne" unique_id=1293900553]
 stream = ExtResource("43_bihgt")
-volume_db = -8.0
+volume_db = 2.0
 unit_size = 3.0
 max_db = 0.0
 autoplay = true
@@ -1585,15 +1582,15 @@ mesh = SubResource("BoxMesh_noarx")
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -10, 2, 0)
 shape = SubResource("BoxShape3D_r3fl7")
 
-[node name="Rustine plaf" type="StaticBody3D" parent="Node3D salle 1_2/Salle2" unique_id=1405058134]
+[node name="Rustine plafond" type="StaticBody3D" parent="Node3D salle 1_2/Salle2" unique_id=1405058134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 20)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D salle 1_2/Salle2/Rustine plaf" unique_id=1065382988]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D salle 1_2/Salle2/Rustine plafond" unique_id=1065382988]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 5, 6.5)
 material_override = ExtResource("37_3s0n5")
 mesh = SubResource("BoxMesh_s0gvp")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 1_2/Salle2/Rustine plaf" unique_id=980497654]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D salle 1_2/Salle2/Rustine plafond" unique_id=980497654]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 shape = SubResource("BoxShape3D_vxd74")
 
@@ -2639,6 +2636,7 @@ transform = Transform3D(-7, 0, 1.0569706e-06, 0, 7, 0, -1.0569706e-06, 0, -7, 8.
 [node name="SonArcElec" type="AudioStreamPlayer3D" parent="Node3D salle 5_6/Salle5/PowerVault" unique_id=2030101001]
 transform = Transform3D(-0.14285716, 0, -2.1573214e-08, 0, 0.14285716, 0, 2.1573214e-08, 0, -0.14285716, 0, 0, 0)
 stream = ExtResource("203_arcelec")
+volume_db = 6.0
 unit_size = 3.0
 autoplay = true
 max_distance = 18.0
@@ -2650,6 +2648,7 @@ transform = Transform3D(-7, 0, 1.0569706e-06, 0, 7, 0, -1.0569706e-06, 0, -7, 1.
 [node name="SonArcElec2" type="AudioStreamPlayer3D" parent="Node3D salle 5_6/Salle5/PowerVault2" unique_id=2030101002]
 transform = Transform3D(-0.14285716, 0, -2.1573214e-08, 0, 0.14285716, 0, 2.1573214e-08, 0, -0.14285716, 0, 0, 0)
 stream = ExtResource("203_arcelec")
+volume_db = 6.0
 unit_size = 3.0
 autoplay = true
 max_distance = 18.0
@@ -3481,7 +3480,7 @@ omni_range = 20.0
 [node name="SonRadioInterference" type="AudioStreamPlayer3D" parent="BT-01" unique_id=2030101003]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5644531, 0.72721386, 0)
 stream = ExtResource("204_radio")
-volume_db = -8.0
+volume_db = 2.0
 unit_size = 6.0
 max_db = 0.0
 autoplay = true

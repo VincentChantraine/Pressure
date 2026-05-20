@@ -22,7 +22,7 @@ public partial class Porte : Node3D
 	[Export] public float VolumeDbOuverture = -32f;
 	[Export] public float VolumeDbFermeture = -32f;
 	[Export] public float VolumeDbDeverrouillage = -28f;
-	[Export] public float VolumeDbRefus = -25f;
+	[Export] public float VolumeDbRefus = 0f;
 
 	[Export] public float AngleOuvert = 90.0f;
 	[Export] public float VitesseOuverture = 3.0f;
@@ -218,8 +218,13 @@ public partial class Porte : Node3D
 
 	private void JouerSon(AudioStreamPlayer3D player)
 	{
-		if (player != null && player.Stream != null)
-			player.Play();
+		if (player == null || player.Stream == null) return;
+		// Stop() explicite avant Play() : sans ça, des appels rapides à Play()
+		// (cas du REFUS quand on bourre les touches 1/2) peuvent laisser
+		// l'AudioStreamPlayer3D dans un état où le restart n'émet pas de son,
+		// notamment avec des streams MP3. Coffre/Levier font pareil.
+		if (player.Playing) player.Stop();
+		player.Play();
 	}
 
 	public override void _Process(double delta)

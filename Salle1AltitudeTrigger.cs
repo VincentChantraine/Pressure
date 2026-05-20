@@ -58,7 +58,9 @@ public partial class Salle1AltitudeTrigger : Node3D
 
 		if (cible == null)
 			GD.PushWarning($"[Salle1AltitudeTrigger] {Name} : cible introuvable via CiblePath.");
-		if (forme == null || forme.Shape == null)
+		// Forme requise uniquement si le mode altitude est actif : depuis qu'on
+		// valide par le regard (raycast), la zone aérienne n'est plus nécessaire.
+		if (ModeAltitudeActif && (forme == null || forme.Shape == null))
 			GD.PushWarning($"[Salle1AltitudeTrigger] {Name} : forme/shape introuvable via FormePath.");
 
 		// Centre boussole (proximité-only) : la zone aérienne si dispo,

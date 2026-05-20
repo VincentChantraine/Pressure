@@ -50,6 +50,10 @@ public partial class MenuPause : Control
         btnReprendre.Pressed += OnReprendrePressed;
         vbox.AddChild(btnReprendre);
 
+        var btnRejouer = CreerBouton("↻  REJOUER");
+        btnRejouer.Pressed += OnRejouerPressed;
+        vbox.AddChild(btnRejouer);
+
         var btnCommandes = CreerBouton("⌨  COMMANDES");
         btnCommandes.Pressed += OnCommandesPressed;
         vbox.AddChild(btnCommandes);
@@ -57,10 +61,6 @@ public partial class MenuPause : Control
         var btnOptions = CreerBouton("⚙  OPTIONS");
         btnOptions.Pressed += OnOptionsPressed;
         vbox.AddChild(btnOptions);
-
-        var btnRejouer = CreerBouton("↻  REJOUER");
-        btnRejouer.Pressed += OnRejouerPressed;
-        vbox.AddChild(btnRejouer);
 
         var btnMenu = CreerBouton("✕  MENU PRINCIPAL");
         btnMenu.Pressed += OnMenuPrincipalPressed;

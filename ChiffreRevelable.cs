@@ -11,7 +11,9 @@ public partial class ChiffreRevelable : Node3D
 	[Export] public float EnergySeuil = 2.0f;
 
 	// Marge (en degrés) ajoutée au SpotAngle pour tolérer les imprécisions.
-	[Export] public float AngleMarginDeg = 0.0f;
+	// Une marge >0 évite que le chiffre clignote / ne se révèle pas quand le
+	// joueur ne le centre pas exactement.
+	[Export] public float AngleMarginDeg = 4.0f;
 
 	// Layers physiques à tester pour l'occlusion (typiquement : layer des murs).
 	[Export(PropertyHint.Layers3DPhysics)] public uint OcclusionMask = 1;

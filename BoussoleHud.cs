@@ -66,17 +66,15 @@ public partial class BoussoleHud : Control
 	{
 		if (!ParametresJeu.AfficherBoussole) { labelDistance.Visible = false; return; }
 		if (GameState.Instance == null)      { labelDistance.Visible = false; return; }
-		// Masquée hors du hub : éviter de pointer vers le puzzle quand on est
-		// déjà dans la salle (ça donnerait directement la solution).
-		if (!HubZone.JoueurDansHub)          { labelDistance.Visible = false; return; }
 
 		// Récupère la caméra active (peut changer : labyrinthe top-down, fin de partie).
 		var viewport = GetViewport();
 		camera = viewport?.GetCamera3D();
 		if (camera == null) { labelDistance.Visible = false; return; }
 
-		// Auto-hide quand le joueur est près d'un puzzle (= il est dans une salle).
-		// Indépendant de HubZone — fonctionne sans setup éditeur.
+		// Auto-masquée quand le joueur est dans une salle (= près du centre d'un
+		// puzzle), pour ne pas montrer une flèche vers la salle suivante alors
+		// qu'on est encore en train de résoudre celle-ci.
 		if (JoueurDansUneSalle(camera.GlobalPosition)) { labelDistance.Visible = false; return; }
 
 		Node3D ancre = TrouverProchaineAncre();
@@ -116,13 +114,17 @@ public partial class BoussoleHud : Control
 		labelDistance.Position = pointe + new Vector2(-size.X * 0.5f, TailleFleche * 0.6f);
 	}
 
+	private Node3D TrouverProchaineAncre() => TrouverProchaineAncreStatique(OrdreSalles);
+
 	private bool JoueurDansUneSalle(Vector3 posJoueur)
 	{
-		// Si le joueur est à moins de RayonSalle mètres d'un centre de salle
-		// (= position d'un puzzle), il est considéré "dans la salle".
 		float r2 = RayonSalle * RayonSalle;
-		foreach (var (_, centre) in GameState.Instance.CentresSalles)
+		foreach (var (id, centre) in GameState.Instance.CentresSalles)
 		{
+			// salle_1 = hub d'exploration (Salle1AltitudeTrigger enregistré au
+			// nœud du déclencheur, souvent près de l'origine). Si on l'incluait,
+			// la boussole serait masquée en permanence dans le hub.
+			if (id == "salle_1") continue;
 			if (centre == null || !IsInstanceValid(centre)) continue;
 			if (posJoueur.DistanceSquaredTo(centre.GlobalPosition) <= r2)
 				return true;
@@ -130,55 +132,49 @@ public partial class BoussoleHud : Control
 		return false;
 	}
 
-	private Node3D TrouverProchaineAncre()
+	// Logique partagée — utilisée aussi par MiniMapHud pour sa flèche off-screen.
+	public static Node3D TrouverProchaineAncreStatique(string[] ordreSalles)
 	{
 		var gs = GameState.Instance;
+		if (gs == null) return null;
 
-		// Phase 0 — Badge 1 pas encore ramassé : on aiguille vers le badge dans
-		// le hub. Sans lui, aucun lecteur ne fonctionnera de toute façon.
-		if (!gs.BadgeRamasse1 && gs.BadgeCible != null && IsInstanceValid(gs.BadgeCible))
+		// Phase 0 — Badge 1 pas encore ramassé.
+		if (!gs.BadgeRamasse1 && gs.BadgeCible != null && GodotObject.IsInstanceValid(gs.BadgeCible))
 			return gs.BadgeCible;
 
-		// Phase 1 — salles non-validées : la cible suit OrdreSalles, qui reflète
-		// le parcours scénarisé imposé par les SallePrerequise des portes.
+		// Phase 1 — salles non-validées, dans l'ordre scénarisé.
 		if (gs.SallesVisitees.Count < 6)
 		{
-			foreach (var id in OrdreSalles)
+			foreach (var id in ordreSalles)
 			{
 				if (gs.SallesVisitees.Contains(id)) continue;
 				if (!gs.AncresSalles.TryGetValue(id, out var ancre)) continue;
-				if (ancre == null || !IsInstanceValid(ancre)) continue;
+				if (ancre == null || !GodotObject.IsInstanceValid(ancre)) continue;
 				return ancre;
 			}
 			return null;
 		}
 
-		// Phase 2a — toutes les salles validées mais Badge 2 pas encore ramassé :
-		// le badge vient de réapparaître quelque part, on l'indique avant
-		// d'aiguiller vers la porte de sortie (qui le refuserait sinon).
-		if (!gs.BadgeRamasse2 && gs.BadgeCible != null && IsInstanceValid(gs.BadgeCible))
+		// Phase 2a — Badge 2 pas encore ramassé.
+		if (!gs.BadgeRamasse2 && gs.BadgeCible != null && GodotObject.IsInstanceValid(gs.BadgeCible))
 			return gs.BadgeCible;
 
-		// Phase 2b — Badge 2 en poche : on guide vers la porte de sortie tant
-		// que le joueur ne l'a pas franchie.
+		// Phase 2b — vers la porte de sortie.
 		if (!gs.PorteSortieFranchie
 			&& gs.AncresSalles.TryGetValue("exit_door", out var porteSortie)
-			&& porteSortie != null && IsInstanceValid(porteSortie))
+			&& porteSortie != null && GodotObject.IsInstanceValid(porteSortie))
 		{
 			return porteSortie;
 		}
 
-		// Phase 3 — porte_sortie franchie : on guide vers la PorteRonde
-		// (sas final → téléportation BT-01).
+		// Phase 3 — vers la PorteRonde (sas final).
 		if (!gs.SortieFinaleAtteinte
 			&& gs.AncresSalles.TryGetValue("exit_teleport", out var porteRonde)
-			&& porteRonde != null && IsInstanceValid(porteRonde))
+			&& porteRonde != null && GodotObject.IsInstanceValid(porteRonde))
 		{
 			return porteRonde;
 		}
 
-		// Phase 4 — téléportation effectuée : boussole inutile, l'écran de
-		// commandes BT-01 prend le relais.
 		return null;
 	}
 
